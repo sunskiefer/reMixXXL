@@ -1,6 +1,6 @@
 # reMixXXL
 
-**Status: 0.1.10, tested on an Akai Force (MPC OS 3.9.1) by the author; wheel touch (also on a stopped track), ring spin, BPM digits, QR and the companion page work.** Four DJ decks for the Akai Force / MPC OS, as a native
+**Status: 0.1.11, tested on an Akai Force (MPC OS 3.9.1) by the author; new WHEEL page layout from the author's own art; wheel touch (also on a stopped track), ring spin, BPM digits, QR and the companion page work.** Four DJ decks for the Akai Force / MPC OS, as a native
 plugin (VST2 for MPC's own plugin host, packed by [mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins)).
 By L'Cronx.
 
@@ -46,10 +46,13 @@ the QR code on the WHEEL page. See [docs/COMPANION.md](docs/COMPANION.md).
 (`reMixXXL-<version>-mpc-armv7.zip`, packed by the mpc-vst-plugins wrapper in `third_party/`). `./build.sh --skin-only`
 rebuilds only the skin. Never build x86/desktop versions: only the Force binary is supported.
 
-**What this source reproduces.** `src/` builds the exact `remixxxl.so` of the 0.1.10 release (SHA-256 of the engine in the zip is
+![WHEEL page, 0.1.11](docs/img/wheel_page_0.1.11.png)
+
+**What this source reproduces.** `src/` builds the exact `remixxxl.so` of the 0.1.11 release (the engine is unchanged since 0.1.10) (SHA-256 of the engine in the zip is
 checked against this source's build). The release's skin differs from what `tools/remix_skin.py` generates in two ways that are
 not in this source yet: 48 extra "jog knob" components in `TUI.json` and the ring film strips in reverse frame order
-(`rx_jog_ring_*.png`). Use the release zip for the tested skin.
+(`rx_jog_ring_*.png`). The 0.1.11 WHEEL page is the 0.1.10 skin run through `tools/patch_wheel.py` (the author's transparent picture
+`art/ui/controls/wheel_page_user_0.1.11.png`, the boxes in `tools/wheel_geom.py`); the script reproduces the release's skin file for file. Use the release zip for the tested skin.
 
 Text sizes follow the L'Cronx XXL rule: Titillium Web, nothing under 26 px on any page (readouts and list rows 26 px
 Bold, button labels 28 px, page names and deck numbers 34 px, knob names 26-28 px SemiBold).
@@ -66,6 +69,7 @@ written to the diag log.
 ## Known limits
 
 - Stopped or paused track: turning the wheel moves the playhead (0.1.10; one turn is about 1.8 s of track).
+- WHEEL page 0.1.11: the engine's own touch layer (`src/boxes.h`) still has the 0.1.10 button boxes; the skin's buttons use the new places. A tap near the new track search / search buttons can also fall in an old box (beat jump, slip/reverse). Fix planned: regenerate `boxes.h` from `tools/wheel_geom.py`.
 - Not done yet: the deck left/right buttons do nothing; no separate cue/headphone output; no per-deck outputs (whether MPC
   routes a plugin's extra outputs is unverified); waveforms are not drawn on the Force screen itself in this release.
 

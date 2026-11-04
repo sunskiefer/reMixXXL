@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.1.11",
+    "device": "Akai Force",
+    "mpc_os": "3.9.1",
+    "date": "2026-11-04",
+    "result": "working",
+    "tested_by": "L'Cronx",
+    "notes": "new WHEEL page layout and art; engine unchanged from 0.1.10; touch layer still has the 0.1.10 button boxes"
+  },
+  {
     "version": "0.1.10",
     "device": "Akai Force",
     "mpc_os": "3.9.1",

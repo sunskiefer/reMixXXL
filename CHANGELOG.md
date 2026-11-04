@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.11 (release)
+WHEEL page: every control cut from the author's new transparent picture and placed where it puts them (loop, 4/8, track search, search, cue, play, beat jump, direction, vinyl, sync, key sync, tempo range, master tempo, tempo reset, jog adjust knob); new connector lines, tempo scale marks, VINYL/CDJ colours, red master tempo lamp, new jog adjust knob (turns in place). The tempo fader, the wheels and the ring are untouched; the Q-Link readouts stay on the left. Skin only: the engine file is the 0.1.10 one.
+Known: the engine's own touch layer still has the 0.1.10 button boxes (see README, Known limits).
+
 ## 0.1.10 (release, tested on a Force)
 On a stopped or paused track, turning the wheel moves the playhead forward or back (VINYL and CDJ), one turn about 1.8 s of track; the ring picture follows. While playing, VINYL scrubs and CDJ nudges as in 0.1.9. Engine change only; skin as in 0.1.9.
 

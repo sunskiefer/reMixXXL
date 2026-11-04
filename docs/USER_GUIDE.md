@@ -65,6 +65,8 @@ Q-Link banks: FX 1 and FX 2 (the three metas, mix, super), FX 1 PARAMS and FX 2 
 
 ## WHEELS and WHEEL
 
+(0.1.11: the WHEEL page uses the author's own layout, see `docs/img/wheel_page_0.1.11.png`; the part ids below are the same, only their places changed.)
+
 The CDJ decks, made from the CDJ photo. WHEELS: two side by side, each with DECK 1-4 buttons in the stripe for the
 deck it drives; WHEEL: one deck full size (the left wheel's deck). The parts (the numbers are the ids in
 `Layout/wheels_overlay.png` / `Layout/wheel_overlay.png`):
