@@ -152,6 +152,21 @@ def stack_panel(scale_w, scale_h):
     return parts, W1, H1, s
 
 
+def wheel_new_parts(C):
+    """0.1.11: the WHEEL page's controls at the boxes of the user's new picture (tools/wheel_geom.py, art/ui/controls/wheel_page_user_0.1.11.png);
+    two-button parts are one box, split at its middle (touch.c). The platter (id 1) and the fader (5) stay as they were."""
+    import wheel_geom as G
+    ox, oy = G.OFF
+    keep = [q for q in C if q["id"] == 5]
+    plat = [q for q in C if q["id"] == 1]
+    new = []
+    for pid, lst in G.PARTS.items():
+        x0 = min(b[0] for _, _, _, b in lst); y0 = min(b[1] for _, _, _, b in lst)
+        x1 = max(b[0] + b[2] for _, _, _, b in lst); y1 = max(b[1] + b[3] for _, _, _, b in lst)
+        new.append({"id": pid, "part": PART_NAMES.get(pid, "part %d" % pid), "x": x0 + ox, "y": y0 + oy, "w": x1 - x0, "h": y1 - y0})
+    return keep + new + plat                          # the platter last: the part boxes round it are tested first
+
+
 def scaled(parts, s, ox, oy):
     out = []
     for p in parts:
@@ -217,6 +232,7 @@ def pages():
     x0 = SHEET_OFF[0] + min(c["x"] for c in cmm.values())
     y0 = SHEET_OFF[1] + min(c["y"] for c in cmm.values())
     C = scaled(parts, s, x0, y0)
+    C = wheel_new_parts(C)                           # 0.1.11: the controls where the user's new WHEEL picture puts them
     out["wheel"] = {"scale": round(s, 4), "panel_1to1": {"w": W1, "h": H1},
                     "centre": {"parts": C, "wheel": wheel_geom(C, s), "deck_buttons": deck_buttons(W - 4 * 106 - 6)}}
     try:

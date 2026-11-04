@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.1.12",
+    "device": "Akai Force",
+    "mpc_os": "3.9.1",
+    "date": "2026-11-04",
+    "result": "pending",
+    "tested_by": "L'Cronx",
+    "notes": "touch boxes match the new WHEEL layout; sent to the author for a Force test"
+  },
+  {
     "version": "0.1.11",
     "device": "Akai Force",
     "mpc_os": "3.9.1",

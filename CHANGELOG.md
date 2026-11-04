@@ -1,8 +1,11 @@
 # Changelog
 
+## 0.1.12 (release)
+The engine's own touch layer (`src/boxes.h`) now uses the WHEEL page's new button places (generated from `tools/wheel_geom.py` by `tools/remix_pages.py`), so a tap on track search / search / beat jump / slip / reverse hits only its own button; with 0.1.11 an old box could also fire. Skin as in 0.1.11. Source in this repo builds the release's `remixxxl.so` (SHA-256 00a9bafa62ddf93ed0fa2a7f8c4ce7aaba855dddf51344d988920f05a86b60c0).
+
 ## 0.1.11 (release)
 WHEEL page: every control cut from the author's new transparent picture and placed where it puts them (loop, 4/8, track search, search, cue, play, beat jump, direction, vinyl, sync, key sync, tempo range, master tempo, tempo reset, jog adjust knob); new connector lines, tempo scale marks, VINYL/CDJ colours, red master tempo lamp, new jog adjust knob (turns in place). The tempo fader, the wheels and the ring are untouched; the Q-Link readouts stay on the left. Skin only: the engine file is the 0.1.10 one.
-Known: the engine's own touch layer still has the 0.1.10 button boxes (see README, Known limits).
+Known (fixed in 0.1.12): the engine's own touch layer still had the 0.1.10 button boxes.
 
 ## 0.1.10 (release, tested on a Force)
 On a stopped or paused track, turning the wheel moves the playhead forward or back (VINYL and CDJ), one turn about 1.8 s of track; the ring picture follows. While playing, VINYL scrubs and CDJ nudges as in 0.1.9. Engine change only; skin as in 0.1.9.
