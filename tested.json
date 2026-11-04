@@ -4,9 +4,9 @@
     "device": "Akai Force",
     "mpc_os": "3.9.1",
     "date": "2026-11-04",
-    "result": "pending",
+    "result": "working",
     "tested_by": "L'Cronx",
-    "notes": "touch boxes match the new WHEEL layout; sent to the author for a Force test"
+    "notes": "tested by the author on the Force: new WHEEL layout and its buttons"
   },
   {
     "version": "0.1.11",
