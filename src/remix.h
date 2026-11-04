@@ -151,6 +151,8 @@ void deck_host_tempo(rx_deck_t *d, double bpm, int playing);  /* MPC's own tempo
 /* scratch/jog from a wheel (touch.c, midi.c): Mixxx semantics */
 void deck_scratch_enable(rx_deck_t *d, int enable, double rpm, double alpha, double beta);
 void deck_scratch_tick(rx_deck_t *d, double ticks);           /* ticks of the wheel (Mixxx: engine.scratchTick) */
+int deck_is_playing(rx_deck_t *d);
+void deck_seek_by_turns(rx_deck_t *d, double turns);          /* a finger turning the wheel of a stopped deck: the playhead follows */
 void deck_ext_jog(rx_deck_t *d, int on);                      /* a finger on the wheel (touch.c) works the wheel: the skin knob stands back */
 void deck_jog(rx_deck_t *d, double amount);                   /* nudge (Mixxx [ChannelN],jog) */
 int deck_index(rx_deck_t *d);

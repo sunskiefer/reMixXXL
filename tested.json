@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.1.10",
+    "device": "Akai Force",
+    "mpc_os": "3.9.1",
+    "date": "2026-11-04",
+    "result": "working",
+    "tested_by": "L'Cronx",
+    "notes": "all working incl. wheel on a stopped track; deck left/right buttons and cue output not done"
+  },
+  {
     "version": "0.1.9",
     "device": "Akai Force",
     "mpc_os": "3.9.1",

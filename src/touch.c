@@ -220,7 +220,7 @@ static void finger_down(rx_touch_t *t, slot_t *s, int page) {
         s->zone = dist < wh->r_top ? 1 : 2;
         s->last_angle = atan2(dy, dx);
         deck_ext_jog(rx_deck(t->engine, deck), 1);
-        s->scratching = vinyl;               /* VINYL: the whole wheel (disc and ring) spins the track; CDJ: it nudges the pitch (deck_jog, scaled by JOG ADJUST) */
+        s->scratching = vinyl && deck_is_playing(rx_deck(t->engine, deck));       /* stopped: the wheel moves the playhead itself (finger_move) */               /* VINYL: the whole wheel (disc and ring) spins the track; CDJ: it nudges the pitch (deck_jog, scaled by JOG ADJUST) */
         if (s->scratching) deck_scratch_enable(rx_deck(t->engine, deck), 1, SCRATCH_RPM, SCRATCH_ALPHA, SCRATCH_BETA);
         post_zone(t, deck, s->zone);
         pthread_mutex_unlock(&t->geom_lock);
@@ -293,7 +293,8 @@ static void finger_move(rx_touch_t *t, slot_t *s, int page) {
         s->last_angle = a;
         double feel = deck_feel(t, s->deck);
         rx_deck_t *dk = rx_deck(t->engine, s->deck);
-        if (s->scratching) deck_scratch_tick(dk, d * (SCRATCH_TICKS_PER_REV / (2 * M_PI)) * feel);
+        if (!deck_is_playing(dk)) deck_seek_by_turns(dk, d / (2 * M_PI) * feel);
+        else if (s->scratching) deck_scratch_tick(dk, d * (SCRATCH_TICKS_PER_REV / (2 * M_PI)) * feel);
         else deck_jog(dk, d * feel * 2.0);         /* a full turn ~ 12.6 jog units at feel 1: about Mixxx's jog scale */
         return;
     }

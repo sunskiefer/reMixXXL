@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.10 (release, tested on a Force)
+On a stopped or paused track, turning the wheel moves the playhead forward or back (VINYL and CDJ), one turn about 1.8 s of track; the ring picture follows. While playing, VINYL scrubs and CDJ nudges as in 0.1.9. Engine change only; skin as in 0.1.9.
+
 ## 0.1.9 (release, tested on a Force)
 Skin-only changes on top of the engine in this source (the engine file is identical from the 0.1.4 build to 0.1.9): 48 "jog knob"
 components in the skin and the ring film strips reversed so the ring turns the same way as the touch. Wheel touch, ring spin,

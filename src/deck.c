@@ -205,7 +205,7 @@ struct rx_deck {
     double gain_prev;                  /* replay gain * vinyl speed gain, last block */
     int wrap_count; double wrap_trigger, wrap_target;    /* loop wraps in the last block (for the scratch controller) */
     double platter;                    /* turns */
-    double jog_prev, jog_idle, jp[4]; int jog_scr, ext_jog, jp_init;   /* the jog ring as a knob: last value seen, seconds since the finger last moved it, scratch on */
+    double jog_prev, jog_idle, jp[4]; int jog_scr, ext_jog, jp_init; int64_t ext_seek_fp;   /* the jog ring as a knob: last value seen, seconds since the finger last moved it, scratch on */
     int blocks;
 
     /* rate control */
@@ -660,6 +660,9 @@ void deck_scratch_enable(rx_deck_t *d, int enable, double rpm, double alpha, dou
 void deck_scratch_tick(rx_deck_t *d, double ticks) {
     __atomic_fetch_add(&d->sc_ticks_fp, (int32_t)lrint(ticks * 1024.0), __ATOMIC_ACQ_REL);
 }
+int deck_is_playing(rx_deck_t *d) { return ctlb(d->c.play); }
+/* a finger turning the wheel on a stopped deck (touch.c): turns of the wheel, queued for the engine thread, which moves the playhead */
+void deck_seek_by_turns(rx_deck_t *d, double turns) { __atomic_fetch_add(&d->ext_seek_fp, (int64_t)llround(turns * 1.8 * RX_SR * 16.0), __ATOMIC_ACQ_REL); }
 void deck_ext_jog(rx_deck_t *d, int on) { __atomic_store_n(&d->ext_jog, on, __ATOMIC_RELEASE); }
 void deck_jog(rx_deck_t *d, double amount) { ctl_post_delta(d->c.jog, amount); }
 
@@ -1252,6 +1255,13 @@ static inline int advance(rx_deck_t *d, double step, double n) {
 
 /* the jog wheel's touch dial and its ring picture: run every block, stopped or playing */
 static void jog_block(rx_deck_t *d, int frames) {
+    {   /* queued by touch.c: a finger on the wheel of a deck that is stopped moves the playhead (VINYL and CDJ alike); while playing it is dropped */
+        int64_t q = __atomic_exchange_n(&d->ext_seek_fp, 0, __ATOMIC_ACQ_REL);
+        if (q != 0 && ctlv(d->c.play) < 0.5) {
+            seek(d, d->pos + (double)q / 16.0);
+            d->platter += (double)q / 16.0 / (1.8 * RX_SR); d->platter -= floor(d->platter);
+        }
+    }
     /* the touch dial round the jog ring is endless: a finger's move on it is the wheel turning
          * wheel turning (clockwise = left up, right down, top right, bottom left): VINYL scratches the track, CDJ nudges the pitch (scaled by JOG
          * ADJUST); each strip is put back to the middle so it never hits an end. The ring's picture follows the platter. */
