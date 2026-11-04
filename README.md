@@ -22,7 +22,19 @@ MPC's plugin screen (1280 x 628 under the MPC header) has these tabs (the OVERVI
 | MIXER | four channel strips (GAIN, HIGH, MID, LOW, FILTER knobs that turn in place; PFL, FX 1, FX 2; a volume fader; a VU meter; L / MID / R crossfader side), MASTER and CUE MIX, the crossfader. Q-Link banks MIXER 1 (volumes + filters), 2 (gains + highs), 3 (mids + lows), MASTER |
 | FX | both effect units: three slots each (effect popup, ON, META and four parameter knobs named by the effect), and per unit ON, MIX, SUPER, MASTER and the deck enables 1 2 3 4. Q-Link banks FX 1, FX 2 (metas, mix, super), FX 1 PARAMS, FX 2 PARAMS |
 | WHEELS | two CDJ-style decks side by side, built from the user's CDJ photo (`art/platter_nobrand.png`, `art/control_map.json`): the platter, cue, play, the tempo fader, tempo reset, master tempo, tempo range, beat loop 4 / 8, loop in / out, beat jump, slip / rev, track search, search, jog feel, vinyl / jog mode, beat sync / master, key sync. DECK 1-4 buttons per side pick which deck each wheel drives. Q-Link banks WHEELS 1..4 |
-| WHEEL | one CDJ deck, full size (the left wheel's deck). Q-Link banks WHEEL 1..4 |
+| WHEEL | one CDJ deck, full size (the left wheel's deck), laid out from the author's own transparent art (0.1.11): loop in / out / reloop, beat loop 4 / 8, track search, search, cue, play, beat jump, direction (slip / rev), vinyl / jog mode, beat sync / master, key sync, tempo range, master tempo, the tempo fader and its scale, tempo reset, the JOG ADJUST knob. The deck's filter, volume, gain, high, mid and low show as values on the left. Q-Link banks WHEEL 1..4 |
+
+## Screenshots (0.1.12)
+
+The pages as the skin draws them (1280 x 628). WHEEL is the 0.1.12 layout, from the author's own art; the others are rendered by `./build.sh --skin-only`.
+
+| DECK | BROWSE |
+|---|---|
+| ![DECK](docs/img/deck.png) | ![BROWSE](docs/img/browse.png) |
+| **MIXER** | **FX** |
+| ![MIXER](docs/img/mixer.png) | ![FX](docs/img/fx.png) |
+| **WHEELS** | **WHEEL** |
+| ![WHEELS](docs/img/wheels.png) | ![WHEEL](docs/img/wheel.png) |
 
 ## The wheel (WHEEL and WHEELS pages)
 
@@ -45,8 +57,6 @@ the QR code on the WHEEL page. See [docs/COMPANION.md](docs/COMPANION.md).
 `./build.sh` builds the ARMv7 plugin with Zig (cross-compile) and the skin; `./tools/package.sh` makes the release zip
 (`reMixXXL-<version>-mpc-armv7.zip`, packed by the mpc-vst-plugins wrapper in `third_party/`). `./build.sh --skin-only`
 rebuilds only the skin. Never build x86/desktop versions: only the Force binary is supported.
-
-![WHEEL page, 0.1.12](docs/img/wheel_page_0.1.11.png)
 
 **What this source reproduces.** `src/` builds the exact `remixxxl.so` of the 0.1.12 release (SHA-256 `00a9bafa62dd...b60c0`; it is
 checked against this source's build). The release's skin differs from what `tools/remix_skin.py` generates in two ways that are
