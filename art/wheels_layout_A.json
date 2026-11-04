@@ -1,0 +1,521 @@
+{
+ "scale": 0.854,
+ "deck_panel": [
+  {
+   "id": 10,
+   "part": "in adjust / out adjust",
+   "x": 0,
+   "y": 0,
+   "w": 105,
+   "h": 45
+  },
+  {
+   "id": 9,
+   "part": "beat loop 4 / 8",
+   "x": 0,
+   "y": 89,
+   "w": 100,
+   "h": 35
+  },
+  {
+   "id": 12,
+   "part": "beat jump < >",
+   "x": 0,
+   "y": 168,
+   "w": 100,
+   "h": 40
+  },
+  {
+   "id": 13,
+   "part": "slip rev fwd/rev",
+   "x": 0,
+   "y": 252,
+   "w": 95,
+   "h": 55
+  },
+  {
+   "id": 14,
+   "part": "track search",
+   "x": 0,
+   "y": 351,
+   "w": 95,
+   "h": 40
+  },
+  {
+   "id": 15,
+   "part": "search",
+   "x": 0,
+   "y": 435,
+   "w": 95,
+   "h": 40
+  },
+  {
+   "id": 3,
+   "part": "cue",
+   "x": 0,
+   "y": 519,
+   "w": 97,
+   "h": 98
+  },
+  {
+   "id": 4,
+   "part": "play/pause",
+   "x": 0,
+   "y": 661,
+   "w": 97,
+   "h": 100
+  },
+  {
+   "id": 17,
+   "part": "vinyl / jog mode",
+   "x": 645,
+   "y": 0,
+   "w": 85,
+   "h": 30
+  },
+  {
+   "id": 18,
+   "part": "inst doubles / beat sync / master",
+   "x": 645,
+   "y": 63,
+   "w": 90,
+   "h": 45
+  },
+  {
+   "id": 19,
+   "part": "key sync",
+   "x": 645,
+   "y": 141,
+   "w": 45,
+   "h": 18
+  },
+  {
+   "id": 16,
+   "part": "jog feel",
+   "x": 645,
+   "y": 192,
+   "w": 50,
+   "h": 55
+  },
+  {
+   "id": 8,
+   "part": "tempo range",
+   "x": 645,
+   "y": 280,
+   "w": 30,
+   "h": 20
+  },
+  {
+   "id": 7,
+   "part": "master tempo",
+   "x": 645,
+   "y": 333,
+   "w": 30,
+   "h": 27
+  },
+  {
+   "id": 5,
+   "part": "tempo fader",
+   "x": 645,
+   "y": 393,
+   "w": 75,
+   "h": 305
+  },
+  {
+   "id": 6,
+   "part": "tempo reset",
+   "x": 645,
+   "y": 731,
+   "w": 36,
+   "h": 36
+  },
+  {
+   "id": 1,
+   "part": "jog wheel",
+   "x": 113,
+   "y": 121,
+   "w": 524,
+   "h": 524
+  }
+ ],
+ "page": [
+  {
+   "side": "L",
+   "id": 10,
+   "part": "in adjust / out adjust",
+   "x": 8,
+   "y": 60,
+   "w": 89,
+   "h": 38
+  },
+  {
+   "side": "L",
+   "id": 9,
+   "part": "beat loop 4 / 8",
+   "x": 8,
+   "y": 136,
+   "w": 85,
+   "h": 29
+  },
+  {
+   "side": "L",
+   "id": 12,
+   "part": "beat jump < >",
+   "x": 8,
+   "y": 203,
+   "w": 85,
+   "h": 34
+  },
+  {
+   "side": "L",
+   "id": 13,
+   "part": "slip rev fwd/rev",
+   "x": 8,
+   "y": 275,
+   "w": 81,
+   "h": 46
+  },
+  {
+   "side": "L",
+   "id": 14,
+   "part": "track search",
+   "x": 8,
+   "y": 359,
+   "w": 81,
+   "h": 34
+  },
+  {
+   "side": "L",
+   "id": 15,
+   "part": "search",
+   "x": 8,
+   "y": 431,
+   "w": 81,
+   "h": 34
+  },
+  {
+   "side": "L",
+   "id": 3,
+   "part": "cue",
+   "x": 8,
+   "y": 503,
+   "w": 82,
+   "h": 83
+  },
+  {
+   "side": "L",
+   "id": 4,
+   "part": "play/pause",
+   "x": 8,
+   "y": 624,
+   "w": 82,
+   "h": 85
+  },
+  {
+   "side": "L",
+   "id": 17,
+   "part": "vinyl / jog mode",
+   "x": 559,
+   "y": 60,
+   "w": 72,
+   "h": 25
+  },
+  {
+   "side": "L",
+   "id": 18,
+   "part": "inst doubles / beat sync / master",
+   "x": 559,
+   "y": 113,
+   "w": 76,
+   "h": 38
+  },
+  {
+   "side": "L",
+   "id": 19,
+   "part": "key sync",
+   "x": 559,
+   "y": 180,
+   "w": 38,
+   "h": 15
+  },
+  {
+   "side": "L",
+   "id": 16,
+   "part": "jog feel",
+   "x": 559,
+   "y": 224,
+   "w": 42,
+   "h": 46
+  },
+  {
+   "side": "L",
+   "id": 8,
+   "part": "tempo range",
+   "x": 559,
+   "y": 299,
+   "w": 25,
+   "h": 17
+  },
+  {
+   "side": "L",
+   "id": 7,
+   "part": "master tempo",
+   "x": 559,
+   "y": 344,
+   "w": 25,
+   "h": 23
+  },
+  {
+   "side": "L",
+   "id": 5,
+   "part": "tempo fader",
+   "x": 559,
+   "y": 395,
+   "w": 64,
+   "h": 260
+  },
+  {
+   "side": "L",
+   "id": 6,
+   "part": "tempo reset",
+   "x": 559,
+   "y": 684,
+   "w": 30,
+   "h": 30
+  },
+  {
+   "side": "L",
+   "id": 1,
+   "part": "jog wheel",
+   "x": 104,
+   "y": 163,
+   "w": 447,
+   "h": 447
+  },
+  {
+   "side": "L",
+   "id": "deck1",
+   "part": "deck select",
+   "x": 182,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "L",
+   "id": "deck2",
+   "part": "deck select",
+   "x": 254,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "L",
+   "id": "deck3",
+   "part": "deck select",
+   "x": 326,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "L",
+   "id": "deck4",
+   "part": "deck select",
+   "x": 398,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "R",
+   "id": 10,
+   "part": "in adjust / out adjust",
+   "x": 644,
+   "y": 60,
+   "w": 89,
+   "h": 38
+  },
+  {
+   "side": "R",
+   "id": 9,
+   "part": "beat loop 4 / 8",
+   "x": 644,
+   "y": 136,
+   "w": 85,
+   "h": 29
+  },
+  {
+   "side": "R",
+   "id": 12,
+   "part": "beat jump < >",
+   "x": 644,
+   "y": 203,
+   "w": 85,
+   "h": 34
+  },
+  {
+   "side": "R",
+   "id": 13,
+   "part": "slip rev fwd/rev",
+   "x": 644,
+   "y": 275,
+   "w": 81,
+   "h": 46
+  },
+  {
+   "side": "R",
+   "id": 14,
+   "part": "track search",
+   "x": 644,
+   "y": 359,
+   "w": 81,
+   "h": 34
+  },
+  {
+   "side": "R",
+   "id": 15,
+   "part": "search",
+   "x": 644,
+   "y": 431,
+   "w": 81,
+   "h": 34
+  },
+  {
+   "side": "R",
+   "id": 3,
+   "part": "cue",
+   "x": 644,
+   "y": 503,
+   "w": 82,
+   "h": 83
+  },
+  {
+   "side": "R",
+   "id": 4,
+   "part": "play/pause",
+   "x": 644,
+   "y": 624,
+   "w": 82,
+   "h": 85
+  },
+  {
+   "side": "R",
+   "id": 17,
+   "part": "vinyl / jog mode",
+   "x": 1195,
+   "y": 60,
+   "w": 72,
+   "h": 25
+  },
+  {
+   "side": "R",
+   "id": 18,
+   "part": "inst doubles / beat sync / master",
+   "x": 1195,
+   "y": 113,
+   "w": 76,
+   "h": 38
+  },
+  {
+   "side": "R",
+   "id": 19,
+   "part": "key sync",
+   "x": 1195,
+   "y": 180,
+   "w": 38,
+   "h": 15
+  },
+  {
+   "side": "R",
+   "id": 16,
+   "part": "jog feel",
+   "x": 1195,
+   "y": 224,
+   "w": 42,
+   "h": 46
+  },
+  {
+   "side": "R",
+   "id": 8,
+   "part": "tempo range",
+   "x": 1195,
+   "y": 299,
+   "w": 25,
+   "h": 17
+  },
+  {
+   "side": "R",
+   "id": 7,
+   "part": "master tempo",
+   "x": 1195,
+   "y": 344,
+   "w": 25,
+   "h": 23
+  },
+  {
+   "side": "R",
+   "id": 5,
+   "part": "tempo fader",
+   "x": 1195,
+   "y": 395,
+   "w": 64,
+   "h": 260
+  },
+  {
+   "side": "R",
+   "id": 6,
+   "part": "tempo reset",
+   "x": 1195,
+   "y": 684,
+   "w": 30,
+   "h": 30
+  },
+  {
+   "side": "R",
+   "id": 1,
+   "part": "jog wheel",
+   "x": 740,
+   "y": 163,
+   "w": 447,
+   "h": 447
+  },
+  {
+   "side": "R",
+   "id": "deck1",
+   "part": "deck select",
+   "x": 818,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "R",
+   "id": "deck2",
+   "part": "deck select",
+   "x": 890,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "R",
+   "id": "deck3",
+   "part": "deck select",
+   "x": 962,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "R",
+   "id": "deck4",
+   "part": "deck select",
+   "x": 1034,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  }
+ ]
+}

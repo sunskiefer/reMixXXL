@@ -1,0 +1,11 @@
+[
+  {
+    "version": "0.1.9",
+    "device": "Akai Force",
+    "mpc_os": "3.9.1",
+    "date": "2026-11-02",
+    "result": "working",
+    "tested_by": "L'Cronx",
+    "notes": "wheel touch, ring spin, BPM digits, QR, companion page; stopped-track wheel, deck left/right buttons and cue output not done"
+  }
+]

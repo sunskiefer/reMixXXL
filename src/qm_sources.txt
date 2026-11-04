@@ -1,0 +1,7 @@
+third_party/qm-dsp/dsp/onsets/DetectionFunction.cpp
+third_party/qm-dsp/dsp/phasevocoder/PhaseVocoder.cpp
+third_party/qm-dsp/dsp/tempotracking/TempoTrackV2.cpp
+third_party/qm-dsp/dsp/transforms/FFT.cpp
+third_party/qm-dsp/maths/MathUtilities.cpp
+third_party/qm-dsp/ext/kissfft/kiss_fft.c
+third_party/qm-dsp/ext/kissfft/tools/kiss_fftr.c

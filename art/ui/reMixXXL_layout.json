@@ -1,0 +1,6763 @@
+{
+ "app": "reMixXXL UI editor",
+ "version": 1,
+ "plugin": "reMixXXL",
+ "size": [
+  1280,
+  628
+ ],
+ "savedAt": "2026-11-01T16:36:27.586Z",
+ "pages": {
+  "OVERVIEW": [
+   {
+    "id": "overview.001",
+    "kind": "text",
+    "name": "OVERVIEW",
+    "key": "",
+    "x": 16,
+    "y": 2,
+    "w": 166,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     16,
+     2,
+     166,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "overview.002",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 88,
+    "y": 56,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     56,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.003",
+    "kind": "text",
+    "name": "1",
+    "key": "",
+    "x": 28,
+    "y": 98,
+    "w": 23,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     28,
+     98,
+     23,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "overview.004",
+    "kind": "button",
+    "name": "ov_tap1",
+    "key": "ov_tap1",
+    "x": 88,
+    "y": 56,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     56,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.005",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 88,
+    "y": 196,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     196,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.006",
+    "kind": "text",
+    "name": "2",
+    "key": "",
+    "x": 28,
+    "y": 238,
+    "w": 23,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     28,
+     238,
+     23,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "overview.007",
+    "kind": "button",
+    "name": "ov_tap2",
+    "key": "ov_tap2",
+    "x": 88,
+    "y": 196,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     196,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.008",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 88,
+    "y": 336,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     336,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.009",
+    "kind": "text",
+    "name": "3",
+    "key": "",
+    "x": 28,
+    "y": 378,
+    "w": 23,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     28,
+     378,
+     23,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "overview.010",
+    "kind": "button",
+    "name": "ov_tap3",
+    "key": "ov_tap3",
+    "x": 88,
+    "y": 336,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     336,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.011",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 88,
+    "y": 476,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     476,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.012",
+    "kind": "text",
+    "name": "4",
+    "key": "",
+    "x": 28,
+    "y": 518,
+    "w": 23,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     28,
+     518,
+     23,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "overview.013",
+    "kind": "button",
+    "name": "ov_tap4",
+    "key": "ov_tap4",
+    "x": 88,
+    "y": 476,
+    "w": 1176,
+    "h": 128,
+    "deleted": false,
+    "orig": [
+     88,
+     476,
+     1176,
+     128
+    ]
+   },
+   {
+    "id": "overview.014",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 292,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     292,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "overview.015",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 398,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     398,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "overview.016",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 504,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     504,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "overview.017",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 610,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     610,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "overview.018",
+    "kind": "readout",
+    "name": "d*_title",
+    "key": "d1_title",
+    "x": 716,
+    "y": 4,
+    "w": 556,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     716,
+     4,
+     556,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  ],
+  "DECK": [
+   {
+    "id": "deck.001",
+    "kind": "text",
+    "name": "DECK",
+    "key": "",
+    "x": 16,
+    "y": 2,
+    "w": 82,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     16,
+     2,
+     82,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "deck.002",
+    "kind": "field",
+    "name": "zoom__open",
+    "key": "zoom__open",
+    "x": 112,
+    "y": 4,
+    "w": 172,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     112,
+     4,
+     172,
+     40
+    ]
+   },
+   {
+    "id": "deck.003",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 292,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     292,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "deck.004",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 398,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     398,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "deck.005",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 504,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     504,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "deck.006",
+    "kind": "option",
+    "name": "deck_sel",
+    "key": "deck_sel",
+    "x": 610,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     610,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "deck.007",
+    "kind": "readout",
+    "name": "d*_title",
+    "key": "d1_title",
+    "x": 716,
+    "y": 4,
+    "w": 246,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     716,
+     4,
+     246,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.008",
+    "kind": "readout",
+    "name": "d*_bpm",
+    "key": "d1_bpm",
+    "x": 966,
+    "y": 4,
+    "w": 92,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     966,
+     4,
+     92,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.009",
+    "kind": "readout",
+    "name": "d*_time",
+    "key": "d1_time",
+    "x": 1062,
+    "y": 4,
+    "w": 110,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     1062,
+     4,
+     110,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.010",
+    "kind": "readout",
+    "name": "d*_ratetxt",
+    "key": "d1_ratetxt",
+    "x": 1176,
+    "y": 4,
+    "w": 100,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     1176,
+     4,
+     100,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.011",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 16,
+    "y": 56,
+    "w": 1248,
+    "h": 184,
+    "deleted": false,
+    "orig": [
+     16,
+     56,
+     1248,
+     232
+    ]
+   },
+   {
+    "id": "deck.012",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 15,
+    "y": 258,
+    "w": 1248,
+    "h": 78,
+    "deleted": false,
+    "orig": [
+     16,
+     296,
+     1248,
+     40
+    ]
+   },
+   {
+    "id": "deck.013",
+    "kind": "button",
+    "name": "d*_play",
+    "key": "d1_play",
+    "x": 16,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     16,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.014",
+    "kind": "button",
+    "name": "d*_cue",
+    "key": "d1_cue",
+    "x": 172,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     172,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.015",
+    "kind": "button",
+    "name": "d*_sync",
+    "key": "d1_sync",
+    "x": 328,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     328,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.016",
+    "kind": "button",
+    "name": "d*_slip",
+    "key": "d1_slip",
+    "x": 484,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     484,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.017",
+    "kind": "button",
+    "name": "d*_rev",
+    "key": "d1_rev",
+    "x": 640,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     640,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.018",
+    "kind": "button",
+    "name": "d*_keylock",
+    "key": "d1_keylock",
+    "x": 796,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     796,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.019",
+    "kind": "button",
+    "name": "d*_quant",
+    "key": "d1_quant",
+    "x": 952,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     952,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.020",
+    "kind": "button",
+    "name": "d*_vinyl",
+    "key": "d1_vinyl",
+    "x": 1108,
+    "y": 348,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     1108,
+     348,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.021",
+    "kind": "button",
+    "name": "d*_hc1",
+    "key": "d1_hc1",
+    "x": 16,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     16,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.022",
+    "kind": "button",
+    "name": "d*_hc2",
+    "key": "d1_hc2",
+    "x": 172,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     172,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.023",
+    "kind": "button",
+    "name": "d*_hc3",
+    "key": "d1_hc3",
+    "x": 328,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     328,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.024",
+    "kind": "button",
+    "name": "d*_hc4",
+    "key": "d1_hc4",
+    "x": 484,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     484,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.025",
+    "kind": "button",
+    "name": "d*_hc5",
+    "key": "d1_hc5",
+    "x": 640,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     640,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.026",
+    "kind": "button",
+    "name": "d*_hc6",
+    "key": "d1_hc6",
+    "x": 796,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     796,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.027",
+    "kind": "button",
+    "name": "d*_hc7",
+    "key": "d1_hc7",
+    "x": 952,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     952,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.028",
+    "kind": "button",
+    "name": "d*_hc8",
+    "key": "d1_hc8",
+    "x": 1108,
+    "y": 420,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     1108,
+     420,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.029",
+    "kind": "button",
+    "name": "d*_loop_in",
+    "key": "d1_loop_in",
+    "x": 16,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     16,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.030",
+    "kind": "button",
+    "name": "d*_loop_out",
+    "key": "d1_loop_out",
+    "x": 172,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     172,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.031",
+    "kind": "button",
+    "name": "d*_reloop",
+    "key": "d1_reloop",
+    "x": 328,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     328,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.032",
+    "kind": "button",
+    "name": "d*_halve",
+    "key": "d1_halve",
+    "x": 484,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     484,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.033",
+    "kind": "button",
+    "name": "d*_double",
+    "key": "d1_double",
+    "x": 640,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     640,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.034",
+    "kind": "button",
+    "name": "d*_bjback",
+    "key": "d1_bjback",
+    "x": 796,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     796,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.035",
+    "kind": "button",
+    "name": "d*_bjfwd",
+    "key": "d1_bjfwd",
+    "x": 952,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     952,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.036",
+    "kind": "button",
+    "name": "d*_eject",
+    "key": "d1_eject",
+    "x": 1108,
+    "y": 492,
+    "w": 148,
+    "h": 60,
+    "deleted": false,
+    "orig": [
+     1108,
+     492,
+     148,
+     60
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.037",
+    "kind": "text",
+    "name": "TEMPO",
+    "key": "",
+    "x": 20,
+    "y": 555,
+    "w": 86,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     20,
+     555,
+     86,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.038",
+    "kind": "readout",
+    "name": "d*_rate",
+    "key": "d1_rate",
+    "x": 16,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     16,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.039",
+    "kind": "text",
+    "name": "FILTER",
+    "key": "",
+    "x": 176,
+    "y": 555,
+    "w": 79,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     176,
+     555,
+     79,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.040",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 172,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     172,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.041",
+    "kind": "text",
+    "name": "GAIN",
+    "key": "",
+    "x": 332,
+    "y": 555,
+    "w": 61,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     332,
+     555,
+     61,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.042",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 328,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     328,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.043",
+    "kind": "text",
+    "name": "HIGH",
+    "key": "",
+    "x": 488,
+    "y": 555,
+    "w": 62,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     488,
+     555,
+     62,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.044",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 484,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     484,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.045",
+    "kind": "text",
+    "name": "MID",
+    "key": "",
+    "x": 644,
+    "y": 555,
+    "w": 50,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     644,
+     555,
+     50,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.046",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 640,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     640,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.047",
+    "kind": "text",
+    "name": "LOW",
+    "key": "",
+    "x": 800,
+    "y": 555,
+    "w": 57,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     800,
+     555,
+     57,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.048",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 796,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     796,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.049",
+    "kind": "text",
+    "name": "LOOP",
+    "key": "",
+    "x": 956,
+    "y": 555,
+    "w": 65,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     956,
+     555,
+     65,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.050",
+    "kind": "readout",
+    "name": "d*_blsize",
+    "key": "d1_blsize",
+    "x": 952,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     952,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "deck.051",
+    "kind": "text",
+    "name": "JUMP",
+    "key": "",
+    "x": 1112,
+    "y": 555,
+    "w": 66,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     1112,
+     555,
+     66,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "deck.052",
+    "kind": "readout",
+    "name": "d*_bjsize",
+    "key": "d1_bjsize",
+    "x": 1108,
+    "y": 588,
+    "w": 148,
+    "h": 32,
+    "deleted": false,
+    "orig": [
+     1108,
+     588,
+     148,
+     32
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  ],
+  "BROWSE": [
+   {
+    "id": "browse.001",
+    "kind": "text",
+    "name": "BROWSE",
+    "key": "",
+    "x": 16,
+    "y": 2,
+    "w": 136,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     16,
+     2,
+     136,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "browse.002",
+    "kind": "readout",
+    "name": "br_path",
+    "key": "br_path",
+    "x": 160,
+    "y": 4,
+    "w": 670,
+    "h": 63,
+    "deleted": false,
+    "orig": [
+     160,
+     4,
+     730,
+     40
+    ]
+   },
+   {
+    "id": "browse.003",
+    "kind": "text",
+    "name": "PAGE",
+    "key": "",
+    "x": 853,
+    "y": 7,
+    "w": 64,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     904,
+     7,
+     64,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "browse.004",
+    "kind": "readout",
+    "name": "br_page",
+    "key": "br_page",
+    "x": 980,
+    "y": 4,
+    "w": 72,
+    "h": 40,
+    "deleted": true,
+    "orig": [
+     980,
+     4,
+     110,
+     40
+    ]
+   },
+   {
+    "id": "browse.005",
+    "kind": "slider",
+    "name": "br_scroll",
+    "key": "br_scroll",
+    "x": 1111,
+    "y": 4,
+    "w": 155,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     1100,
+     4,
+     172,
+     40
+    ]
+   },
+   {
+    "id": "browse.006",
+    "kind": "readout",
+    "name": "br_row1",
+    "key": "br_row1",
+    "x": 60,
+    "y": 0,
+    "w": 1220,
+    "h": 74,
+    "deleted": true,
+    "orig": [
+     30,
+     56,
+     1220,
+     74
+    ]
+   },
+   {
+    "id": "browse.007",
+    "kind": "readout",
+    "name": "br_row2",
+    "key": "br_row2",
+    "x": 30,
+    "y": 134,
+    "w": 1220,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     30,
+     134,
+     1220,
+     74
+    ]
+   },
+   {
+    "id": "browse.008",
+    "kind": "readout",
+    "name": "br_row3",
+    "key": "br_row3",
+    "x": 30,
+    "y": 212,
+    "w": 1220,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     30,
+     212,
+     1220,
+     74
+    ]
+   },
+   {
+    "id": "browse.009",
+    "kind": "readout",
+    "name": "br_row4",
+    "key": "br_row4",
+    "x": 30,
+    "y": 290,
+    "w": 1220,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     30,
+     290,
+     1220,
+     74
+    ]
+   },
+   {
+    "id": "browse.010",
+    "kind": "readout",
+    "name": "br_row5",
+    "key": "br_row5",
+    "x": 30,
+    "y": 368,
+    "w": 1220,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     30,
+     368,
+     1220,
+     74
+    ]
+   },
+   {
+    "id": "browse.011",
+    "kind": "readout",
+    "name": "br_row6",
+    "key": "br_row6",
+    "x": 30,
+    "y": 446,
+    "w": 1220,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     30,
+     446,
+     1220,
+     74
+    ]
+   },
+   {
+    "id": "browse.012",
+    "kind": "button",
+    "name": "load1",
+    "key": "load1",
+    "x": 16,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     16,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.013",
+    "kind": "button",
+    "name": "load2",
+    "key": "load2",
+    "x": 174,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     174,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.014",
+    "kind": "button",
+    "name": "load3",
+    "key": "load3",
+    "x": 332,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     332,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.015",
+    "kind": "button",
+    "name": "load4",
+    "key": "load4",
+    "x": 490,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     490,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.016",
+    "kind": "button",
+    "name": "br_folder",
+    "key": "br_folder",
+    "x": 648,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     648,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.017",
+    "kind": "button",
+    "name": "br_prev",
+    "key": "br_prev",
+    "x": 806,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     806,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.018",
+    "kind": "button",
+    "name": "br_next",
+    "key": "br_next",
+    "x": 964,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     964,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.019",
+    "kind": "field",
+    "name": "br_sort__open",
+    "key": "br_sort__open",
+    "x": 1122,
+    "y": 545,
+    "w": 150,
+    "h": 72,
+    "deleted": false,
+    "orig": [
+     1122,
+     540,
+     150,
+     72
+    ]
+   },
+   {
+    "id": "browse.020",
+    "kind": "row",
+    "name": "br_sel",
+    "key": "br_sel",
+    "x": 16,
+    "y": 75,
+    "w": 1248,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     16,
+     56,
+     1248,
+     74
+    ]
+   },
+   {
+    "id": "browse.021",
+    "kind": "row",
+    "name": "br_sel",
+    "key": "br_sel",
+    "x": 16,
+    "y": 153,
+    "w": 1248,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     16,
+     134,
+     1248,
+     74
+    ]
+   },
+   {
+    "id": "browse.022",
+    "kind": "row",
+    "name": "br_sel",
+    "key": "br_sel",
+    "x": 16,
+    "y": 231,
+    "w": 1248,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     16,
+     212,
+     1248,
+     74
+    ]
+   },
+   {
+    "id": "browse.023",
+    "kind": "row",
+    "name": "br_sel",
+    "key": "br_sel",
+    "x": 16,
+    "y": 309,
+    "w": 1248,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     16,
+     290,
+     1248,
+     74
+    ]
+   },
+   {
+    "id": "browse.024",
+    "kind": "row",
+    "name": "br_sel",
+    "key": "br_sel",
+    "x": 16,
+    "y": 387,
+    "w": 1248,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     16,
+     368,
+     1248,
+     74
+    ]
+   },
+   {
+    "id": "browse.025",
+    "kind": "row",
+    "name": "br_sel",
+    "key": "br_sel",
+    "x": 16,
+    "y": 465,
+    "w": 1248,
+    "h": 74,
+    "deleted": false,
+    "orig": [
+     16,
+     446,
+     1248,
+     74
+    ]
+   },
+   {
+    "id": "browse.nmvxzzna55",
+    "kind": "box",
+    "name": "new box",
+    "key": "",
+    "x": 932,
+    "y": 7,
+    "w": 51,
+    "h": 36,
+    "deleted": false,
+    "label": "0",
+    "note": "WHAT PAGE IS ON\n",
+    "added": true,
+    "z": 28
+   },
+   {
+    "id": "browse.nmvy01mls8",
+    "kind": "button",
+    "name": "new button",
+    "key": "",
+    "x": 1033,
+    "y": 6,
+    "w": 73,
+    "h": 37,
+    "deleted": false,
+    "label": "BACK",
+    "px": 28,
+    "note": "TO GO BACK TO A FOLDER UP ON THI ROOT FORMT THE CURRENT FOLDER",
+    "added": true,
+    "z": 29
+   },
+   {
+    "id": "browse.nmvy02b7l10",
+    "kind": "text",
+    "name": "new text",
+    "key": "",
+    "x": 755,
+    "y": 156,
+    "w": 180,
+    "h": 36,
+    "deleted": false,
+    "label": "0",
+    "px": 28,
+    "added": true,
+    "z": 30
+   }
+  ],
+  "MIXER": [
+   {
+    "id": "mixer.001",
+    "kind": "text",
+    "name": "MIXER",
+    "key": "",
+    "x": 16,
+    "y": 2,
+    "w": 102,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     16,
+     2,
+     102,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "mixer.002",
+    "kind": "text",
+    "name": "DECK 1",
+    "key": "",
+    "x": 132,
+    "y": 7,
+    "w": 84,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     132,
+     7,
+     84,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "mixer.003",
+    "kind": "knob",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 25,
+    "y": 76,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     24,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.004",
+    "kind": "knob",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 26,
+    "y": 199,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     24,
+     150,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.005",
+    "kind": "knob",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 28,
+    "y": 315,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     24,
+     240,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.006",
+    "kind": "knob",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 27,
+    "y": 430,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     24,
+     330,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.007",
+    "kind": "knob",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 128,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     128,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.008",
+    "kind": "button",
+    "name": "d*_pfl",
+    "key": "d1_pfl",
+    "x": 128,
+    "y": 152,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     128,
+     152,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.009",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d1_fx1",
+    "x": 128,
+    "y": 204,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     128,
+     204,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.010",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d1_fx2",
+    "x": 128,
+    "y": 256,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     128,
+     256,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.011",
+    "kind": "slider",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 128,
+    "y": 306,
+    "w": 96,
+    "h": 190,
+    "deleted": false,
+    "orig": [
+     128,
+     306,
+     96,
+     190
+    ]
+   },
+   {
+    "id": "mixer.012",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d1_xfside",
+    "x": 24,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     24,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.013",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d1_xfside",
+    "x": 92,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     92,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.014",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d1_xfside",
+    "x": 160,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     160,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.015",
+    "kind": "text",
+    "name": "DECK 2",
+    "key": "",
+    "x": 368,
+    "y": 7,
+    "w": 84,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     368,
+     7,
+     84,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "mixer.016",
+    "kind": "knob",
+    "name": "d*_gain",
+    "key": "d2_gain",
+    "x": 260,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     260,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.017",
+    "kind": "knob",
+    "name": "d*_hi",
+    "key": "d2_hi",
+    "x": 260,
+    "y": 150,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     260,
+     150,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.018",
+    "kind": "knob",
+    "name": "d*_mid",
+    "key": "d2_mid",
+    "x": 260,
+    "y": 240,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     260,
+     240,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.019",
+    "kind": "knob",
+    "name": "d*_low",
+    "key": "d2_low",
+    "x": 260,
+    "y": 330,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     260,
+     330,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.020",
+    "kind": "knob",
+    "name": "d*_filter",
+    "key": "d2_filter",
+    "x": 364,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     364,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.021",
+    "kind": "button",
+    "name": "d*_pfl",
+    "key": "d2_pfl",
+    "x": 364,
+    "y": 152,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     364,
+     152,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.022",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d2_fx1",
+    "x": 364,
+    "y": 204,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     364,
+     204,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.023",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d2_fx2",
+    "x": 364,
+    "y": 256,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     364,
+     256,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.024",
+    "kind": "slider",
+    "name": "d*_vol",
+    "key": "d2_vol",
+    "x": 364,
+    "y": 306,
+    "w": 96,
+    "h": 190,
+    "deleted": false,
+    "orig": [
+     364,
+     306,
+     96,
+     190
+    ]
+   },
+   {
+    "id": "mixer.025",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d2_xfside",
+    "x": 260,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     260,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.026",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d2_xfside",
+    "x": 328,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     328,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.027",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d2_xfside",
+    "x": 396,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     396,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.028",
+    "kind": "text",
+    "name": "DECK 3",
+    "key": "",
+    "x": 604,
+    "y": 7,
+    "w": 84,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     604,
+     7,
+     84,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "mixer.029",
+    "kind": "knob",
+    "name": "d*_gain",
+    "key": "d3_gain",
+    "x": 496,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     496,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.030",
+    "kind": "knob",
+    "name": "d*_hi",
+    "key": "d3_hi",
+    "x": 496,
+    "y": 150,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     496,
+     150,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.031",
+    "kind": "knob",
+    "name": "d*_mid",
+    "key": "d3_mid",
+    "x": 496,
+    "y": 240,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     496,
+     240,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.032",
+    "kind": "knob",
+    "name": "d*_low",
+    "key": "d3_low",
+    "x": 496,
+    "y": 330,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     496,
+     330,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.033",
+    "kind": "knob",
+    "name": "d*_filter",
+    "key": "d3_filter",
+    "x": 600,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     600,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.034",
+    "kind": "button",
+    "name": "d*_pfl",
+    "key": "d3_pfl",
+    "x": 600,
+    "y": 152,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     600,
+     152,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.035",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d3_fx1",
+    "x": 600,
+    "y": 204,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     600,
+     204,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.036",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d3_fx2",
+    "x": 600,
+    "y": 256,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     600,
+     256,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.037",
+    "kind": "slider",
+    "name": "d*_vol",
+    "key": "d3_vol",
+    "x": 600,
+    "y": 306,
+    "w": 96,
+    "h": 190,
+    "deleted": false,
+    "orig": [
+     600,
+     306,
+     96,
+     190
+    ]
+   },
+   {
+    "id": "mixer.038",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d3_xfside",
+    "x": 496,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     496,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.039",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d3_xfside",
+    "x": 564,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     564,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.040",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d3_xfside",
+    "x": 632,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     632,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.041",
+    "kind": "text",
+    "name": "DECK 4",
+    "key": "",
+    "x": 840,
+    "y": 7,
+    "w": 84,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     840,
+     7,
+     84,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "mixer.042",
+    "kind": "knob",
+    "name": "d*_gain",
+    "key": "d4_gain",
+    "x": 732,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     732,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.043",
+    "kind": "knob",
+    "name": "d*_hi",
+    "key": "d4_hi",
+    "x": 732,
+    "y": 150,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     732,
+     150,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.044",
+    "kind": "knob",
+    "name": "d*_mid",
+    "key": "d4_mid",
+    "x": 732,
+    "y": 240,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     732,
+     240,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.045",
+    "kind": "knob",
+    "name": "d*_low",
+    "key": "d4_low",
+    "x": 732,
+    "y": 330,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     732,
+     330,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.046",
+    "kind": "knob",
+    "name": "d*_filter",
+    "key": "d4_filter",
+    "x": 836,
+    "y": 60,
+    "w": 96,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     836,
+     60,
+     96,
+     88
+    ]
+   },
+   {
+    "id": "mixer.047",
+    "kind": "button",
+    "name": "d*_pfl",
+    "key": "d4_pfl",
+    "x": 836,
+    "y": 152,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     836,
+     152,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.048",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d4_fx1",
+    "x": 836,
+    "y": 204,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     836,
+     204,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.049",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d4_fx2",
+    "x": 836,
+    "y": 256,
+    "w": 96,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     836,
+     256,
+     96,
+     44
+    ]
+   },
+   {
+    "id": "mixer.050",
+    "kind": "slider",
+    "name": "d*_vol",
+    "key": "d4_vol",
+    "x": 836,
+    "y": 306,
+    "w": 96,
+    "h": 190,
+    "deleted": false,
+    "orig": [
+     836,
+     306,
+     96,
+     190
+    ]
+   },
+   {
+    "id": "mixer.051",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d4_xfside",
+    "x": 732,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     732,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.052",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d4_xfside",
+    "x": 800,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     800,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.053",
+    "kind": "option",
+    "name": "d*_xfside",
+    "key": "d4_xfside",
+    "x": 868,
+    "y": 522,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     868,
+     502,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "mixer.054",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 230,
+    "y": 66,
+    "w": 18,
+    "h": 420,
+    "deleted": false,
+    "orig": [
+     230,
+     66,
+     18,
+     420
+    ]
+   },
+   {
+    "id": "mixer.055",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 466,
+    "y": 66,
+    "w": 18,
+    "h": 420,
+    "deleted": false,
+    "orig": [
+     466,
+     66,
+     18,
+     420
+    ]
+   },
+   {
+    "id": "mixer.056",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 702,
+    "y": 66,
+    "w": 18,
+    "h": 420,
+    "deleted": false,
+    "orig": [
+     702,
+     66,
+     18,
+     420
+    ]
+   },
+   {
+    "id": "mixer.057",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 938,
+    "y": 66,
+    "w": 18,
+    "h": 420,
+    "deleted": false,
+    "orig": [
+     938,
+     66,
+     18,
+     420
+    ]
+   },
+   {
+    "id": "mixer.058",
+    "kind": "box",
+    "name": "black box (live picture drawn here)",
+    "key": "",
+    "x": 1172,
+    "y": 66,
+    "w": 18,
+    "h": 420,
+    "deleted": false,
+    "orig": [
+     1172,
+     66,
+     18,
+     420
+    ]
+   },
+   {
+    "id": "mixer.059",
+    "kind": "text",
+    "name": "MASTER",
+    "key": "",
+    "x": 1022,
+    "y": 7,
+    "w": 100,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     1022,
+     7,
+     100,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "mixer.060",
+    "kind": "knob",
+    "name": "master_gain",
+    "key": "master_gain",
+    "x": 989,
+    "y": 77,
+    "w": 120,
+    "h": 118,
+    "deleted": false,
+    "orig": [
+     992,
+     60,
+     120,
+     118
+    ]
+   },
+   {
+    "id": "mixer.061",
+    "kind": "knob",
+    "name": "head_mix",
+    "key": "head_mix",
+    "x": 989,
+    "y": 226,
+    "w": 120,
+    "h": 118,
+    "deleted": false,
+    "orig": [
+     992,
+     186,
+     120,
+     118
+    ]
+   },
+   {
+    "id": "mixer.062",
+    "kind": "slider",
+    "name": "xfader",
+    "key": "xfader",
+    "x": 211,
+    "y": 572,
+    "w": 920,
+    "h": 48,
+    "deleted": false,
+    "orig": [
+     24,
+     560,
+     920,
+     48
+    ]
+   },
+   {
+    "id": "mixer.063",
+    "kind": "text",
+    "name": "XFADER",
+    "key": "",
+    "x": 1139,
+    "y": 578,
+    "w": 94,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     960,
+     567,
+     94,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "mixer.nmvy0ghrg2",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 29,
+    "y": 49,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 63,
+    "src": "/_blob/1618dacc336423f3a336048314690e9e"
+   },
+   {
+    "id": "mixer.nmvy0hv024",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 28,
+    "y": 172,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 64,
+    "src": "/_blob/d3b160849226e45ccb647379081922bf"
+   },
+   {
+    "id": "mixer.nmvy0idnx5",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 29,
+    "y": 288,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 65,
+    "src": "/_blob/20060238462b520593b3352e492ac6c4"
+   },
+   {
+    "id": "mixer.nmvy0np7t7",
+    "kind": "button",
+    "name": "new button",
+    "key": "",
+    "x": 31,
+    "y": 578,
+    "w": 148,
+    "h": 38,
+    "deleted": false,
+    "label": "XFDR MODE",
+    "px": 28,
+    "note": "cross fader modes",
+    "added": true,
+    "z": 66
+   },
+   {
+    "id": "mixer.nmvy0ojgm8",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 29,
+    "y": 402,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 67,
+    "src": "/_blob/861c6fd514fd59c85dcfdc7c732d0bdb"
+   },
+   {
+    "id": "mixer.nmvy0q3bh9",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 1003,
+    "y": 50,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 68,
+    "src": "/_blob/cf4cf2341da9b9b23f93fe929aa8d411"
+   },
+   {
+    "id": "mixer.nmvy0qfij10",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 1004,
+    "y": 198,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 69,
+    "src": "/_blob/a8214f8c31b70e50f6fb5870c8ef505e"
+   }
+  ],
+  "FX": [
+   {
+    "id": "fx.001",
+    "kind": "text",
+    "name": "FX",
+    "key": "",
+    "x": 16,
+    "y": 2,
+    "w": 41,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     16,
+     2,
+     41,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "fx.002",
+    "kind": "field",
+    "name": "fx1_1_type__open",
+    "key": "fx1_1_type__open",
+    "x": 24,
+    "y": 56,
+    "w": 258,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     24,
+     56,
+     258,
+     44
+    ]
+   },
+   {
+    "id": "fx.003",
+    "kind": "button",
+    "name": "fx1_1_en",
+    "key": "fx1_1_en",
+    "x": 294,
+    "y": 56,
+    "w": 114,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     294,
+     56,
+     114,
+     44
+    ]
+   },
+   {
+    "id": "fx.004",
+    "kind": "knob",
+    "name": "fx1_1_meta",
+    "key": "fx1_1_meta",
+    "x": 24,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     24,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.005",
+    "kind": "knob",
+    "name": "fx1_1_p1",
+    "key": "fx1_1_p1",
+    "x": 101,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     101,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.006",
+    "kind": "knob",
+    "name": "fx1_1_p2",
+    "key": "fx1_1_p2",
+    "x": 178,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     178,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.007",
+    "kind": "knob",
+    "name": "fx1_1_p3",
+    "key": "fx1_1_p3",
+    "x": 255,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     255,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.008",
+    "kind": "knob",
+    "name": "fx1_1_p4",
+    "key": "fx1_1_p4",
+    "x": 332,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     332,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.009",
+    "kind": "field",
+    "name": "fx1_2_type__open",
+    "key": "fx1_2_type__open",
+    "x": 424,
+    "y": 56,
+    "w": 258,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     424,
+     56,
+     258,
+     44
+    ]
+   },
+   {
+    "id": "fx.010",
+    "kind": "button",
+    "name": "fx1_2_en",
+    "key": "fx1_2_en",
+    "x": 694,
+    "y": 56,
+    "w": 114,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     694,
+     56,
+     114,
+     44
+    ]
+   },
+   {
+    "id": "fx.011",
+    "kind": "knob",
+    "name": "fx1_2_meta",
+    "key": "fx1_2_meta",
+    "x": 424,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     424,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.012",
+    "kind": "knob",
+    "name": "fx1_2_p1",
+    "key": "fx1_2_p1",
+    "x": 501,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     501,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.013",
+    "kind": "knob",
+    "name": "fx1_2_p2",
+    "key": "fx1_2_p2",
+    "x": 578,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     578,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.014",
+    "kind": "knob",
+    "name": "fx1_2_p3",
+    "key": "fx1_2_p3",
+    "x": 655,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     655,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.015",
+    "kind": "knob",
+    "name": "fx1_2_p4",
+    "key": "fx1_2_p4",
+    "x": 732,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     732,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.016",
+    "kind": "field",
+    "name": "fx1_3_type__open",
+    "key": "fx1_3_type__open",
+    "x": 824,
+    "y": 56,
+    "w": 258,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     824,
+     56,
+     258,
+     44
+    ]
+   },
+   {
+    "id": "fx.017",
+    "kind": "button",
+    "name": "fx1_3_en",
+    "key": "fx1_3_en",
+    "x": 1094,
+    "y": 56,
+    "w": 114,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     1094,
+     56,
+     114,
+     44
+    ]
+   },
+   {
+    "id": "fx.018",
+    "kind": "knob",
+    "name": "fx1_3_meta",
+    "key": "fx1_3_meta",
+    "x": 824,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     824,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.019",
+    "kind": "knob",
+    "name": "fx1_3_p1",
+    "key": "fx1_3_p1",
+    "x": 901,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     901,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.020",
+    "kind": "knob",
+    "name": "fx1_3_p2",
+    "key": "fx1_3_p2",
+    "x": 978,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     978,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.021",
+    "kind": "knob",
+    "name": "fx1_3_p3",
+    "key": "fx1_3_p3",
+    "x": 1055,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     1055,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.022",
+    "kind": "knob",
+    "name": "fx1_3_p4",
+    "key": "fx1_3_p4",
+    "x": 1132,
+    "y": 126,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     1132,
+     108,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.023",
+    "kind": "text",
+    "name": "UNIT 1",
+    "key": "",
+    "x": 154,
+    "y": 265,
+    "w": 103,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     24,
+     213,
+     103,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "fx.024",
+    "kind": "button",
+    "name": "fx1_on",
+    "key": "fx1_on",
+    "x": 280,
+    "y": 265,
+    "w": 100,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     150,
+     213,
+     100,
+     44
+    ]
+   },
+   {
+    "id": "fx.025",
+    "kind": "knob",
+    "name": "fx1_mix",
+    "key": "fx1_mix",
+    "x": 408,
+    "y": 248,
+    "w": 92,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     262,
+     196,
+     92,
+     88
+    ]
+   },
+   {
+    "id": "fx.026",
+    "kind": "knob",
+    "name": "fx1_super",
+    "key": "fx1_super",
+    "x": 541,
+    "y": 248,
+    "w": 92,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     360,
+     196,
+     92,
+     88
+    ]
+   },
+   {
+    "id": "fx.027",
+    "kind": "button",
+    "name": "fx1_master",
+    "key": "fx1_master",
+    "x": 661,
+    "y": 265,
+    "w": 136,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     470,
+     213,
+     136,
+     44
+    ]
+   },
+   {
+    "id": "fx.028",
+    "kind": "text",
+    "name": "DECKS",
+    "key": "",
+    "x": 821,
+    "y": 270,
+    "w": 78,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     630,
+     218,
+     78,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "fx.029",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d1_fx1",
+    "x": 911,
+    "y": 265,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     720,
+     213,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.030",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d2_fx1",
+    "x": 983,
+    "y": 265,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     792,
+     213,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.031",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d3_fx1",
+    "x": 1055,
+    "y": 265,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     864,
+     213,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.032",
+    "kind": "button",
+    "name": "d*_fx1",
+    "key": "d4_fx1",
+    "x": 1127,
+    "y": 265,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     936,
+     213,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.033",
+    "kind": "field",
+    "name": "fx2_1_type__open",
+    "key": "fx2_1_type__open",
+    "x": 24,
+    "y": 346,
+    "w": 258,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     24,
+     316,
+     258,
+     44
+    ]
+   },
+   {
+    "id": "fx.034",
+    "kind": "button",
+    "name": "fx2_1_en",
+    "key": "fx2_1_en",
+    "x": 294,
+    "y": 346,
+    "w": 114,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     294,
+     316,
+     114,
+     44
+    ]
+   },
+   {
+    "id": "fx.035",
+    "kind": "knob",
+    "name": "fx2_1_meta",
+    "key": "fx2_1_meta",
+    "x": 24,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     24,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.036",
+    "kind": "knob",
+    "name": "fx2_1_p1",
+    "key": "fx2_1_p1",
+    "x": 101,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     101,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.037",
+    "kind": "knob",
+    "name": "fx2_1_p2",
+    "key": "fx2_1_p2",
+    "x": 178,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     178,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.038",
+    "kind": "knob",
+    "name": "fx2_1_p3",
+    "key": "fx2_1_p3",
+    "x": 255,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     255,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.039",
+    "kind": "knob",
+    "name": "fx2_1_p4",
+    "key": "fx2_1_p4",
+    "x": 332,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     332,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.040",
+    "kind": "field",
+    "name": "fx2_2_type__open",
+    "key": "fx2_2_type__open",
+    "x": 424,
+    "y": 346,
+    "w": 258,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     424,
+     316,
+     258,
+     44
+    ]
+   },
+   {
+    "id": "fx.041",
+    "kind": "button",
+    "name": "fx2_2_en",
+    "key": "fx2_2_en",
+    "x": 694,
+    "y": 346,
+    "w": 114,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     694,
+     316,
+     114,
+     44
+    ]
+   },
+   {
+    "id": "fx.042",
+    "kind": "knob",
+    "name": "fx2_2_meta",
+    "key": "fx2_2_meta",
+    "x": 424,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     424,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.043",
+    "kind": "knob",
+    "name": "fx2_2_p1",
+    "key": "fx2_2_p1",
+    "x": 501,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     501,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.044",
+    "kind": "knob",
+    "name": "fx2_2_p2",
+    "key": "fx2_2_p2",
+    "x": 578,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     578,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.045",
+    "kind": "knob",
+    "name": "fx2_2_p3",
+    "key": "fx2_2_p3",
+    "x": 655,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     655,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.046",
+    "kind": "knob",
+    "name": "fx2_2_p4",
+    "key": "fx2_2_p4",
+    "x": 732,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     732,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.047",
+    "kind": "field",
+    "name": "fx2_3_type__open",
+    "key": "fx2_3_type__open",
+    "x": 824,
+    "y": 346,
+    "w": 258,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     824,
+     316,
+     258,
+     44
+    ]
+   },
+   {
+    "id": "fx.048",
+    "kind": "button",
+    "name": "fx2_3_en",
+    "key": "fx2_3_en",
+    "x": 1094,
+    "y": 346,
+    "w": 114,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     1094,
+     316,
+     114,
+     44
+    ]
+   },
+   {
+    "id": "fx.049",
+    "kind": "knob",
+    "name": "fx2_3_meta",
+    "key": "fx2_3_meta",
+    "x": 824,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     824,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.050",
+    "kind": "knob",
+    "name": "fx2_3_p1",
+    "key": "fx2_3_p1",
+    "x": 901,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     901,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.051",
+    "kind": "knob",
+    "name": "fx2_3_p2",
+    "key": "fx2_3_p2",
+    "x": 978,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     978,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.052",
+    "kind": "knob",
+    "name": "fx2_3_p3",
+    "key": "fx2_3_p3",
+    "x": 1055,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     1055,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.053",
+    "kind": "knob",
+    "name": "fx2_3_p4",
+    "key": "fx2_3_p4",
+    "x": 1132,
+    "y": 414,
+    "w": 76,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     1132,
+     368,
+     76,
+     88
+    ]
+   },
+   {
+    "id": "fx.054",
+    "kind": "text",
+    "name": "UNIT 2",
+    "key": "",
+    "x": 150,
+    "y": 550,
+    "w": 103,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     24,
+     473,
+     103,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "fx.055",
+    "kind": "button",
+    "name": "fx2_on",
+    "key": "fx2_on",
+    "x": 276,
+    "y": 550,
+    "w": 100,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     150,
+     473,
+     100,
+     44
+    ]
+   },
+   {
+    "id": "fx.056",
+    "kind": "knob",
+    "name": "fx2_mix",
+    "key": "fx2_mix",
+    "x": 399,
+    "y": 533,
+    "w": 92,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     262,
+     456,
+     92,
+     88
+    ]
+   },
+   {
+    "id": "fx.057",
+    "kind": "knob",
+    "name": "fx2_super",
+    "key": "fx2_super",
+    "x": 537,
+    "y": 533,
+    "w": 92,
+    "h": 88,
+    "deleted": false,
+    "orig": [
+     360,
+     456,
+     92,
+     88
+    ]
+   },
+   {
+    "id": "fx.058",
+    "kind": "button",
+    "name": "fx2_master",
+    "key": "fx2_master",
+    "x": 663,
+    "y": 541,
+    "w": 136,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     470,
+     473,
+     136,
+     44
+    ]
+   },
+   {
+    "id": "fx.059",
+    "kind": "text",
+    "name": "DECKS",
+    "key": "",
+    "x": 823,
+    "y": 546,
+    "w": 78,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     630,
+     478,
+     78,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "fx.060",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d1_fx2",
+    "x": 913,
+    "y": 541,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     720,
+     473,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.061",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d2_fx2",
+    "x": 985,
+    "y": 541,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     792,
+     473,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.062",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d3_fx2",
+    "x": 1057,
+    "y": 541,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     864,
+     473,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.063",
+    "kind": "button",
+    "name": "d*_fx2",
+    "key": "d4_fx2",
+    "x": 1129,
+    "y": 541,
+    "w": 64,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     936,
+     473,
+     64,
+     44
+    ]
+   },
+   {
+    "id": "fx.nmvy0s7mb11",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 537,
+    "y": 505,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 63,
+    "src": "/_blob/08872a996e41f8c964ae634aaa73b492"
+   },
+   {
+    "id": "fx.nmvy0sh4m12",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 400,
+    "y": 506,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 64,
+    "src": "/_blob/8884dbc62f22072edcec238c47ed4cf0"
+   },
+   {
+    "id": "fx.nmvy0to4i13",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 26,
+    "y": 404,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 65,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0us9615",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 105,
+    "y": 402,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 66,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0uvt516",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 181,
+    "y": 407,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 67,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0uyfd17",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 259,
+    "y": 407,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 68,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0v14818",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 337,
+    "y": 405,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 69,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0v3sg19",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 426,
+    "y": 405,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 70,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0v6d420",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 506,
+    "y": 404,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 71,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0v8z621",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 583,
+    "y": 405,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 72,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0vb6722",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 659,
+    "y": 403,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 73,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0vcwm23",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 738,
+    "y": 406,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 74,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0ver324",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 827,
+    "y": 405,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 75,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0vgjt25",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 906,
+    "y": 401,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 76,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0vijv26",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 981,
+    "y": 407,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 77,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0vkgy27",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 1061,
+    "y": 401,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 78,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0vm6828",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 1136,
+    "y": 400,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 79,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz29",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 26,
+    "y": 116,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 80,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz30",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 105,
+    "y": 114,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 81,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz31",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 181,
+    "y": 119,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 82,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz32",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 259,
+    "y": 119,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 83,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz33",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 337,
+    "y": 117,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 84,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz34",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 426,
+    "y": 117,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 85,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnwz35",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 506,
+    "y": 116,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 86,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx036",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 583,
+    "y": 117,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 87,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx037",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 659,
+    "y": 115,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 88,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx038",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 738,
+    "y": 118,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 89,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx039",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 827,
+    "y": 117,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 90,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx040",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 906,
+    "y": 113,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 91,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx041",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 981,
+    "y": 119,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 92,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx042",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 1061,
+    "y": 113,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 93,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0wnx043",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 1136,
+    "y": 112,
+    "w": 70,
+    "h": 70,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 94,
+    "src": "/_blob/b2da33f6ca318c91f4522f810b20a91e"
+   },
+   {
+    "id": "fx.nmvy0y1ap44",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 406,
+    "y": 216,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 95,
+    "src": "/_blob/8884dbc62f22072edcec238c47ed4cf0"
+   },
+   {
+    "id": "fx.nmvy0y1ap45",
+    "kind": "image",
+    "name": "one knob",
+    "key": "",
+    "x": 542,
+    "y": 214,
+    "w": 92,
+    "h": 91,
+    "deleted": false,
+    "label": "one knob",
+    "added": true,
+    "z": 96,
+    "src": "/_blob/08872a996e41f8c964ae634aaa73b492"
+   }
+  ],
+  "WHEELS": [
+   {
+    "id": "wheels.001",
+    "kind": "text",
+    "name": "WHEELS",
+    "key": "",
+    "x": 16,
+    "y": 7,
+    "w": 101,
+    "h": 33,
+    "deleted": false,
+    "orig": [
+     16,
+     7,
+     101,
+     33
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.002",
+    "kind": "part",
+    "name": "part 10: loop in / out adjust",
+    "key": "",
+    "x": 8,
+    "y": 126,
+    "w": 90,
+    "h": 38,
+    "deleted": true,
+    "orig": [
+     8,
+     126,
+     90,
+     38
+    ]
+   },
+   {
+    "id": "wheels.003",
+    "kind": "part",
+    "name": "part 9: beat loop 4 / 8",
+    "key": "",
+    "x": 8,
+    "y": 170,
+    "w": 85,
+    "h": 30,
+    "deleted": true,
+    "orig": [
+     8,
+     170,
+     85,
+     30
+    ]
+   },
+   {
+    "id": "wheels.004",
+    "kind": "part",
+    "name": "part 12: beat jump",
+    "key": "",
+    "x": 8,
+    "y": 205,
+    "w": 85,
+    "h": 34,
+    "deleted": true,
+    "orig": [
+     8,
+     205,
+     85,
+     34
+    ]
+   },
+   {
+    "id": "wheels.005",
+    "kind": "part",
+    "name": "part 13: slip rev",
+    "key": "",
+    "x": 8,
+    "y": 245,
+    "w": 81,
+    "h": 47,
+    "deleted": true,
+    "orig": [
+     8,
+     244,
+     81,
+     47
+    ]
+   },
+   {
+    "id": "wheels.006",
+    "kind": "part",
+    "name": "part 14: track search",
+    "key": "",
+    "x": 5,
+    "y": 296,
+    "w": 81,
+    "h": 34,
+    "deleted": true,
+    "orig": [
+     8,
+     296,
+     81,
+     34
+    ]
+   },
+   {
+    "id": "wheels.007",
+    "kind": "part",
+    "name": "part 15: search",
+    "key": "",
+    "x": 8,
+    "y": 335,
+    "w": 81,
+    "h": 34,
+    "deleted": true,
+    "orig": [
+     8,
+     335,
+     81,
+     34
+    ]
+   },
+   {
+    "id": "wheels.008",
+    "kind": "part",
+    "name": "part 3: cue",
+    "key": "",
+    "x": 8,
+    "y": 375,
+    "w": 83,
+    "h": 84,
+    "deleted": true,
+    "orig": [
+     8,
+     375,
+     83,
+     84
+    ]
+   },
+   {
+    "id": "wheels.009",
+    "kind": "part",
+    "name": "part 4: play",
+    "key": "",
+    "x": 8,
+    "y": 463,
+    "w": 83,
+    "h": 85,
+    "deleted": true,
+    "orig": [
+     8,
+     464,
+     83,
+     85
+    ]
+   },
+   {
+    "id": "wheels.010",
+    "kind": "part",
+    "name": "part 1: jog wheel",
+    "key": "",
+    "x": 105,
+    "y": 114,
+    "w": 448,
+    "h": 448,
+    "deleted": false,
+    "orig": [
+     105,
+     114,
+     448,
+     448
+    ]
+   },
+   {
+    "id": "wheels.011",
+    "kind": "part",
+    "name": "part 17: vinyl / jog mode",
+    "key": "",
+    "x": 559,
+    "y": 91,
+    "w": 73,
+    "h": 26,
+    "deleted": true,
+    "orig": [
+     559,
+     91,
+     73,
+     26
+    ]
+   },
+   {
+    "id": "wheels.012",
+    "kind": "part",
+    "name": "part 18: beat sync / master",
+    "key": "",
+    "x": 559,
+    "y": 122,
+    "w": 77,
+    "h": 38,
+    "deleted": true,
+    "orig": [
+     559,
+     122,
+     77,
+     38
+    ]
+   },
+   {
+    "id": "wheels.013",
+    "kind": "part",
+    "name": "part 19: key sync",
+    "key": "",
+    "x": 559,
+    "y": 165,
+    "w": 38,
+    "h": 15,
+    "deleted": true,
+    "orig": [
+     559,
+     165,
+     38,
+     15
+    ]
+   },
+   {
+    "id": "wheels.014",
+    "kind": "part",
+    "name": "part 16: jog feel",
+    "key": "",
+    "x": 559,
+    "y": 186,
+    "w": 43,
+    "h": 47,
+    "deleted": true,
+    "orig": [
+     559,
+     186,
+     43,
+     47
+    ]
+   },
+   {
+    "id": "wheels.015",
+    "kind": "part",
+    "name": "part 8: tempo range",
+    "key": "",
+    "x": 559,
+    "y": 238,
+    "w": 26,
+    "h": 17,
+    "deleted": true,
+    "orig": [
+     559,
+     238,
+     26,
+     17
+    ]
+   },
+   {
+    "id": "wheels.016",
+    "kind": "part",
+    "name": "part 7: master tempo",
+    "key": "",
+    "x": 559,
+    "y": 260,
+    "w": 26,
+    "h": 23,
+    "deleted": true,
+    "orig": [
+     559,
+     260,
+     26,
+     23
+    ]
+   },
+   {
+    "id": "wheels.017",
+    "kind": "part",
+    "name": "part 5: tempo fader",
+    "key": "",
+    "x": 559,
+    "y": 288,
+    "w": 64,
+    "h": 261,
+    "deleted": true,
+    "orig": [
+     559,
+     288,
+     64,
+     261
+    ]
+   },
+   {
+    "id": "wheels.018",
+    "kind": "part",
+    "name": "part 6: tempo reset",
+    "key": "",
+    "x": 559,
+    "y": 554,
+    "w": 31,
+    "h": 31,
+    "deleted": true,
+    "orig": [
+     559,
+     554,
+     31,
+     31
+    ]
+   },
+   {
+    "id": "wheels.019",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 115,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     115,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.020",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 221,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     221,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.021",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 327,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     327,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.022",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 433,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     433,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.023",
+    "kind": "part",
+    "name": "part 10: loop in / out adjust",
+    "key": "",
+    "x": 644,
+    "y": 126,
+    "w": 90,
+    "h": 38,
+    "deleted": false,
+    "orig": [
+     644,
+     126,
+     90,
+     38
+    ]
+   },
+   {
+    "id": "wheels.024",
+    "kind": "part",
+    "name": "part 9: beat loop 4 / 8",
+    "key": "",
+    "x": 644,
+    "y": 170,
+    "w": 85,
+    "h": 30,
+    "deleted": false,
+    "orig": [
+     644,
+     170,
+     85,
+     30
+    ]
+   },
+   {
+    "id": "wheels.025",
+    "kind": "part",
+    "name": "part 12: beat jump",
+    "key": "",
+    "x": 644,
+    "y": 205,
+    "w": 85,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     644,
+     205,
+     85,
+     34
+    ]
+   },
+   {
+    "id": "wheels.026",
+    "kind": "part",
+    "name": "part 13: slip rev",
+    "key": "",
+    "x": 644,
+    "y": 244,
+    "w": 81,
+    "h": 47,
+    "deleted": false,
+    "orig": [
+     644,
+     244,
+     81,
+     47
+    ]
+   },
+   {
+    "id": "wheels.027",
+    "kind": "part",
+    "name": "part 14: track search",
+    "key": "",
+    "x": 644,
+    "y": 296,
+    "w": 81,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     644,
+     296,
+     81,
+     34
+    ]
+   },
+   {
+    "id": "wheels.028",
+    "kind": "part",
+    "name": "part 15: search",
+    "key": "",
+    "x": 644,
+    "y": 335,
+    "w": 81,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     644,
+     335,
+     81,
+     34
+    ]
+   },
+   {
+    "id": "wheels.029",
+    "kind": "part",
+    "name": "part 3: cue",
+    "key": "",
+    "x": 644,
+    "y": 375,
+    "w": 83,
+    "h": 84,
+    "deleted": false,
+    "orig": [
+     644,
+     375,
+     83,
+     84
+    ]
+   },
+   {
+    "id": "wheels.030",
+    "kind": "part",
+    "name": "part 4: play",
+    "key": "",
+    "x": 644,
+    "y": 464,
+    "w": 83,
+    "h": 85,
+    "deleted": false,
+    "orig": [
+     644,
+     464,
+     83,
+     85
+    ]
+   },
+   {
+    "id": "wheels.031",
+    "kind": "part",
+    "name": "part 1: jog wheel",
+    "key": "",
+    "x": 741,
+    "y": 114,
+    "w": 448,
+    "h": 448,
+    "deleted": false,
+    "orig": [
+     741,
+     114,
+     448,
+     448
+    ]
+   },
+   {
+    "id": "wheels.032",
+    "kind": "part",
+    "name": "part 17: vinyl / jog mode",
+    "key": "",
+    "x": 1195,
+    "y": 91,
+    "w": 73,
+    "h": 26,
+    "deleted": false,
+    "orig": [
+     1195,
+     91,
+     73,
+     26
+    ]
+   },
+   {
+    "id": "wheels.033",
+    "kind": "part",
+    "name": "part 18: beat sync / master",
+    "key": "",
+    "x": 1195,
+    "y": 122,
+    "w": 77,
+    "h": 38,
+    "deleted": false,
+    "orig": [
+     1195,
+     122,
+     77,
+     38
+    ]
+   },
+   {
+    "id": "wheels.034",
+    "kind": "part",
+    "name": "part 19: key sync",
+    "key": "",
+    "x": 1195,
+    "y": 165,
+    "w": 38,
+    "h": 15,
+    "deleted": false,
+    "orig": [
+     1195,
+     165,
+     38,
+     15
+    ]
+   },
+   {
+    "id": "wheels.035",
+    "kind": "part",
+    "name": "part 16: jog feel",
+    "key": "",
+    "x": 1195,
+    "y": 186,
+    "w": 43,
+    "h": 47,
+    "deleted": false,
+    "orig": [
+     1195,
+     186,
+     43,
+     47
+    ]
+   },
+   {
+    "id": "wheels.036",
+    "kind": "part",
+    "name": "part 8: tempo range",
+    "key": "",
+    "x": 1195,
+    "y": 238,
+    "w": 26,
+    "h": 17,
+    "deleted": false,
+    "orig": [
+     1195,
+     238,
+     26,
+     17
+    ]
+   },
+   {
+    "id": "wheels.037",
+    "kind": "part",
+    "name": "part 7: master tempo",
+    "key": "",
+    "x": 1195,
+    "y": 260,
+    "w": 26,
+    "h": 23,
+    "deleted": false,
+    "orig": [
+     1195,
+     260,
+     26,
+     23
+    ]
+   },
+   {
+    "id": "wheels.038",
+    "kind": "part",
+    "name": "part 5: tempo fader",
+    "key": "",
+    "x": 1195,
+    "y": 288,
+    "w": 64,
+    "h": 261,
+    "deleted": false,
+    "orig": [
+     1195,
+     288,
+     64,
+     261
+    ]
+   },
+   {
+    "id": "wheels.039",
+    "kind": "part",
+    "name": "part 6: tempo reset",
+    "key": "",
+    "x": 1195,
+    "y": 554,
+    "w": 31,
+    "h": 31,
+    "deleted": false,
+    "orig": [
+     1195,
+     554,
+     31,
+     31
+    ]
+   },
+   {
+    "id": "wheels.040",
+    "kind": "option",
+    "name": "wheel_r",
+    "key": "wheel_r",
+    "x": 751,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     751,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.041",
+    "kind": "option",
+    "name": "wheel_r",
+    "key": "wheel_r",
+    "x": 857,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     857,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.042",
+    "kind": "option",
+    "name": "wheel_r",
+    "key": "wheel_r",
+    "x": 963,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     963,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.043",
+    "kind": "option",
+    "name": "wheel_r",
+    "key": "wheel_r",
+    "x": 1069,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     1069,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheels.044",
+    "kind": "readout",
+    "name": "touch_txt",
+    "key": "touch_txt",
+    "x": 536,
+    "y": 4,
+    "w": 210,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     536,
+     4,
+     210,
+     40
+    ]
+   },
+   {
+    "id": "wheels.045",
+    "kind": "readout",
+    "name": "wheel_l_txt",
+    "key": "wheel_l_txt",
+    "x": 105,
+    "y": 52,
+    "w": 448,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     105,
+     52,
+     448,
+     34
+    ]
+   },
+   {
+    "id": "wheels.046",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 72,
+    "y": 558,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     72,
+     558,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.047",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 8,
+    "y": 558,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     8,
+     558,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.048",
+    "kind": "readout",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 252,
+    "y": 558,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     252,
+     558,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.049",
+    "kind": "readout",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 188,
+    "y": 558,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     188,
+     558,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.050",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 432,
+    "y": 558,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     432,
+     558,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.051",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 368,
+    "y": 558,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     368,
+     558,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.052",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 72,
+    "y": 594,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     72,
+     594,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.053",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 8,
+    "y": 594,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     8,
+     594,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.054",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 252,
+    "y": 594,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     252,
+     594,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.055",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 188,
+    "y": 594,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     188,
+     594,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.056",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 432,
+    "y": 594,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     432,
+     594,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.057",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 368,
+    "y": 594,
+    "w": 176,
+    "h": 34,
+    "deleted": true,
+    "orig": [
+     368,
+     594,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.058",
+    "kind": "readout",
+    "name": "wheel_r_txt",
+    "key": "wheel_r_txt",
+    "x": 741,
+    "y": 52,
+    "w": 448,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     741,
+     52,
+     448,
+     34
+    ]
+   },
+   {
+    "id": "wheels.059",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 708,
+    "y": 558,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     708,
+     558,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.060",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 644,
+    "y": 558,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     644,
+     558,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.061",
+    "kind": "readout",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 888,
+    "y": 558,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     888,
+     558,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.062",
+    "kind": "readout",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 824,
+    "y": 558,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     824,
+     558,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.063",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 1068,
+    "y": 558,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     1068,
+     558,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.064",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 1004,
+    "y": 558,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     1004,
+     558,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.065",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 708,
+    "y": 594,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     708,
+     594,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.066",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 644,
+    "y": 594,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     644,
+     594,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.067",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 888,
+    "y": 594,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     888,
+     594,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.068",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 824,
+    "y": 594,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     824,
+     594,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.069",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 1068,
+    "y": 594,
+    "w": 112,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     1068,
+     594,
+     112,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheels.070",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 1004,
+    "y": 594,
+    "w": 176,
+    "h": 34,
+    "deleted": false,
+    "orig": [
+     1004,
+     594,
+     176,
+     34
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheels.nmvy119lp46",
+    "kind": "image",
+    "name": "Designer",
+    "key": "",
+    "x": 93,
+    "y": 95,
+    "w": 475,
+    "h": 487,
+    "deleted": false,
+    "label": "Designer",
+    "added": true,
+    "z": 70,
+    "src": "/_blob/e169955c1e0313190ec0625de56ba97a"
+   },
+   {
+    "id": "wheels.nmvy11yz347",
+    "kind": "image",
+    "name": "jogwheelsPLATER ONLY WITH SHADOW_overlay",
+    "key": "",
+    "x": 165,
+    "y": 171,
+    "w": 332,
+    "h": 326,
+    "deleted": false,
+    "label": "jogwheelsPLATER ONLY WITH SHADOW_overlay",
+    "added": true,
+    "z": 71,
+    "src": "/_blob/e2b19c61ef59893f9d7512cea0a1149e"
+   }
+  ],
+  "WHEEL": [
+   {
+    "id": "wheel.001",
+    "kind": "text",
+    "name": "WHEEL",
+    "key": "",
+    "x": 16,
+    "y": 2,
+    "w": 112,
+    "h": 44,
+    "deleted": false,
+    "orig": [
+     16,
+     2,
+     112,
+     44
+    ],
+    "px": 34
+   },
+   {
+    "id": "wheel.002",
+    "kind": "part",
+    "name": "part 10: loop in / out adjust",
+    "key": "",
+    "x": 276,
+    "y": 93,
+    "w": 104,
+    "h": 45,
+    "deleted": false,
+    "orig": [
+     276,
+     93,
+     104,
+     45
+    ]
+   },
+   {
+    "id": "wheel.003",
+    "kind": "part",
+    "name": "part 9: beat loop 4 / 8",
+    "key": "",
+    "x": 276,
+    "y": 143,
+    "w": 99,
+    "h": 35,
+    "deleted": false,
+    "orig": [
+     276,
+     143,
+     99,
+     35
+    ]
+   },
+   {
+    "id": "wheel.004",
+    "kind": "part",
+    "name": "part 12: beat jump",
+    "key": "",
+    "x": 276,
+    "y": 184,
+    "w": 99,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     276,
+     184,
+     99,
+     40
+    ]
+   },
+   {
+    "id": "wheel.005",
+    "kind": "part",
+    "name": "part 13: slip rev",
+    "key": "",
+    "x": 276,
+    "y": 229,
+    "w": 94,
+    "h": 54,
+    "deleted": false,
+    "orig": [
+     276,
+     229,
+     94,
+     54
+    ]
+   },
+   {
+    "id": "wheel.006",
+    "kind": "part",
+    "name": "part 14: track search",
+    "key": "",
+    "x": 276,
+    "y": 290,
+    "w": 94,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     276,
+     290,
+     94,
+     40
+    ]
+   },
+   {
+    "id": "wheel.007",
+    "kind": "part",
+    "name": "part 15: search",
+    "key": "",
+    "x": 276,
+    "y": 335,
+    "w": 94,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     276,
+     335,
+     94,
+     40
+    ]
+   },
+   {
+    "id": "wheel.008",
+    "kind": "part",
+    "name": "part 3: cue",
+    "key": "",
+    "x": 276,
+    "y": 381,
+    "w": 96,
+    "h": 97,
+    "deleted": false,
+    "orig": [
+     276,
+     381,
+     96,
+     97
+    ]
+   },
+   {
+    "id": "wheel.009",
+    "kind": "part",
+    "name": "part 4: play",
+    "key": "",
+    "x": 276,
+    "y": 483,
+    "w": 96,
+    "h": 99,
+    "deleted": false,
+    "orig": [
+     276,
+     483,
+     96,
+     99
+    ]
+   },
+   {
+    "id": "wheel.010",
+    "kind": "part",
+    "name": "part 1: jog wheel",
+    "key": "",
+    "x": 388,
+    "y": 79,
+    "w": 519,
+    "h": 519,
+    "deleted": false,
+    "orig": [
+     388,
+     79,
+     519,
+     519
+    ]
+   },
+   {
+    "id": "wheel.011",
+    "kind": "part",
+    "name": "part 17: vinyl / jog mode",
+    "key": "",
+    "x": 914,
+    "y": 52,
+    "w": 84,
+    "h": 30,
+    "deleted": false,
+    "orig": [
+     914,
+     52,
+     84,
+     30
+    ]
+   },
+   {
+    "id": "wheel.012",
+    "kind": "part",
+    "name": "part 18: beat sync / master",
+    "key": "",
+    "x": 914,
+    "y": 88,
+    "w": 89,
+    "h": 45,
+    "deleted": false,
+    "orig": [
+     914,
+     88,
+     89,
+     45
+    ]
+   },
+   {
+    "id": "wheel.013",
+    "kind": "part",
+    "name": "part 19: key sync",
+    "key": "",
+    "x": 914,
+    "y": 138,
+    "w": 45,
+    "h": 18,
+    "deleted": false,
+    "orig": [
+     914,
+     138,
+     45,
+     18
+    ]
+   },
+   {
+    "id": "wheel.014",
+    "kind": "part",
+    "name": "part 16: jog feel",
+    "key": "",
+    "x": 914,
+    "y": 162,
+    "w": 49,
+    "h": 54,
+    "deleted": false,
+    "orig": [
+     914,
+     162,
+     49,
+     54
+    ]
+   },
+   {
+    "id": "wheel.015",
+    "kind": "part",
+    "name": "part 8: tempo range",
+    "key": "",
+    "x": 914,
+    "y": 222,
+    "w": 30,
+    "h": 20,
+    "deleted": false,
+    "orig": [
+     914,
+     222,
+     30,
+     20
+    ]
+   },
+   {
+    "id": "wheel.016",
+    "kind": "part",
+    "name": "part 7: master tempo",
+    "key": "",
+    "x": 914,
+    "y": 248,
+    "w": 30,
+    "h": 27,
+    "deleted": false,
+    "orig": [
+     914,
+     248,
+     30,
+     27
+    ]
+   },
+   {
+    "id": "wheel.017",
+    "kind": "part",
+    "name": "part 5: tempo fader",
+    "key": "",
+    "x": 914,
+    "y": 281,
+    "w": 74,
+    "h": 302,
+    "deleted": false,
+    "orig": [
+     914,
+     281,
+     74,
+     302
+    ]
+   },
+   {
+    "id": "wheel.018",
+    "kind": "part",
+    "name": "part 6: tempo reset",
+    "key": "",
+    "x": 914,
+    "y": 588,
+    "w": 36,
+    "h": 36,
+    "deleted": false,
+    "orig": [
+     914,
+     588,
+     36,
+     36
+    ]
+   },
+   {
+    "id": "wheel.019",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 850,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     850,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheel.020",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 956,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     956,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheel.021",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 1062,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     1062,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheel.022",
+    "kind": "option",
+    "name": "wheel_l",
+    "key": "wheel_l",
+    "x": 1168,
+    "y": 4,
+    "w": 96,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     1168,
+     4,
+     96,
+     40
+    ]
+   },
+   {
+    "id": "wheel.023",
+    "kind": "readout",
+    "name": "wheel_l_txt",
+    "key": "wheel_l_txt",
+    "x": 130,
+    "y": 4,
+    "w": 340,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     130,
+     4,
+     340,
+     40
+    ]
+   },
+   {
+    "id": "wheel.024",
+    "kind": "readout",
+    "name": "touch_txt",
+    "key": "touch_txt",
+    "x": 480,
+    "y": 4,
+    "w": 360,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     480,
+     4,
+     360,
+     40
+    ]
+   },
+   {
+    "id": "wheel.025",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 106,
+    "y": 100,
+    "w": 160,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     106,
+     100,
+     160,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheel.026",
+    "kind": "readout",
+    "name": "d*_filter",
+    "key": "d1_filter",
+    "x": 16,
+    "y": 100,
+    "w": 250,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     16,
+     100,
+     250,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheel.027",
+    "kind": "readout",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 106,
+    "y": 152,
+    "w": 160,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     106,
+     152,
+     160,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheel.028",
+    "kind": "readout",
+    "name": "d*_vol",
+    "key": "d1_vol",
+    "x": 16,
+    "y": 152,
+    "w": 250,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     16,
+     152,
+     250,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheel.029",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 106,
+    "y": 204,
+    "w": 160,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     106,
+     204,
+     160,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheel.030",
+    "kind": "readout",
+    "name": "d*_gain",
+    "key": "d1_gain",
+    "x": 16,
+    "y": 204,
+    "w": 250,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     16,
+     204,
+     250,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheel.031",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 106,
+    "y": 256,
+    "w": 160,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     106,
+     256,
+     160,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheel.032",
+    "kind": "readout",
+    "name": "d*_hi",
+    "key": "d1_hi",
+    "x": 16,
+    "y": 256,
+    "w": 250,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     16,
+     256,
+     250,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheel.033",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 106,
+    "y": 308,
+    "w": 160,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     106,
+     308,
+     160,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheel.034",
+    "kind": "readout",
+    "name": "d*_mid",
+    "key": "d1_mid",
+    "x": 16,
+    "y": 308,
+    "w": 250,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     16,
+     308,
+     250,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   },
+   {
+    "id": "wheel.035",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 106,
+    "y": 360,
+    "w": 160,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     106,
+     360,
+     160,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "id": "wheel.036",
+    "kind": "readout",
+    "name": "d*_low",
+    "key": "d1_low",
+    "x": 16,
+    "y": 360,
+    "w": 250,
+    "h": 40,
+    "deleted": false,
+    "orig": [
+     16,
+     360,
+     250,
+     40
+    ],
+    "decks": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "px": 26
+   }
+  ]
+ }
+}

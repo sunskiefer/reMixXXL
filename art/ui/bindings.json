@@ -1,0 +1,5 @@
+{
+ "browse.nmvy01mls8": {"type": "button", "param": "br_up", "label": "BACK"},
+ "browse.nmvxzzna55": {"type": "live", "param": "br_page"},
+ "mixer.nmvy0np7t7": {"type": "popup", "param": "xf_mode"}
+}

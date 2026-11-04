@@ -1,0 +1,8 @@
+# quickjs-ng 0.17.0 (third_party/quickjs): the files to compile for midi_js.c, one per line. cutils.h is header-only
+# in this version (no cutils.c); libunicode-table.h, libregexp-opcode.h, quickjs-atom.h, quickjs-opcode.h and the
+# builtin-*.h are #included by these. Build each with the same zig line as src/*.c (add -w: QuickJS is not warning-clean
+# under clang) and -Ithird_party/quickjs; link with -lm -lpthread -ldl (dlopen is used by midi.c, not QuickJS).
+third_party/quickjs/quickjs.c
+third_party/quickjs/libregexp.c
+third_party/quickjs/libunicode.c
+third_party/quickjs/dtoa.c

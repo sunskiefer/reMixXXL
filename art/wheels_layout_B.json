@@ -1,0 +1,332 @@
+{
+ "scale": 1.0,
+ "deck_panel": [
+  {
+   "id": 10,
+   "part": "in adjust / out adjust",
+   "x": 0,
+   "y": 0,
+   "w": 105,
+   "h": 45
+  },
+  {
+   "id": 9,
+   "part": "beat loop 4 / 8",
+   "x": 0,
+   "y": 74,
+   "w": 100,
+   "h": 35
+  },
+  {
+   "id": 12,
+   "part": "beat jump < >",
+   "x": 0,
+   "y": 138,
+   "w": 100,
+   "h": 40
+  },
+  {
+   "id": 13,
+   "part": "slip rev fwd/rev",
+   "x": 0,
+   "y": 207,
+   "w": 95,
+   "h": 55
+  },
+  {
+   "id": 14,
+   "part": "track search",
+   "x": 0,
+   "y": 291,
+   "w": 95,
+   "h": 40
+  },
+  {
+   "id": 15,
+   "part": "search",
+   "x": 0,
+   "y": 360,
+   "w": 95,
+   "h": 40
+  },
+  {
+   "id": 3,
+   "part": "cue",
+   "x": 0,
+   "y": 429,
+   "w": 97,
+   "h": 98
+  },
+  {
+   "id": 4,
+   "part": "play/pause",
+   "x": 0,
+   "y": 556,
+   "w": 97,
+   "h": 100
+  },
+  {
+   "id": 17,
+   "part": "vinyl / jog mode",
+   "x": 645,
+   "y": 0,
+   "w": 85,
+   "h": 30
+  },
+  {
+   "id": 18,
+   "part": "inst doubles / beat sync / master",
+   "x": 645,
+   "y": 47,
+   "w": 90,
+   "h": 45
+  },
+  {
+   "id": 19,
+   "part": "key sync",
+   "x": 645,
+   "y": 109,
+   "w": 45,
+   "h": 18
+  },
+  {
+   "id": 16,
+   "part": "jog feel",
+   "x": 645,
+   "y": 144,
+   "w": 50,
+   "h": 55
+  },
+  {
+   "id": 8,
+   "part": "tempo range",
+   "x": 645,
+   "y": 216,
+   "w": 30,
+   "h": 20
+  },
+  {
+   "id": 7,
+   "part": "master tempo",
+   "x": 645,
+   "y": 253,
+   "w": 30,
+   "h": 27
+  },
+  {
+   "id": 5,
+   "part": "tempo fader",
+   "x": 645,
+   "y": 297,
+   "w": 75,
+   "h": 305
+  },
+  {
+   "id": 6,
+   "part": "tempo reset",
+   "x": 645,
+   "y": 619,
+   "w": 36,
+   "h": 36
+  },
+  {
+   "id": 1,
+   "part": "jog wheel",
+   "x": 113,
+   "y": 66,
+   "w": 524,
+   "h": 524
+  }
+ ],
+ "page": [
+  {
+   "side": "C",
+   "id": 10,
+   "part": "in adjust / out adjust",
+   "x": 272,
+   "y": 60,
+   "w": 105,
+   "h": 45
+  },
+  {
+   "side": "C",
+   "id": 9,
+   "part": "beat loop 4 / 8",
+   "x": 272,
+   "y": 134,
+   "w": 100,
+   "h": 35
+  },
+  {
+   "side": "C",
+   "id": 12,
+   "part": "beat jump < >",
+   "x": 272,
+   "y": 198,
+   "w": 100,
+   "h": 40
+  },
+  {
+   "side": "C",
+   "id": 13,
+   "part": "slip rev fwd/rev",
+   "x": 272,
+   "y": 267,
+   "w": 95,
+   "h": 55
+  },
+  {
+   "side": "C",
+   "id": 14,
+   "part": "track search",
+   "x": 272,
+   "y": 351,
+   "w": 95,
+   "h": 40
+  },
+  {
+   "side": "C",
+   "id": 15,
+   "part": "search",
+   "x": 272,
+   "y": 420,
+   "w": 95,
+   "h": 40
+  },
+  {
+   "side": "C",
+   "id": 3,
+   "part": "cue",
+   "x": 272,
+   "y": 489,
+   "w": 97,
+   "h": 98
+  },
+  {
+   "side": "C",
+   "id": 4,
+   "part": "play/pause",
+   "x": 272,
+   "y": 616,
+   "w": 97,
+   "h": 100
+  },
+  {
+   "side": "C",
+   "id": 17,
+   "part": "vinyl / jog mode",
+   "x": 917,
+   "y": 60,
+   "w": 85,
+   "h": 30
+  },
+  {
+   "side": "C",
+   "id": 18,
+   "part": "inst doubles / beat sync / master",
+   "x": 917,
+   "y": 107,
+   "w": 90,
+   "h": 45
+  },
+  {
+   "side": "C",
+   "id": 19,
+   "part": "key sync",
+   "x": 917,
+   "y": 169,
+   "w": 45,
+   "h": 18
+  },
+  {
+   "side": "C",
+   "id": 16,
+   "part": "jog feel",
+   "x": 917,
+   "y": 204,
+   "w": 50,
+   "h": 55
+  },
+  {
+   "side": "C",
+   "id": 8,
+   "part": "tempo range",
+   "x": 917,
+   "y": 276,
+   "w": 30,
+   "h": 20
+  },
+  {
+   "side": "C",
+   "id": 7,
+   "part": "master tempo",
+   "x": 917,
+   "y": 313,
+   "w": 30,
+   "h": 27
+  },
+  {
+   "side": "C",
+   "id": 5,
+   "part": "tempo fader",
+   "x": 917,
+   "y": 357,
+   "w": 75,
+   "h": 305
+  },
+  {
+   "side": "C",
+   "id": 6,
+   "part": "tempo reset",
+   "x": 917,
+   "y": 679,
+   "w": 36,
+   "h": 36
+  },
+  {
+   "side": "C",
+   "id": 1,
+   "part": "jog wheel",
+   "x": 385,
+   "y": 126,
+   "w": 524,
+   "h": 524
+  },
+  {
+   "side": "C",
+   "id": "deck1",
+   "part": "deck select",
+   "x": 984,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "C",
+   "id": "deck2",
+   "part": "deck select",
+   "x": 1056,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "C",
+   "id": "deck3",
+   "part": "deck select",
+   "x": 1128,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  },
+  {
+   "side": "C",
+   "id": "deck4",
+   "part": "deck select",
+   "x": 1200,
+   "y": 4,
+   "w": 64,
+   "h": 48
+  }
+ ]
+}

@@ -1,0 +1,173 @@
+[
+ {
+  "id": 1,
+  "part": "jog wheel (platter)",
+  "x": 193,
+  "y": 28,
+  "w": 524,
+  "h": 524,
+  "unsure": false
+ },
+ {
+  "id": 2,
+  "part": "jog centre display",
+  "x": 370,
+  "y": 205,
+  "w": 170,
+  "h": 170,
+  "unsure": false
+ },
+ {
+  "id": 3,
+  "part": "cue",
+  "x": 52,
+  "y": 413,
+  "w": 97,
+  "h": 98,
+  "unsure": false
+ },
+ {
+  "id": 4,
+  "part": "play/pause",
+  "x": 52,
+  "y": 522,
+  "w": 97,
+  "h": 100,
+  "unsure": false
+ },
+ {
+  "id": 5,
+  "part": "tempo fader",
+  "x": 760,
+  "y": 295,
+  "w": 75,
+  "h": 305,
+  "unsure": false
+ },
+ {
+  "id": 6,
+  "part": "tempo reset",
+  "x": 712,
+  "y": 422,
+  "w": 36,
+  "h": 36,
+  "unsure": false
+ },
+ {
+  "id": 7,
+  "part": "master tempo",
+  "x": 790,
+  "y": 245,
+  "w": 30,
+  "h": 27,
+  "unsure": false
+ },
+ {
+  "id": 8,
+  "part": "tempo range",
+  "x": 790,
+  "y": 195,
+  "w": 30,
+  "h": 20,
+  "unsure": true
+ },
+ {
+  "id": 9,
+  "part": "beat loop 4 / 8",
+  "x": 55,
+  "y": 55,
+  "w": 100,
+  "h": 35,
+  "unsure": false
+ },
+ {
+  "id": 10,
+  "part": "in adjust / out adjust",
+  "x": 55,
+  "y": 0,
+  "w": 105,
+  "h": 45,
+  "unsure": true
+ },
+ {
+  "id": 11,
+  "part": "loop",
+  "x": 195,
+  "y": 0,
+  "w": 37,
+  "h": 22,
+  "unsure": true
+ },
+ {
+  "id": 12,
+  "part": "beat jump < >",
+  "x": 55,
+  "y": 110,
+  "w": 100,
+  "h": 40,
+  "unsure": false
+ },
+ {
+  "id": 13,
+  "part": "slip rev fwd/rev",
+  "x": 55,
+  "y": 185,
+  "w": 95,
+  "h": 55,
+  "unsure": false
+ },
+ {
+  "id": 14,
+  "part": "track search",
+  "x": 55,
+  "y": 280,
+  "w": 95,
+  "h": 40,
+  "unsure": false
+ },
+ {
+  "id": 15,
+  "part": "search",
+  "x": 55,
+  "y": 345,
+  "w": 95,
+  "h": 40,
+  "unsure": false
+ },
+ {
+  "id": 16,
+  "part": "jog feel",
+  "x": 645,
+  "y": 45,
+  "w": 50,
+  "h": 55,
+  "unsure": false
+ },
+ {
+  "id": 17,
+  "part": "vinyl / jog mode",
+  "x": 765,
+  "y": 0,
+  "w": 85,
+  "h": 30,
+  "unsure": true
+ },
+ {
+  "id": 18,
+  "part": "inst doubles / beat sync / master",
+  "x": 760,
+  "y": 45,
+  "w": 90,
+  "h": 45,
+  "unsure": true
+ },
+ {
+  "id": 19,
+  "part": "key sync",
+  "x": 785,
+  "y": 108,
+  "w": 45,
+  "h": 18,
+  "unsure": true
+ }
+]

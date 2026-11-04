@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c10">
+<title>reMixXXL waveforms</title>
+<style>
+  :root { --bg:#0b0c10; --panel:#14161d; --line:#262a35; --text:#e8eaf0; --dim:#8a90a2; --accent:#f5a623; --sep:#b0307f; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--text); overscroll-behavior:none; -webkit-text-size-adjust:100%;
+    font-family:"Titillium Web", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display:flex; flex-direction:column; height:100vh; height:100dvh; padding:0 max(4px, env(safe-area-inset-right)) 4px max(4px, env(safe-area-inset-left)); overflow:hidden; }
+  header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:6px 2px; flex:none; }
+  h1 { font-size:20px; margin:0; letter-spacing:.5px; white-space:nowrap; } h1 span { color:var(--accent); }
+  #status { font-size:13px; padding:2px 9px; border-radius:12px; background:#3a1d1d; color:#ff8a80; white-space:nowrap; }
+  #status.ok { background:#16301f; color:#7be49a; }
+  .ctl { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--dim); white-space:nowrap; }
+  .ctl button, #select, #zoombtn { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:8px; font-size:16px; padding:3px 11px; min-height:32px; cursor:pointer; touch-action:manipulation; }
+  .ctl button:active { background:#222633; }
+  .ctl .picked, #pick button.picked, .seg button.picked { background:#3a2a0a; border-color:var(--accent); color:var(--accent); }
+  #fsbtn { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:50%; width:32px; height:32px; min-height:32px; padding:0; font-size:14px; cursor:pointer; touch-action:manipulation; }
+  #fsbtn.on { border-color:var(--accent); color:var(--accent); }
+  #select, #zoombtn { font-weight:700; letter-spacing:.8px; font-size:15px; padding:3px 14px; }
+  #select.on, #zoombtn.on { background:#3a2a0a; border-color:var(--accent); color:var(--accent); }
+  #zoomv { min-width:34px; color:var(--text); text-align:center; }
+  #decks { flex:1; min-height:0; display:flex; flex-direction:column; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#05060a; }
+  .deck { flex:1 1 0; min-height:0; position:relative; }
+  .deck + .deck { border-top:3px solid var(--sep); }
+  .deck.off { display:none; }
+  body.zoom canvas.main { cursor:zoom-in; }
+  canvas.main { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; user-select:none; -webkit-user-select:none; }
+  canvas.main.drag { cursor:grabbing; } canvas.main.pitch { cursor:ew-resize; box-shadow:inset 0 0 0 2px #42a5f5; }
+  .vu { position:absolute; right:4px; top:4px; bottom:4px; width:22px; display:flex; gap:3px; pointer-events:none; z-index:3; }
+  .vu i { flex:1; background:linear-gradient(to top,#2ecc71 0%,#2ecc71 60%,#f1c40f 80%,#e74c3c 100%); transform-origin:bottom; transform:scaleY(0); border-radius:2px; }
+  /* SELECT on: the controls sit over the waveform */
+  .over { display:none; position:absolute; inset:0 34px 0 0; align-items:center; gap:8px; padding:0 8px; pointer-events:none; z-index:2; }
+  body.select .over { display:flex; }
+  body.select.zoom .over { display:none; }   /* SELECT + ZOOM: the controls get out of the way so a tap on the track sets where to play */
+  .over > * { pointer-events:auto; }
+  .wheel { position:relative; height:calc(var(--lh, 100px) - 10px); width:calc(var(--lh, 100px) - 10px); flex:none; border-radius:50%; touch-action:none; cursor:grab; user-select:none; -webkit-user-select:none; }
+  body:not(.wheels) .wheel { display:none; }
+  .wheel img { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; will-change:transform; opacity:.92; }
+  .wheel .hub { position:absolute; inset:25%; border-radius:50%; background:rgba(8,9,13,.8); pointer-events:none; }
+  .wheel .shine { position:absolute; inset:0; border-radius:50%; pointer-events:none; background:linear-gradient(135deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,0) 38%); }
+  .wheel.drag { filter:brightness(1.2); }
+  .btns { flex:1; min-width:0; display:flex; gap:6px; height:66%; align-self:center; pointer-events:none; }
+  .btns button { pointer-events:auto; flex:1 1 0; min-width:0; padding:0 2px; border-radius:12px; border:2px solid rgba(255,255,255,.2); background:rgba(20,22,29,.34);
+    color:#fff; font-family:inherit; font-weight:700; letter-spacing:.3px; line-height:1.05; text-shadow:0 1px 3px #000, 0 0 6px #000;
+    font-size:clamp(12px, calc(var(--lh, 100px) * .22), 30px); overflow:hidden; white-space:normal; cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  .btns button.on { background:rgba(120,78,10,.36); border-color:#e49a22; color:#ffb54a; }
+  .btns button.go.on { background:rgba(18,90,44,.4); border-color:#2ecc71; color:#8af0ae; }
+  .btns button.pitch { background:rgba(15,60,90,.62); border-color:#42a5f5; color:#8fd0ff; }
+  .btns button:active { filter:brightness(1.5); }
+  .rd { flex:none; text-align:right; pointer-events:none; text-shadow:0 1px 3px #000, 0 0 8px #000; font-weight:700; line-height:1.05; align-self:flex-end; padding-bottom:2px; display:flex; flex-direction:column; align-items:flex-end; }
+  .rd .bp { font-size:clamp(13px, calc(var(--lh, 100px) * .2), 26px); color:#fff; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .rd .dn { display:none; font-size:clamp(10px, calc(var(--lh, 100px) * .12), 14px); color:var(--accent); }
+  /* narrow (a phone upright): two rows of buttons, no ring */
+  @media (max-width: 700px) {
+    h1 { font-size:17px; } h1 small { display:none; }
+    .ctl { font-size:12px; gap:4px; } .ctl button { padding:2px 9px; min-height:30px; font-size:15px; }
+    .btns { flex-wrap:wrap; height:78%; gap:5px; } .btns button { flex:1 1 22%; }
+    .wheel { display:none !important; }
+    .over { flex-wrap:wrap; align-content:center; } .btns { flex:1 1 100%; } .rd { position:absolute; right:34px; top:2px; flex-direction:row; gap:8px; align-items:baseline; }
+  }
+  @media (max-height: 520px) { header { gap:6px; padding:3px 2px; } h1 { font-size:16px; } .ctl { font-size:12px; gap:4px; } .ctl button, #select, #zoombtn { padding:2px 8px; min-height:28px; font-size:14px; } header { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; } header::-webkit-scrollbar { display:none; } h1 small { display:none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>re<span>Mix</span>XXL</h1>
+  <span id="status">connecting&hellip;</span>
+  <div class="ctl">scale <button id="zo">&minus;</button><span id="zoomv">8 s</span><button id="zi">+</button></div>
+  <div class="ctl"><label><input type="checkbox" id="grid" checked> beat grid</label> <label><input type="checkbox" id="wh"> wheels</label></div>
+  <div class="ctl seg" id="count"><button data-n="1">1</button><button data-n="2">2</button><button data-n="4">4</button></div>
+  <div class="ctl seg" id="pick"><button data-d="0">1</button><button data-d="1">2</button><button data-d="2">3</button><button data-d="3">4</button></div>
+  <button id="select">SELECT</button>
+  <button id="zoombtn">ZOOM</button>
+  <button id="fsbtn" title="full screen" aria-label="full screen">&#9679;</button>
+</header>
+<div id="decks"></div>
+<script>
+"use strict";
+const HC = ["#C50A08","#32BE44","#42D4F4","#F8D200","#0044FF","#AF00CC","#FCA6D7","#F2F2FF"];
+const PPS = 400;                         // waveform columns per second (RX_WAVE_PX_PER_SEC)
+const ZOOMS = [2, 4, 8, 16, 32, 64];
+const SEC_PER_REV = 60 / 33.3333;        // one platter turn at 33 rpm = 1.8 s of music
+let zi = +(localStorage.getItem("rxzoom") || 2); if (!(zi >= 0 && zi < ZOOMS.length)) zi = 2;
+let showGrid = true;
+
+const decks = [];
+const root = document.getElementById("decks");
+const BUTTONS = [["play", "PLAY", "go"], ["cue_default", "CUE", "hold"], ["beatsync", "SYNC", "trig"], ["sync_master", "MASTER"], ["quantize", "QUANT"], ["keylock", "KEY<br>LOCK"], ["vinyl_mode", "VINYL"]];
+for (let i = 0; i < 4; i++) {
+  const el = document.createElement("div");
+  el.className = "deck";
+  el.innerHTML = '<canvas class="main"></canvas><div class="vu"><i></i><i></i></div><div class="over"><div class="wheel"><img alt="" draggable="false" src="__RING__"><div class="hub"></div><div class="shine"></div></div>' +
+    '<div class="btns">' + BUTTONS.map(b => '<button data-b="' + b[0] + '"' + (b[2] ? ' class="' + b[2] + '"' : '') + (b[2] === "hold" ? ' data-hold="1"' : '') + (b[2] === "trig" ? ' data-trig="1"' : '') + '>' + b[1] + '</button>').join("") +
+    '<button class="lane" data-lane="1" style="display:none">SPIN</button></div><div class="rd"><span class="dn">DECK ' + (i + 1) + '</span><span class="bp">bpm. -</span></div></div>';
+  root.appendChild(el);
+  decks.push({
+    el, i, main: el.querySelector(".main"), vu: el.querySelectorAll(".vu i"), s: null, rx: 0, drag: null, lane: "spin",
+    btn: el.querySelectorAll(".btns button"), laneBtn: el.querySelector(".lane"), wheel: el.querySelector(".wheel"), wimg: el.querySelector(".wheel img"),
+    bp: el.querySelector(".bp"), cols: null, key: "", fetching: false
+  });
+}
+
+function sizeCanvas(c) {
+  const r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  const w = Math.max(10, Math.round(r.width * dpr)), h = Math.max(10, Math.round(r.height * dpr));
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; c._img = null; }
+}
+
+async function loadWave(d, s) {
+  d.fetching = true;
+  const key = s.ti + "|" + s.dur.toFixed(2) + "|" + s.nc;
+  try {
+    const a = await fetch("/w/" + d.i);
+    d.cols = new Uint8Array(await a.arrayBuffer());
+    d.key = key;
+  } catch (e) { d.cols = null; }
+  d.fetching = false;
+}
+
+function drawMain(d, pos, s, tstart, Z, fixedHead) {
+  const c = d.main; sizeCanvas(c);
+  const W = c.width, H = c.height, ctx = c.getContext("2d");
+  if (!c._img || c._img.width !== W || c._img.height !== H) { c._img = ctx.createImageData(W, H); c._ck = ""; }
+  const img = c._img, px = new Uint32Array(img.data.buffer);
+  const ck = tstart.toFixed(3) + "|" + Z.toFixed(3) + "|" + W + "|" + H + "|" + d.key + "|" + (d.cols ? d.cols.length : 0);
+  const redo = c._ck !== ck;                              // the picture is only redrawn when the window moved (a still zoomed view costs nothing)
+  if (redo) px.fill(0xFF0A0605);                          // ABGR: near black
+  const cols = d.cols, n = cols ? cols.length >> 2 : 0, half = H / 2;
+  if (n > 0 && redo) {
+    const perPx = PPS * Z / W;                            // columns per pixel
+    for (let x = 0; x < W; x++) {
+      const t0 = tstart + x / W * Z, t1 = tstart + (x + 1) / W * Z;
+      let c0 = Math.floor(t0 * PPS), c1 = Math.max(c0 + 1, Math.ceil(t1 * PPS));
+      if (c1 <= 0 || c0 >= n) continue;
+      if (c0 < 0) c0 = 0; if (c1 > n) c1 = n;
+      let lo = 0, mi = 0, hi = 0, al = 0;
+      for (let k = c0; k < c1; k++) { const o = k << 2; if (cols[o] > lo) lo = cols[o]; if (cols[o+1] > mi) mi = cols[o+1]; if (cols[o+2] > hi) hi = cols[o+2]; if (cols[o+3] > al) al = cols[o+3]; }
+      // Mixxx's RGB waveform (WaveformRendererRGB): low = red, mid = green, high = blue, the colour normalised to its brightest
+      // channel (no floor, so a bass hit is pure red, a hat pure blue, a mix pink or white), the bar as tall as the overall peak
+      const mx = Math.max(lo, mi, hi);
+      if (mx <= 0) continue;
+      const r = Math.round(255 * lo / mx), g = Math.round(255 * mi / mx), b = Math.round(255 * hi / mx);
+      const h = al / 255 * half;
+      const col = 0xFF000000 | (b << 16) | (g << 8) | r;
+      const y0 = Math.max(0, Math.floor(half - h)), y1 = Math.min(H, Math.ceil(half + h));
+      for (let y = y0; y < y1; y++) px[y * W + x] = col;
+    }
+  }
+  c._ck = ck;
+  ctx.putImageData(img, 0, 0);
+  const tx = t => (t - tstart) / Z * W;
+  // loop
+  if (s.li >= 0 && s.lo > s.li) {
+    const a = Math.max(0, tx(s.li)), b = Math.min(W, tx(s.lo));
+    if (b > a) { ctx.fillStyle = s.lp ? "rgba(32,190,68,.28)" : "rgba(32,190,68,.12)"; ctx.fillRect(a, 0, b - a, H); }
+    ctx.fillStyle = "#20be44"; for (const t of [s.li, s.lo]) { const x = tx(t); if (x >= 0 && x <= W) ctx.fillRect(x - 1, 0, 2, H); }
+  }
+  // beat grid
+  if (showGrid && s.bpm > 0 && 60 / s.bpm / Z * W >= 3) {
+    const per = 60 / s.bpm, tl = tstart, tr = tstart + Z;
+    const k0 = Math.ceil((tl - s.b0) / per), k1 = Math.floor((tr - s.b0) / per);
+    if (k1 - k0 < 4000) for (let k = k0; k <= k1; k++) {
+      const x = Math.round(tx(s.b0 + k * per)), down = ((k % 4) + 4) % 4 === 0;
+      ctx.fillStyle = down ? "rgba(255,255,255,.62)" : "rgba(255,255,255,.22)"; ctx.fillRect(x, 0, down ? 2 : 1, H);
+    }
+  }
+  // cues
+  const tag = (t, colr, label) => {
+    const x = tx(t); if (x < -20 || x > W + 20) return;
+    ctx.fillStyle = colr; ctx.fillRect(x - 1, 0, 2, H);
+    ctx.fillRect(x, 0, 26 * (window.devicePixelRatio || 1), 20 * (window.devicePixelRatio || 1));
+    ctx.fillStyle = "#000"; ctx.font = "bold " + 14 * (window.devicePixelRatio || 1) + "px sans-serif"; ctx.fillText(label, x + 6, 15 * (window.devicePixelRatio || 1));
+  };
+  if (s.cue >= 0) tag(s.cue, "#ff8a00", "C");
+  for (let h = 0; h < s.hc.length; h++) if (s.hc[h][0] >= 0) tag(s.hc[h][0], HC[s.hc[h][1] & 7], String(h + 1));
+  // the playhead: fixed in the middle in the normal view, moving across the waveform in the ZOOM view
+  const hx = fixedHead ? Math.round(W / 2) : Math.round(tx(pos));
+  if (hx >= -10 && hx <= W + 10) {
+    ctx.fillStyle = "#ff2d2d"; ctx.fillRect(hx - 1, 0, 2, H);
+    ctx.beginPath(); ctx.moveTo(hx - 8, 0); ctx.lineTo(hx + 8, 0); ctx.lineTo(hx, 10); ctx.closePath(); ctx.fill();
+  }
+}
+
+let last = performance.now();
+function frame(now) {
+  for (const d of decks) {
+    const s = d.s; if (!s || d.el.classList.contains("off")) continue;
+    if (!s.ld) {
+      d.cols = null; d.key = ""; d.bp.textContent = "bpm. -";
+      const c = d.main; sizeCanvas(c); const x = c.getContext("2d"); x.fillStyle = "#05060a"; x.fillRect(0, 0, c.width, c.height);
+      continue;
+    }
+    // the position between two frames: what the engine said, plus the time since times the rate
+    let pos = s.pos + (s.pl ? (now - d.rx) / 1000 * s.rate : 0);
+    if (pos < 0) pos = 0; if (pos > s.dur) pos = s.dur;
+    const key = s.ti + "|" + s.dur.toFixed(2) + "|" + s.nc;
+    if (key !== d.key && !d.fetching && s.nc > 0) loadWave(d, s);
+    if (zoomOn) {                                          // ZOOM: a window of the track you choose; the playhead moves on its own
+      if (d.zkey !== d.key || !(d.vs > 0)) { d.v0 = 0; d.vs = Math.max(1, s.dur); d.zkey = d.key; }   // each new track starts as the whole track
+      drawMain(d, pos, s, d.v0, d.vs, false);
+    } else drawMain(d, pos, s, pos - ZOOMS[zi] / 2, ZOOMS[zi], true);
+    d.vu[0].style.transform = "scaleY(" + (s.vu[0] || 0) + ")"; d.vu[1].style.transform = "scaleY(" + (s.vu[1] || 0) + ")";
+    if (document.body.classList.contains("select")) {
+      d.wimg.style.transform = "rotate(" + ((pos / SEC_PER_REV * 360) % 360).toFixed(2) + "deg)";
+      const bv = s.bpm * Math.abs(s.rate); d.bp.textContent = "bpm. " + (s.bpm > 0 ? (Math.abs(bv - Math.round(bv)) < 0.05 ? Math.round(bv) : bv.toFixed(1)) : "-");
+      const on = { play: s.pl, sync_master: s.sm, quantize: s.qn, keylock: s.kl, vinyl_mode: s.vin };
+      d.btn.forEach(b => { const k = b.dataset.b; if (k in on) b.classList.toggle("on", !!on[k]); });
+      const vb = d.el.querySelector('[data-b="vinyl_mode"]'); const t = s.vin ? "VINYL" : "CDJ"; if (vb.textContent !== t) vb.textContent = t;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+// the connection: reconnects by itself
+const st = document.getElementById("status");
+let sock = null;
+function send(m) { if (sock && sock.readyState === 1) sock.send(m); }
+function connect() {
+  const ws = new WebSocket("ws://" + location.host + "/ws"); sock = ws;
+  ws.onopen = () => { st.textContent = "live"; st.className = "ok"; };
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data), now = performance.now();
+    for (let i = 0; i < 4; i++) { decks[i].s = m.d[i]; decks[i].rx = now; }
+  };
+  ws.onclose = () => { st.textContent = "reconnecting…"; st.className = ""; setTimeout(connect, 1000); };
+  ws.onerror = () => ws.close();
+}
+connect();
+requestAnimationFrame(frame);
+
+function setZoom(v) { zi = Math.max(0, Math.min(ZOOMS.length - 1, v)); document.getElementById("zoomv").textContent = ZOOMS[zi] + " s"; try { localStorage.setItem("rxzoom", zi); } catch (e) {} }
+document.getElementById("zo").onclick = () => setZoom(zi + 1);     // zoom out: more seconds across
+document.getElementById("zi").onclick = () => setZoom(zi - 1);
+document.getElementById("grid").onchange = e => showGrid = e.target.checked;
+setZoom(zi);
+
+// ---- which decks are shown (1, 2, 3 or 4) and whether the SELECT controls are on, remembered in this browser
+let shown = [true, true, true, true];
+try { const q = JSON.parse(localStorage.getItem("rxshown")); if (Array.isArray(q) && q.length === 4 && q.some(Boolean)) shown = q.map(Boolean); } catch (e) {}
+const zoomBtn = document.getElementById("zoombtn");
+let zoomOn = false; try { zoomOn = localStorage.getItem("rxzm") === "1"; } catch (e) {}
+const selBtn = document.getElementById("select"), whBox = document.getElementById("wh");
+let selOn = false; try { selOn = localStorage.getItem("rxsel") === "1"; } catch (e) {}
+try { if (localStorage.getItem("rxwheel") === "1") whBox.checked = true; } catch (e) {}
+function applyLayout() {
+  const n = shown.filter(Boolean).length;
+  decks.forEach((d, i) => d.el.classList.toggle("off", !shown[i]));
+  document.querySelectorAll("#pick button").forEach((b, i) => b.classList.toggle("picked", shown[i]));
+  document.querySelectorAll("#count button").forEach(b => b.classList.toggle("picked", +b.dataset.n === n));
+  document.body.classList.toggle("select", selOn); selBtn.classList.toggle("on", selOn);
+  document.body.classList.toggle("zoom", zoomOn); zoomBtn.classList.toggle("on", zoomOn);
+  document.body.classList.toggle("wheels", whBox.checked);
+  const lh = Math.floor(root.clientHeight / n); root.style.setProperty("--lh", lh + "px");    // text and buttons scale with the lane height
+  try { localStorage.setItem("rxshown", JSON.stringify(shown)); } catch (e) {}
+}
+document.querySelectorAll("#count button").forEach(b => b.onclick = () => { const n = +b.dataset.n; shown = [0, 1, 2, 3].map(i => i < n); applyLayout(); });
+document.querySelectorAll("#pick button").forEach((b, i) => b.onclick = () => { const t = shown.slice(); t[i] = !t[i]; if (t.some(Boolean)) { shown = t; applyLayout(); } });
+const fsBtn = document.getElementById("fsbtn");
+fsBtn.onclick = () => { const de = document.documentElement; try { if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document); else (de.requestFullscreen || de.webkitRequestFullscreen).call(de); } catch (e) {} };
+document.addEventListener("fullscreenchange", () => fsBtn.classList.toggle("on", !!document.fullscreenElement));
+zoomBtn.onclick = () => { zoomOn = !zoomOn; for (const d of decks) d.zkey = null; try { localStorage.setItem("rxzm", zoomOn ? 1 : 0); } catch (e) {} applyLayout(); };
+selBtn.onclick = () => { selOn = !selOn; try { localStorage.setItem("rxsel", selOn ? 1 : 0); } catch (e) {} applyLayout(); };
+whBox.onchange = () => { try { localStorage.setItem("rxwheel", whBox.checked ? 1 : 0); } catch (e) {} applyLayout(); };
+window.addEventListener("resize", applyLayout);
+if (window.ResizeObserver) new ResizeObserver(applyLayout).observe(root);
+applyLayout();
+
+// ---- touching a lane: the engine decides what it does. SPIN lane: vinyl = touch holds + drag scratches, CDJ = drag nudges.
+// PITCH lane: drag sideways = tempo (the lane's full width = 16 %, right = faster), double tap = pitch back to 0.
+for (const d of decks) {
+  const c = d.main, n = d.i + 1;
+  try { if (localStorage.getItem("rxlane" + n) === "pitch") d.lane = "pitch"; } catch (x) {}
+  const paintLane = () => { d.laneBtn.textContent = d.lane === "pitch" ? "PITCH" : "SPIN"; d.laneBtn.classList.toggle("pitch", d.lane === "pitch"); c.classList.toggle("pitch", d.lane === "pitch"); };
+  d.laneBtn.addEventListener("click", e => { d.lane = d.lane === "pitch" ? "spin" : "pitch"; try { localStorage.setItem("rxlane" + n, d.lane); } catch (x) {} paintLane(); });
+  paintLane();
+  let lastTap = 0;
+  c.addEventListener("pointerdown", e => {
+    if (d.drag !== null) return;
+    d.drag = e.pointerId; d.lx = e.clientX; try { c.setPointerCapture(e.pointerId); } catch (x) {} c.classList.add("drag");
+    if (d.lane === "pitch") {
+      send("Q " + n);
+      const t = performance.now(); if (t - lastTap < 350) send("B " + n + " rate_set_default 1");
+      lastTap = t;
+    } else send("D " + n);
+    e.preventDefault();
+  });
+  c.addEventListener("pointermove", e => {
+    if (d.drag !== e.pointerId) return;
+    const dx = e.clientX - d.lx; d.lx = e.clientX;
+    if (!dx) return;
+    const W = c.getBoundingClientRect().width || 1;
+    if (d.lane === "pitch") { send("P " + n + " " + (dx / W * 0.16).toFixed(5)); e.preventDefault(); return; }
+    const rev = -(dx / W * ZOOMS[zi]) / SEC_PER_REV;       // content follows the finger: drag left = forward in time
+    send("M " + n + " " + rev.toFixed(5));
+    e.preventDefault();
+  });
+  const up = e => { if (d.drag !== e.pointerId) return; d.drag = null; c.classList.remove("drag"); if (d.lane !== "pitch") send("U " + n); };
+  c.addEventListener("pointerup", up); c.addEventListener("pointercancel", up); c.addEventListener("lostpointercapture", up);
+
+  const wl = d.wheel;                                      // the jog ring: turn it with a finger like the real one
+  wl.addEventListener("pointerdown", e => {
+    if (d.drag !== null) return;
+    const r = wl.getBoundingClientRect(); d.cx = r.left + r.width / 2; d.cy = r.top + r.height / 2;
+    d.drag = e.pointerId; d.la = Math.atan2(e.clientY - d.cy, e.clientX - d.cx); try { wl.setPointerCapture(e.pointerId); } catch (x) {} wl.classList.add("drag");
+    send("D " + n); e.preventDefault();
+  });
+  wl.addEventListener("pointermove", e => {
+    if (d.drag !== e.pointerId) return;
+    const a = Math.atan2(e.clientY - d.cy, e.clientX - d.cx); let da = a - d.la; d.la = a;
+    if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI;
+    if (da) send("M " + n + " " + (da / (2 * Math.PI)).toFixed(5));   // clockwise = forward
+    e.preventDefault();
+  });
+  const wup = e => { if (d.drag !== e.pointerId) return; d.drag = null; wl.classList.remove("drag"); send("U " + n); };
+  wl.addEventListener("pointerup", wup); wl.addEventListener("pointercancel", wup); wl.addEventListener("lostpointercapture", wup);
+
+  d.btn.forEach(b => {
+    const name = b.dataset.b; if (!name) return;
+    if (b.dataset.hold) {                                  // CUE: 1 on press, 0 on release, like the hardware
+      b.addEventListener("pointerdown", e => { try { b.setPointerCapture(e.pointerId); } catch (x) {} send("B " + n + " " + name + " 1"); e.preventDefault(); });
+      const r = () => send("B " + n + " " + name + " 0");
+      b.addEventListener("pointerup", r); b.addEventListener("pointercancel", r);
+    } else if (b.dataset.trig) {
+      b.addEventListener("pointerdown", e => { send("B " + n + " " + name + " 1"); e.preventDefault(); });
+    } else {
+      b.addEventListener("pointerdown", e => { const s = d.s; const cur = !!(s && ({ play: s.pl, sync_master: s.sm, quantize: s.qn, keylock: s.kl, vinyl_mode: s.vin })[name]); send("B " + n + " " + name + " " + (cur ? 0 : 1)); e.preventDefault(); });
+    }
+  });
+}
+
+// ---- the ZOOM view: two fingers pinch/drag (or the mouse wheel) like a photo; one finger pans; with SELECT on a tap sends the playhead there
+const MINSPAN = 1.0;
+function clampView(d, s) {
+  const dur = Math.max(1, s.dur);
+  d.vs = Math.max(Math.min(MINSPAN, dur), Math.min(dur, d.vs));
+  d.v0 = Math.max(0, Math.min(dur - d.vs, d.v0));
+}
+function zoomAt(d, s, tAnchor, fx, factor) {              // keep the time under the finger/cursor (fraction fx of the width) where it is
+  d.vs *= factor; d.v0 = tAnchor - fx * d.vs; clampView(d, s);
+}
+for (const d of decks) {
+  const c = d.main, n = d.i + 1, pts = new Map();
+  let tap = null, pinch = null;
+  c.addEventListener("wheel", e => {
+    if (!zoomOn || !d.s || !d.s.ld) return;
+    e.preventDefault();
+    const r = c.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width;
+    zoomAt(d, d.s, d.v0 + fx * d.vs, fx, Math.exp(e.deltaY * 0.0015));
+  }, { passive: false });
+  c.addEventListener("pointerdown", e => {
+    if (!zoomOn) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try { c.setPointerCapture(e.pointerId); } catch (x) {}
+    if (pts.size === 1) tap = { x: e.clientX, y: e.clientY, t: performance.now(), moved: false };
+    else { tap = null; const [a, b] = [...pts.values()]; pinch = { dist: Math.hypot(a.x - b.x, a.y - b.y) || 1 }; }
+    e.stopImmediatePropagation(); e.preventDefault();
+  }, true);
+  c.addEventListener("pointermove", e => {
+    if (!zoomOn || !pts.has(e.pointerId) || !d.s || !d.s.ld) return;
+    const r = c.getBoundingClientRect(), p = pts.get(e.pointerId), px = p.x;
+    p.x = e.clientX; p.y = e.clientY;
+    if (pts.size >= 2) {                                   // pinch: spread = zoom in, and the middle between the fingers pans
+      const [a, b] = [...pts.values()], dist = Math.hypot(a.x - b.x, a.y - b.y) || 1, mid = ((a.x + b.x) / 2 - r.left) / r.width;
+      if (pinch) zoomAt(d, d.s, d.v0 + mid * d.vs, mid, pinch.dist / dist);
+      if (pinch) pinch.dist = dist;
+    } else {
+      if (tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 8) tap.moved = true;
+      if (tap && tap.moved) { d.v0 -= (e.clientX - px) / r.width * d.vs; clampView(d, d.s); }
+    }
+    e.stopImmediatePropagation(); e.preventDefault();
+  }, true);
+  const zup = e => {
+    if (!zoomOn || !pts.has(e.pointerId)) return;
+    const r = c.getBoundingClientRect();
+    if (tap && !tap.moved && pts.size === 1 && performance.now() - tap.t < 450 && selOn && d.s && d.s.ld) {
+      const t = d.v0 + (e.clientX - r.left) / r.width * d.vs;      // SELECT + ZOOM: a tap puts the playhead there
+      send("G " + n + " " + Math.max(0, Math.min(d.s.dur, t)).toFixed(3));
+    }
+    pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (pts.size === 0) tap = null;
+    e.stopImmediatePropagation();
+  };
+  c.addEventListener("pointerup", zup, true); c.addEventListener("pointercancel", zup, true);
+}
+</script>
+</body>
+</html>

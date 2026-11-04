@@ -1,0 +1,510 @@
+<title>reMixXXL UI Editor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a dark workbench. The real 1280 x 628 page sits on the left, scaled to fit; the inspector sits on the right and drops under it on a phone. Orange is the CDJ's cue ring, used only for selection. */
+:root{
+  --bg:#121315; --panel:#1b1d20; --panel2:#24272b; --line:#34383d; --fg:#e9eaec; --dim:#9aa0a8;
+  --accent:#d9733f; --accent-ink:#1a0d06; --ok:#5fb37c; --warn:#d9a53f; --bad:#d9594f;
+  --ui:"Titillium Web",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.35 var(--ui);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;
+  display:flex;flex-direction:column;gap:10px;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;min-height:36px}
+button:hover{border-color:#5a6068}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+button.on{border-color:var(--accent);color:var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.brand{font-weight:700;font-size:20px;letter-spacing:.01em}
+.brand small{font-weight:400;color:var(--dim);font-size:13px;margin-left:8px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{border-radius:6px 6px 0 0;border-bottom:2px solid transparent;background:transparent;font-weight:600;letter-spacing:.04em}
+.tabs button.cur{border-bottom-color:var(--accent);color:var(--accent);background:var(--panel)}
+.spacer{flex:1}
+.stat{font-size:13px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.stat i{width:8px;height:8px;border-radius:50%;background:var(--warn);display:inline-block}
+.stat.ok i{background:var(--ok)} .stat.bad i{background:var(--bad)}
+.work{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;min-height:0;flex:1}
+@media(max-width:900px){.work{grid-template-columns:minmax(0,1fr)}}
+.stage{display:flex;flex-direction:column;gap:8px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.bar .grp{display:flex;gap:4px;align-items:center;padding-right:8px;margin-right:2px;border-right:1px solid var(--line)}
+.bar .grp:last-child{border-right:0}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.lbtn{display:inline-flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;min-height:36px;font-size:15px;text-transform:none;letter-spacing:0;color:var(--fg)}
+.lbtn:hover{border-color:#5a6068}
+.bar label.lbtn{font-size:15px;color:var(--fg);text-transform:none;letter-spacing:0}
+.viewport.drop{outline:2px dashed var(--accent)}
+.bar label{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.viewport{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#0b0c0d;max-height:calc(100vh - 190px);min-height:240px}
+.sizer{position:relative}
+.cv{position:absolute;left:0;top:0;width:1280px;height:628px;transform-origin:0 0;background:#222 center/100% 100% no-repeat;overflow:hidden;touch-action:none;user-select:none}
+.cv.grid::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(to right,rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.07) 1px,transparent 1px);background-size:var(--g) var(--g)}
+.it{position:absolute;cursor:move;touch-action:none}
+.it>img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
+.it.sel{outline:2px solid var(--accent);outline-offset:0;z-index:5000}
+.it:hover:not(.sel){outline:1px dashed rgba(217,115,63,.8)}
+.it.moved::before{content:"";position:absolute;inset:0;box-shadow:0 0 0 1px rgba(95,179,124,.9) inset;pointer-events:none}
+.it.noimg{border:1px dashed #777;background:rgba(255,255,255,.05)}
+.it .tx{position:absolute;inset:0;display:flex;align-items:center;white-space:nowrap;font-family:var(--ui);font-weight:700;color:#f0f0f0;pointer-events:none}
+.it.btn{background:linear-gradient(#383c42,#23262a);border:1px solid #55595f;border-radius:5px;box-shadow:0 2px 0 #0b0b0c}
+.it.btn .tx{justify-content:center}
+.it.knob .kn{position:absolute;left:50%;top:0;transform:translateX(-50%);aspect-ratio:1;height:72%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a4e54,#17181a);border:2px solid #5b6066}
+.it.knob .kn::after{content:"";position:absolute;left:50%;top:6%;width:3px;height:30%;background:var(--accent);transform:translateX(-50%)}
+.it.knob .tx{top:auto;height:28%;justify-content:center;font-weight:600;font-size:18px}
+.it.slider{background:#0e0f10;border:1px solid #3a3d41;border-radius:4px}
+.it.slider::after{content:"";position:absolute;background:linear-gradient(#cfd2d6,#6c7076);border-radius:3px}
+.it.slider.v::after{left:10%;right:10%;top:calc(50% - 14px);height:28px}
+.it.slider.h::after{top:10%;bottom:10%;left:calc(50% - 14px);width:28px}
+.it.box{background:#000}
+.it.txt .tx{position:absolute}
+.hd{position:absolute;width:14px;height:14px;background:var(--accent);border:2px solid #fff;border-radius:3px;z-index:6000;touch-action:none}
+.ghost{position:absolute;border:1px dashed rgba(255,255,255,.55);pointer-events:none;z-index:4000}
+.insp{display:flex;flex-direction:column;gap:10px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.card h2{margin:0;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.sel-name{font-weight:700;font-size:17px;overflow-wrap:anywhere}
+.sel-sub{font-size:12px;color:var(--dim);font-family:var(--mono);overflow-wrap:anywhere}
+.xy{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.xy label,.f label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;display:flex;flex-direction:column;gap:3px}
+input[type=number],input[type=text],textarea,select{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:6px 8px;width:100%;min-width:0;font-family:var(--mono);font-size:14px}
+textarea{font-family:var(--ui);resize:vertical;min-height:58px}
+.f{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.list{max-height:240px;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.list button{display:flex;justify-content:space-between;gap:8px;text-align:left;border:0;background:transparent;padding:4px 6px;min-height:28px;border-radius:4px;font-size:13px}
+.list button.cur{background:var(--panel2);color:var(--accent)}
+.list button span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .k{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.list .del{opacity:.5;text-decoration:line-through}
+.hint{font-size:12.5px;color:var(--dim)}
+.hint b{color:var(--fg);font-weight:600}
+kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:0 4px}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:14px;z-index:99999;max-width:90vw}
+</style>
+
+<header class="top">
+  <div class="brand">reMixXXL UI Editor<small>1280 × 628 · the real pages</small></div>
+  <nav class="tabs" id="tabs" aria-label="Pages"></nav>
+  <div class="spacer"></div>
+  <div class="stat" id="stat"><i></i><span>Starting…</span></div>
+</header>
+
+<div class="work">
+  <section class="stage">
+    <div class="bar">
+      <div class="grp"><label>Add</label>
+        <button id="aBtn">Button</button><button id="aSld">Slider</button><button id="aKnb">Knob</button>
+        <button id="aTxt">Text</button><button id="aBox">Box</button><label class="lbtn" for="file" id="aImg" tabindex="0">Picture…</label>
+        <input type="file" id="file" accept="image/*" multiple class="vh">
+      </div>
+      <div class="grp"><button id="undo" title="Ctrl+Z">Undo</button><button id="redo" title="Ctrl+Y">Redo</button></div>
+      <div class="grp"><label for="snap">Snap</label>
+        <select id="snap"><option value="1">1 px</option><option value="2">2 px</option><option value="4">4 px</option><option value="8">8 px</option><option value="16">16 px</option></select>
+        <button id="gridB">Grid</button><button id="ghostB">Originals</button>
+      </div>
+      <div class="grp"><button id="zout">−</button><button id="zfit">Fit</button><button id="zin">+</button><span class="hint" id="zv"></span></div>
+      <div class="grp"><button id="saveF" class="primary">Save file</button><label class="lbtn" for="jfile" id="loadF" tabindex="0">Open file…</label>
+        <input type="file" id="jfile" accept=".json,application/json" class="vh"></div>
+    </div>
+    <div class="viewport" id="vp"><div class="sizer" id="sz"><div class="cv" id="cv"></div></div></div>
+    <div class="hint"><b>Pictures:</b> press Picture…, or paste one with <kbd>Ctrl</kbd>+<kbd>V</kbd>, or drop image files on the page. <b>Text:</b> double-click a part, or type in the Text box on the right. <b>Drag</b> a part to move it, drag the orange squares to resize. <kbd>Shift</kbd>+click selects several. Arrow keys nudge 1 px (<kbd>Shift</kbd> 10). <kbd>Del</kbd> removes, <kbd>Ctrl</kbd>+<kbd>D</kbd> copies. Green outline = moved from the original place.</div>
+  </section>
+
+  <aside class="insp">
+    <div class="card" id="selCard">
+      <h2>Selected</h2>
+      <div id="selBody" class="hint">Tap a part on the page.</div>
+    </div>
+    <div class="card">
+      <h2>On this page</h2>
+      <div class="list" id="list"></div>
+      <div class="row"><button id="resetPage">Put this page back</button></div>
+    </div>
+  </aside>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const W = DATA.size[0], H = DATA.size[1], MINPX = DATA.min_text_px || 26;
+const LS = "rx-ui-layout-v1";
+const $ = s => document.querySelector(s);
+const NAMES = DATA.pages.map(p => p.name);
+
+// ---------- model
+let L = {};            // page name -> [item]
+let cur = NAMES[0], sel = new Set(), zoom = 1, fitZoom = true, showGrid = false, showGhost = false;
+let undoS = [], redoS = [], dbRef = null, assets = null, downloads = null, saveTimer = 0, seq = 1;
+
+function baseItems() {
+  const out = {};
+  for (const p of DATA.pages) out[p.name] = p.elements.map((e, i) => ({
+    id: e.id, kind: e.kind, name: e.name, key: e.key || "", label: e.label || "", px: e.px || null, note: "",
+    x: e.x, y: e.y, w: e.w, h: e.h, ox: e.x, oy: e.y, ow: e.w, oh: e.h, img: e.img || "", deleted: false, added: false,
+    decks: e.decks || [], z: i
+  }));
+  return out;
+}
+L = baseItems();
+
+function serialize() {
+  const pages = {};
+  for (const n of NAMES) pages[n] = L[n].map(i => {
+    const o = { id: i.id, kind: i.kind, name: i.name, key: i.key, x: i.x, y: i.y, w: i.w, h: i.h, deleted: i.deleted };
+    if (!i.added) { o.orig = [i.ox, i.oy, i.ow, i.oh]; if (i.decks.length) o.decks = i.decks; }
+    if (i.label !== (origLabel(n, i.id))) o.label = i.label;
+    if (i.px) o.px = i.px;
+    if (i.note) o.note = i.note;
+    if (i.added) { o.added = true; o.z = i.z; if (i.orient) o.orient = i.orient; if (i.src) o.src = i.src; }
+    return o;
+  });
+  return { app: "reMixXXL UI editor", version: 1, plugin: "reMixXXL", size: [W, H], savedAt: new Date().toISOString(), pages };
+}
+const origLabels = {};
+for (const p of DATA.pages) for (const e of p.elements) origLabels[p.name + "|" + e.id] = e.label || "";
+function origLabel(page, id) { return origLabels[page + "|" + id] ?? ""; }
+
+function applyLayout(j) {
+  const base = baseItems();
+  for (const n of NAMES) {
+    const saved = (j.pages && j.pages[n]) || [];
+    const byId = Object.fromEntries(base[n].map(i => [i.id, i]));
+    const out = base[n].slice();
+    for (const s of saved) {
+      if (s.added) {
+        out.push({ id: s.id, kind: s.kind, name: s.name, key: s.key || "", label: s.label || "", px: s.px || null, note: s.note || "",
+          x: s.x, y: s.y, w: s.w, h: s.h, ox: s.x, oy: s.y, ow: s.w, oh: s.h, img: "", src: s.src || "", orient: s.orient, deleted: !!s.deleted,
+          added: true, decks: [], z: s.z || 9999 });
+      } else if (byId[s.id]) {
+        const i = byId[s.id];
+        i.x = s.x; i.y = s.y; i.w = s.w; i.h = s.h; i.deleted = !!s.deleted;
+        if (s.label !== undefined) i.label = s.label;
+        if (s.px) i.px = s.px;
+        if (s.note) i.note = s.note;
+      }
+    }
+    L[n] = out;
+  }
+}
+
+// ---------- persistence
+function setStat(kind, text) { const s = $("#stat"); s.className = "stat " + (kind || ""); s.lastElementChild.textContent = text; }
+function toast(t) { const e = $("#toast"); e.textContent = t; e.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => e.hidden = true, 2600); }
+function queueSave() { setStat("", "Unsaved changes…"); clearTimeout(saveTimer); saveTimer = setTimeout(save, 700); }
+async function save() {
+  const j = serialize(), txt = JSON.stringify(j);
+  let local = false, remote = false;
+  try { localStorage.setItem(LS, txt); local = true; } catch (e) {}
+  if (dbRef) { try { await dbRef.set({ json: txt, savedAt: j.savedAt }); remote = true; } catch (e) { console.warn("db save", e); } }
+  if (remote) setStat("ok", "Saved — it stays, and Claude can read it");
+  else if (local) setStat("", "Saved in this browser only — use Save file");
+  else setStat("bad", "Not saved — use Save file");
+}
+
+// ---------- history
+function snap() { undoS.push(JSON.stringify(serialize().pages)); if (undoS.length > 120) undoS.shift(); redoS = []; syncUR(); }
+function restore(txt) { applyLayout({ pages: JSON.parse(txt) }); sel.clear(); render(); queueSave(); }
+function undo() { if (!undoS.length) return; redoS.push(JSON.stringify(serialize().pages)); restore(undoS.pop()); syncUR(); }
+function redo() { if (!redoS.length) return; undoS.push(JSON.stringify(serialize().pages)); restore(redoS.pop()); syncUR(); }
+function syncUR() { $("#undo").disabled = !undoS.length; $("#redo").disabled = !redoS.length; }
+
+// ---------- rendering
+const cv = $("#cv"), vp = $("#vp"), sz = $("#sz");
+function items() { return L[cur]; }
+function byId(id) { return items().find(i => i.id === id); }
+function movable(i) { return !i.deleted; }
+function canResize(i) { return !(i.kind === "part" || (i.kind === "text")); }
+
+function itemEl(i) {
+  const d = document.createElement("div");
+  d.className = "it " + i.kind + (sel.has(i.id) ? " sel" : "") + ((i.x !== i.ox || i.y !== i.oy || i.w !== i.ow || i.h !== i.oh) && !i.added ? " moved" : "");
+  d.dataset.id = i.id;
+  d.style.cssText = "left:" + i.x + "px;top:" + i.y + "px;width:" + i.w + "px;height:" + i.h + "px;z-index:" + i.z;
+  const px = i.px || 28;
+  if (i.added) {
+    if (i.kind === "image") { const im = document.createElement("img"); im.src = i.src || i.img; d.appendChild(im); }
+    else if (i.kind === "button") { d.classList.add("btn"); d.innerHTML = '<div class="tx" style="font-size:' + px + 'px"></div>'; d.firstChild.textContent = i.label; }
+    else if (i.kind === "slider") { d.classList.add(i.orient === "h" ? "h" : "v"); }
+    else if (i.kind === "knob") { d.innerHTML = '<div class="kn"></div><div class="tx"></div>'; d.lastChild.textContent = i.label; }
+    else if (i.kind === "text") { d.classList.add("txt"); d.innerHTML = '<div class="tx" style="font-size:' + px + 'px"></div>'; d.firstChild.textContent = i.label; }
+    else if (i.kind === "box") { /* black */ }
+  } else if (i.kind === "text") {
+    d.classList.add("txt");
+    d.innerHTML = '<div class="tx" style="font-size:' + px + 'px;font-weight:700"></div>';
+    d.firstChild.textContent = i.label;
+    d.style.width = "auto"; d.style.minWidth = i.w + "px";
+  } else if (i.label && i.label !== origLabel(cur, i.id) && ["button", "option", "field", "row", "readout", "knob"].includes(i.kind)) {
+    if (i.kind === "knob") { d.innerHTML = '<div class="kn"></div><div class="tx"></div>'; d.lastChild.textContent = i.label; d.classList.add("knob"); }
+    else if (i.kind === "readout") { d.classList.add("txt"); d.innerHTML = '<div class="tx" style="font-size:' + px + 'px"></div>'; d.firstChild.textContent = i.label; }
+    else { d.classList.add("btn"); d.innerHTML = '<div class="tx" style="font-size:' + px + 'px"></div>'; d.firstChild.textContent = i.label; }
+  } else if (i.img) { const im = document.createElement("img"); im.src = i.img; d.appendChild(im); }
+  else d.classList.add("noimg");
+  if (i.deleted) d.style.display = "none";
+  return d;
+}
+function render() {
+  cv.style.backgroundImage = "url(" + DATA.bg + ")";
+  cv.replaceChildren();
+  for (const i of items().slice().sort((a, b) => a.z - b.z)) {
+    if (showGhost && !i.deleted && (i.x !== i.ox || i.y !== i.oy) && !i.added) {
+      const g = document.createElement("div"); g.className = "ghost";
+      g.style.cssText = "left:" + i.ox + "px;top:" + i.oy + "px;width:" + i.ow + "px;height:" + i.oh + "px"; cv.appendChild(g);
+    }
+    cv.appendChild(itemEl(i));
+  }
+  const one = [...sel].map(byId).filter(Boolean);
+  if (one.length === 1 && canResize(one[0]) && !one[0].deleted) addHandles(one[0]);
+  cv.classList.toggle("grid", showGrid); cv.style.setProperty("--g", snapPx() + "px");
+  renderList(); renderSel(); layoutZoom();
+}
+function addHandles(i) {
+  for (const h of ["nw", "n", "ne", "e", "se", "s", "sw", "w"]) {
+    const e = document.createElement("div"); e.className = "hd"; e.dataset.h = h;
+    const cx = h.includes("w") ? i.x : h.includes("e") ? i.x + i.w : i.x + i.w / 2;
+    const cy = h.includes("n") ? i.y : h.includes("s") ? i.y + i.h : i.y + i.h / 2;
+    e.style.cssText = "left:" + (cx - 7) + "px;top:" + (cy - 7) + "px;cursor:" + h + "-resize";
+    cv.appendChild(e);
+  }
+}
+function renderList() {
+  const l = $("#list"); l.replaceChildren();
+  for (const i of items().slice().sort((a, b) => a.y - b.y || a.x - b.x)) {
+    const b = document.createElement("button"); b.className = (sel.has(i.id) ? "cur " : "") + (i.deleted ? "del" : "");
+    const a = document.createElement("span"); a.textContent = (i.added ? "+ " : "") + (i.kind === "text" ? "“" + i.label + "”" : i.label && i.added ? i.label : i.name);
+    const k = document.createElement("span"); k.className = "k"; k.textContent = i.kind + (i.decks.length > 1 ? " ×" + i.decks.length : "");
+    b.append(a, k); b.onclick = () => { sel = new Set([i.id]); render(); }; l.appendChild(b);
+  }
+}
+function renderSel() {
+  const b = $("#selBody"), s = [...sel].map(byId).filter(Boolean);
+  if (!s.length) { b.className = "hint"; b.textContent = "Tap a part on the page, or pick one from the list. Add buttons, sliders, knobs, texts or pictures with the Add buttons."; return; }
+  b.className = "f"; b.replaceChildren();
+  if (s.length > 1) { b.innerHTML = '<div class="sel-name">' + s.length + ' parts selected</div><div class="hint">Drag or nudge them together.</div>'; rowBtns(b, s); return; }
+  const i = s[0];
+  const nm = document.createElement("div"); nm.className = "sel-name"; nm.textContent = i.added ? (i.label || "new " + i.kind) : i.name; b.appendChild(nm);
+  const sub = document.createElement("div"); sub.className = "sel-sub";
+  sub.textContent = i.id + " · " + i.kind + (i.key ? " · " + i.key : "") + (i.decks.length > 1 ? " · one per deck (all four move together)" : "") + (i.added ? " · NEW" : "");
+  b.appendChild(sub);
+  const xy = document.createElement("div"); xy.className = "xy";
+  for (const [k, lab] of [["x", "X"], ["y", "Y"], ["w", "W"], ["h", "H"]]) {
+    const l = document.createElement("label"); l.textContent = lab;
+    const n = document.createElement("input"); n.type = "number"; n.value = i[k]; n.id = "f_" + k;
+    if ((k === "w" || k === "h") && !canResize(i)) n.disabled = true;
+    n.onchange = () => { snap(); setGeom(i, k, parseInt(n.value || "0", 10)); render(); queueSave(); };
+    l.appendChild(n); xy.appendChild(l);
+  }
+  b.appendChild(xy);
+  if (i.kind !== "box" && i.kind !== "part" && i.kind !== "image" || i.added || i.kind === "text") {
+    const f = document.createElement("div"); f.className = "f";
+    const l = document.createElement("label"); l.textContent = i.kind === "image" ? "Picture name" : (i.added || i.kind === "text") ? "Text on it" : "Text (replaces the printed one)";
+    const t = document.createElement("input"); t.type = "text"; t.id = "f_label"; t.value = i.label || (i.added ? "" : (i.kind === "text" ? "" : i.name.replace(/^d\*_/, "").replace(/_/g, " ").toUpperCase()));
+    t.oninput = () => { i.label = t.value; const e = cv.querySelector('[data-id="' + i.id + '"] .tx'); if (e) e.textContent = i.label; else render(); queueSave(); };
+    t.onfocus = () => snap(); l.appendChild(t); f.appendChild(l);
+    if (i.kind !== "image" && i.kind !== "box" && i.kind !== "slider" && i.kind !== "part") {
+      const l2 = document.createElement("label"); l2.textContent = "Letter size (px, not under " + MINPX + ")";
+      const p = document.createElement("input"); p.type = "number"; p.id = "f_px"; p.min = MINPX; p.value = i.px || 28;
+      p.onchange = () => { snap(); i.px = Math.max(MINPX, parseInt(p.value || MINPX, 10)); render(); queueSave(); };
+      l2.appendChild(p); f.appendChild(l2);
+    }
+    if (i.kind === "slider") {
+      const l3 = document.createElement("label"); l3.textContent = "Direction";
+      const o = document.createElement("select"); o.id = "f_orient";
+      o.innerHTML = '<option value="v">Up and down</option><option value="h">Left and right</option>'; o.value = i.orient === "h" ? "h" : "v";
+      o.onchange = () => { snap(); i.orient = o.value; if ((o.value === "h") !== (i.w > i.h)) { const t_ = i.w; i.w = i.h; i.h = t_; } render(); queueSave(); };
+      l3.appendChild(o); f.appendChild(l3);
+    }
+    b.appendChild(f);
+  }
+  const nl = document.createElement("label"); nl.className = "f"; nl.style.gap = "3px";
+  nl.innerHTML = '<span style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em">What should it control?</span>';
+  const ta = document.createElement("textarea"); ta.id = "f_note"; ta.value = i.note; ta.placeholder = i.added ? "e.g. deck 1 loop size, 8 beats" : "optional note for Claude";
+  ta.oninput = () => { i.note = ta.value; queueSave(); }; ta.onfocus = () => snap(); nl.appendChild(ta); b.appendChild(nl);
+  rowBtns(b, [i]);
+}
+function rowBtns(b, s) {
+  const r = document.createElement("div"); r.className = "row";
+  const mk = (t, fn, cls) => { const x = document.createElement("button"); x.textContent = t; if (cls) x.className = cls; x.onclick = fn; r.appendChild(x); };
+  mk("Copy", () => dupSel());
+  mk("Front", () => { snap(); const m = Math.max(...items().map(q => q.z)) + 1; s.forEach((q, n) => q.z = m + n); render(); queueSave(); });
+  mk("Back", () => { snap(); const m = Math.min(...items().map(q => q.z)) - 1; s.forEach((q, n) => q.z = m - n); render(); queueSave(); });
+  if (s.length === 1 && !s[0].added && (s[0].x !== s[0].ox || s[0].y !== s[0].oy || s[0].w !== s[0].ow || s[0].h !== s[0].oh))
+    mk("Original place", () => { snap(); const q = s[0]; q.x = q.ox; q.y = q.oy; q.w = q.ow; q.h = q.oh; render(); queueSave(); });
+  if (s.every(q => q.deleted)) mk("Restore", () => { snap(); s.forEach(q => q.deleted = false); render(); queueSave(); });
+  else mk("Delete", () => delSel());
+  b.appendChild(r);
+}
+
+// ---------- editing
+function snapPx() { return parseInt($("#snap").value, 10) || 1; }
+function clamp(i) { i.w = Math.max(8, Math.min(W, i.w)); i.h = Math.max(8, Math.min(H, i.h)); i.x = Math.max(0, Math.min(W - i.w, i.x)); i.y = Math.max(0, Math.min(H - i.h, i.y)); }
+function setGeom(i, k, v) { i[k] = v; if (k === "w" || k === "h") { if (!canResize(i)) return; } clamp(i); }
+function delSel() { snap(); for (const id of sel) { const i = byId(id); if (!i) continue; if (i.added) L[cur] = L[cur].filter(q => q !== i); else i.deleted = true; } sel.clear(); render(); queueSave(); }
+function dupSel() {
+  snap(); const ns = new Set();
+  for (const id of sel) {
+    const i = byId(id); if (!i) continue;
+    const c = Object.assign({}, i, { id: cur.toLowerCase() + ".n" + Date.now().toString(36) + (seq++), added: true, x: Math.min(W - i.w, i.x + 16), y: Math.min(H - i.h, i.y + 16),
+      z: Math.max(...items().map(q => q.z)) + 1, deleted: false, note: i.note, src: i.src || (i.added ? "" : ""), name: i.added ? i.name : "copy of " + i.name, decks: [] });
+    if (!i.added && i.kind !== "text") { c.kind = i.kind === "readout" || i.kind === "field" || i.kind === "row" || i.kind === "option" || i.kind === "part" ? "box" : i.kind; }
+    if (!i.added && i.img) { c.kind = "image"; c.src = i.img; c.label = i.name; }
+    L[cur].push(c); ns.add(c.id);
+  }
+  sel = ns; render(); queueSave();
+}
+function addItem(kind) {
+  snap();
+  const d = { button: [148, 60, "BUTTON"], slider: [48, 190, ""], knob: [96, 100, "KNOB"], text: [180, 36, "TEXT"], box: [200, 100, ""] }[kind];
+  const vr = vp.getBoundingClientRect();
+  const cx = Math.round((vp.scrollLeft + 40) / zoom), cy = Math.round((vp.scrollTop + 70) / zoom);
+  const i = { id: cur.toLowerCase() + ".n" + Date.now().toString(36) + (seq++), kind, name: "new " + kind, key: "", label: d[2], px: ["button", "knob", "text"].includes(kind) ? 28 : null,
+    note: "", x: cx, y: cy, w: d[0], h: d[1], ox: cx, oy: cy, ow: d[0], oh: d[1], img: "", added: true, deleted: false, decks: [], z: Math.max(0, ...items().map(q => q.z)) + 1,
+    orient: kind === "slider" ? "v" : undefined };
+  clamp(i); L[cur].push(i); sel = new Set([i.id]); render(); queueSave();
+  toast("Added. Drag it where you want it, then say in the box what it should control.");
+}
+async function addImages(files) {
+  for (const f of files) {
+    try {
+      const url = URL.createObjectURL(f);
+      const im = await new Promise((res, rej) => { const q = new Image(); q.onload = () => res(q); q.onerror = rej; q.src = url; });
+      let w = im.naturalWidth, h = im.naturalHeight; const k = Math.min(1, 1280 / w, 1280 / h); w = Math.round(w * k); h = Math.round(h * k);
+      const c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(im, 0, 0, w, h);
+      const png = !/jpe?g/.test(f.type);
+      const mime = png ? "image/png" : "image/jpeg";
+      const src = c.toDataURL(mime, .92);
+      const nm = (f.name || "pasted picture").replace(/\.[^.]+$/, "");
+      snap();
+      const sc = Math.min(1, 420 / w, 300 / h), dw = Math.round(w * sc), dh = Math.round(h * sc);
+      const i = { id: cur.toLowerCase() + ".n" + Date.now().toString(36) + (seq++), kind: "image", name: nm, key: "", label: nm, px: null, note: "",
+        x: 40, y: 60, w: dw, h: dh, ox: 40, oy: 60, ow: dw, oh: dh, img: "", src, added: true, deleted: false, decks: [], z: Math.max(0, ...items().map(q => q.z)) + 1 };
+      L[cur].push(i); sel = new Set([i.id]); render(); queueSave();
+      toast("Picture added. Drag it where you want it.");
+      if (assets) {                                     // stored with the page in the background: the picture is already on screen
+        c.toBlob(async b => {
+          try { const up = await assets.upload(new File([b], nm + (png ? ".png" : ".jpg"), { type: mime })); if (up && up.url) { i.src = up.url; queueSave(); } }
+          catch (e) { console.warn("asset upload", e); }
+        }, mime, .92);
+      }
+    } catch (e) { toast("Could not read " + (f.name || "that picture")); }
+  }
+}
+document.addEventListener("paste", e => {
+  if (/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const fs = [...(e.clipboardData ? e.clipboardData.items : [])].filter(x => x.kind === "file" && x.type.startsWith("image/")).map(x => x.getAsFile()).filter(Boolean);
+  if (fs.length) { e.preventDefault(); addImages(fs); }
+});
+vp.addEventListener("dragover", e => { e.preventDefault(); vp.classList.add("drop"); });
+vp.addEventListener("dragleave", () => vp.classList.remove("drop"));
+vp.addEventListener("drop", e => { e.preventDefault(); vp.classList.remove("drop"); const fs = [...(e.dataTransfer ? e.dataTransfer.files : [])].filter(x => x.type.startsWith("image/")); if (fs.length) addImages(fs); else toast("Drop an image file."); });
+
+// ---------- pointer interaction
+let drag = null;
+cv.addEventListener("pointerdown", e => {
+  const hd = e.target.closest(".hd"), it = e.target.closest(".it");
+  if (hd) {
+    const i = byId([...sel][0]); if (!i) return; snap();
+    drag = { mode: "rs", h: hd.dataset.h, sx: e.clientX, sy: e.clientY, o: { x: i.x, y: i.y, w: i.w, h: i.h }, i };
+  } else if (it) {
+    const id = it.dataset.id;
+    if (e.shiftKey) { sel.has(id) ? sel.delete(id) : sel.add(id); render(); return; }
+    if (!sel.has(id)) sel = new Set([id]);
+    snap();
+    drag = { mode: "mv", sx: e.clientX, sy: e.clientY, o: [...sel].map(byId).filter(Boolean).map(i => ({ i, x: i.x, y: i.y })) };
+    render();
+  } else { sel.clear(); render(); return; }
+  cv.setPointerCapture(e.pointerId); e.preventDefault();
+});
+cv.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const g = snapPx(), dx = (e.clientX - drag.sx) / zoom, dy = (e.clientY - drag.sy) / zoom, sn = v => Math.round(v / g) * g;
+  if (drag.mode === "mv") {
+    const mdx = sn(dx), mdy = sn(dy);
+    for (const o of drag.o) { o.i.x = o.x + mdx; o.i.y = o.y + mdy; clamp(o.i); }
+  } else {
+    const { i, o, h } = drag; let x = o.x, y = o.y, w = o.w, hh = o.h;
+    if (h.includes("e")) w = sn(o.w + dx); if (h.includes("s")) hh = sn(o.h + dy);
+    if (h.includes("w")) { const nx = sn(o.x + dx); w = o.w + (o.x - nx); x = nx; }
+    if (h.includes("n")) { const ny = sn(o.y + dy); hh = o.h + (o.y - ny); y = ny; }
+    if (w < 8 || hh < 8) return; i.x = x; i.y = y; i.w = w; i.h = hh; clamp(i);
+  }
+  const mv = drag.mode === "mv" ? drag.o.map(o => o.i) : [drag.i];
+  for (const i of mv) { const el = cv.querySelector('[data-id="' + i.id + '"]'); if (el) { el.style.left = i.x + "px"; el.style.top = i.y + "px"; el.style.width = i.w + "px"; el.style.height = i.h + "px"; } }
+  if (drag.mode === "rs") { cv.querySelectorAll(".hd").forEach(x => x.remove()); addHandles(drag.i); }
+});
+const endDrag = () => { if (!drag) return; drag = null; render(); queueSave(); };
+cv.addEventListener("pointerup", endDrag); cv.addEventListener("pointercancel", endDrag);
+document.addEventListener("keydown", e => {
+  if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  const k = e.key;
+  if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === "z") { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === "y") { e.preventDefault(); redo(); return; }
+  if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === "d") { e.preventDefault(); dupSel(); return; }
+  if ((k === "Delete" || k === "Backspace") && sel.size) { e.preventDefault(); delSel(); return; }
+  const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[k];
+  if (d && sel.size) {
+    e.preventDefault(); const s = e.shiftKey ? 10 : 1;
+    if (!nudge.t) snap(); clearTimeout(nudge.t); nudge.t = setTimeout(() => nudge.t = 0, 800);
+    for (const id of sel) { const i = byId(id); if (i) { i.x += d[0] * s; i.y += d[1] * s; clamp(i); } }
+    render(); queueSave();
+  }
+});
+const nudge = { t: 0 };
+
+// ---------- zoom, tabs, buttons
+function layoutZoom() {
+  if (fitZoom) zoom = Math.max(.2, Math.min(2, (vp.clientWidth - 2) / W));
+  sz.style.width = W * zoom + "px"; sz.style.height = H * zoom + "px";
+  cv.style.transform = "scale(" + zoom + ")"; $("#zv").textContent = Math.round(zoom * 100) + "%";
+}
+function buildTabs() {
+  const t = $("#tabs"); t.replaceChildren();
+  for (const n of NAMES) { const b = document.createElement("button"); b.textContent = n; b.className = n === cur ? "cur" : ""; b.onclick = () => { cur = n; sel.clear(); buildTabs(); render(); }; t.appendChild(b); }
+}
+$("#aBtn").onclick = () => addItem("button"); $("#aSld").onclick = () => addItem("slider"); $("#aKnb").onclick = () => addItem("knob");
+$("#aTxt").onclick = () => addItem("text"); $("#aBox").onclick = () => addItem("box");
+$("#file").onchange = e => { addImages([...e.target.files]); e.target.value = ""; };
+$("#undo").onclick = undo; $("#redo").onclick = redo;
+$("#snap").onchange = render;
+$("#gridB").onclick = e => { showGrid = !showGrid; e.target.classList.toggle("on", showGrid); render(); };
+$("#ghostB").onclick = e => { showGhost = !showGhost; e.target.classList.toggle("on", showGhost); render(); };
+$("#zin").onclick = () => { fitZoom = false; zoom = Math.min(2, zoom + .1); render(); };
+$("#zout").onclick = () => { fitZoom = false; zoom = Math.max(.2, zoom - .1); render(); };
+$("#zfit").onclick = () => { fitZoom = true; render(); };
+$("#resetPage").onclick = () => { if (!$("#resetPage").dataset.arm) { $("#resetPage").dataset.arm = 1; $("#resetPage").textContent = "Tap again to put every part back"; setTimeout(() => { delete $("#resetPage").dataset.arm; $("#resetPage").textContent = "Put this page back"; }, 3000); return; }
+  snap(); L[cur] = baseItems()[cur]; sel.clear(); render(); queueSave(); delete $("#resetPage").dataset.arm; $("#resetPage").textContent = "Put this page back"; };
+$("#saveF").onclick = async () => {
+  const txt = JSON.stringify(serialize(), null, 1);
+  if (downloads) { try { await downloads.save({ filename: "reMixXXL_layout.json", data: txt }); toast("Layout file saved."); return; } catch (e) { if (e && e.code === "declined") return; } }
+  try { await navigator.clipboard.writeText(txt); toast("Layout copied to the clipboard."); } catch (e) { toast("Could not save a file here. The layout is still stored with the page."); }
+};
+$("#jfile").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { snap(); applyLayout(JSON.parse(await f.text())); sel.clear(); render(); queueSave(); toast("Layout opened."); } catch (x) { toast("That is not a layout file."); } e.target.value = ""; };
+cv.addEventListener("dblclick", e => { if (e.target.closest(".it")) { const f = $("#f_label"); if (f) { f.focus(); f.select(); } } });
+window.addEventListener("resize", () => { if (fitZoom) layoutZoom(); });
+
+// ---------- start
+(async function start() {
+  buildTabs(); render(); syncUR();
+  let loaded = false;
+  try {
+    if (window.claude && claude.use) {
+      const db = await claude.use("db");
+      if (db) {
+        dbRef = db.collection("layout").doc("current");
+        try { const s = await dbRef.get(); if (s.exists) { const d = s.data(); if (d && d.json) { applyLayout(JSON.parse(d.json)); loaded = true; } } } catch (e) { console.warn(e); }
+      }
+      assets = await claude.use("assets"); downloads = await claude.use("downloads");
+    }
+  } catch (e) { console.warn(e); }
+  if (!loaded) { try { const t = localStorage.getItem(LS); if (t) { applyLayout(JSON.parse(t)); loaded = true; } } catch (e) {} }
+  render();
+  setStat(dbRef ? "ok" : "", loaded ? "Your saved layout is loaded" : dbRef ? "Ready — changes stay and Claude can read them" : "Ready — saves in this browser");
+})();
+</script>
