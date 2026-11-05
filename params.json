@@ -5321,6 +5321,153 @@
    "kind": "knob",
    "ctl": "[Channel4],jog_b",
    "deck": 4
+  },
+  {
+   "key": "mp_row1",
+   "name": "CTRL ROW 1",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_row1"
+  },
+  {
+   "key": "mp_row2",
+   "name": "CTRL ROW 2",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_row2"
+  },
+  {
+   "key": "mp_row3",
+   "name": "CTRL ROW 3",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_row3"
+  },
+  {
+   "key": "mp_row4",
+   "name": "CTRL ROW 4",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_row4"
+  },
+  {
+   "key": "mp_row5",
+   "name": "CTRL ROW 5",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_row5"
+  },
+  {
+   "key": "mp_row6",
+   "name": "CTRL ROW 6",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_row6"
+  },
+  {
+   "key": "mp_sel",
+   "name": "CTRL SELECT",
+   "default": 0,
+   "min": 0,
+   "max": 5,
+   "kind": "int",
+   "display": "int",
+   "ctl": "[reMixXXL],maps_sel"
+  },
+  {
+   "key": "mp_row",
+   "name": "CTRL LIST ROW",
+   "default": 1,
+   "min": 0,
+   "max": 7,
+   "kind": "int",
+   "display": "int",
+   "ctl": "[reMixXXL],maps_row"
+  },
+  {
+   "key": "mp_page",
+   "name": "CTRL PAGE",
+   "default": 0,
+   "min": 0,
+   "max": 999,
+   "kind": "int",
+   "display": "int",
+   "ctl": "[reMixXXL],maps_page"
+  },
+  {
+   "key": "mp_prev",
+   "name": "CTRL PAGE <",
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "trigger",
+   "momentary": true,
+   "ctl": "[reMixXXL],maps_page_prev"
+  },
+  {
+   "key": "mp_next",
+   "name": "CTRL PAGE >",
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "trigger",
+   "momentary": true,
+   "ctl": "[reMixXXL],maps_page_next"
+  },
+  {
+   "key": "mp_load",
+   "name": "CTRL LOAD",
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "trigger",
+   "momentary": true,
+   "ctl": "[reMixXXL],maps_load"
+  },
+  {
+   "key": "mp_none",
+   "name": "CTRL NONE",
+   "default": 0.0,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "trigger",
+   "momentary": true,
+   "ctl": "[reMixXXL],maps_none"
+  },
+  {
+   "key": "mp_status",
+   "name": "CTRL STATUS",
+   "default": 0.0,
+   "min": 0,
+   "max": 0,
+   "kind": "text",
+   "display": "string",
+   "poll": true,
+   "ctl": "[reMixXXL],maps_status"
   }
  ]
 }

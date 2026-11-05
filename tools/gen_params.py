@@ -184,6 +184,18 @@ for n in range(1, 5):
     for k, nm in (("l", "LEFT"), ("r", "RIGHT"), ("t", "TOP"), ("b", "BOTTOM")):
         add("d%d_jog%s" % (n, k), "JOG " + nm, "knob", 0.5, ctl="[Channel%d],jog_%s" % (n, k), deck=n)
 
+# ---- appended in 0.1.13: the CONTROLLERS page (every Mixxx .midi.xml in the Mappings folder: six rows a page, LOAD / NONE, < > pages)
+for i in range(1, 7):
+    add("mp_row%d" % i, "CTRL ROW %d" % i, "text", ctl="[reMixXXL],maps_row%d" % i)
+add("mp_sel", "CTRL SELECT", "int", 0, 0, 5, ctl="[reMixXXL],maps_sel")
+add("mp_row", "CTRL LIST ROW", "int", 1, 0, 7, ctl="[reMixXXL],maps_row", display="int")
+add("mp_page", "CTRL PAGE", "int", 0, 0, 999, ctl="[reMixXXL],maps_page", display="int")
+add("mp_prev", "CTRL PAGE <", "trigger", ctl="[reMixXXL],maps_page_prev")
+add("mp_next", "CTRL PAGE >", "trigger", ctl="[reMixXXL],maps_page_next")
+add("mp_load", "CTRL LOAD", "trigger", ctl="[reMixXXL],maps_load")
+add("mp_none", "CTRL NONE", "trigger", ctl="[reMixXXL],maps_none")
+add("mp_status", "CTRL STATUS", "text", ctl="[reMixXXL],maps_status")
+
 
 def ff(v):
     return "%.6gf" % float(v) if "." in "%.6g" % float(v) or "e" in "%.6g" % float(v) else "%.6g.0f" % float(v)

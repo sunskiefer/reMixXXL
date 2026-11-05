@@ -1,6 +1,6 @@
 # reMixXXL
 
-**Status: 0.1.12, tested on an Akai Force (MPC OS 3.9.1) by the author; new WHEEL page layout from the author's own art; wheel touch (also on a stopped track), ring spin, BPM digits, QR and the companion page work.** Four DJ decks for the Akai Force / MPC OS, as a native
+**Status: 0.1.15 (release). The last version tested on an Akai Force (MPC OS 3.9.1) by the author and recorded in `tested.json` is 0.1.12: new WHEEL page layout from the author's own art; wheel touch (also on a stopped track), ring spin, BPM digits, QR and the companion page work.** Four DJ decks for the Akai Force / MPC OS, as a native
 plugin (VST2 for MPC's own plugin host, packed by [mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins)).
 By L'Cronx.
 
@@ -68,6 +68,9 @@ Text sizes follow the L'Cronx XXL rule: Titillium Web, nothing under 26 px on an
 Bold, button labels 28 px, page names and deck numbers 34 px, knob names 26-28 px SemiBold).
 
 ## MIDI and the MC3000 mapping
+
+0.1.13 (test build): the MAPS page loads any controller map from `Mappings`, and the map builder page (`http://<Force IP>:6731/map`) makes a map for any controller. How: [docs/MAP_BUILDER.md](docs/MAP_BUILDER.md).
+
 
 All MIDI that reaches the plugin's track goes to the engine (no CC / NRPN by the wrapper). The `Mappings` folder of
 the plugin holds Mixxx controller mappings; `Denon MC3000.midi.xml` + `Denon-MC3000-scripts.js` (with

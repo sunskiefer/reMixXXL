@@ -416,7 +416,7 @@ void deck_register_controls(rx_deck_t *d) {
     c->rateRange = reg(d, "rateRange", CK_FLOAT, 0.01, 4.0, 0.10);
     c->rateRange_idx = reg(d, "rateRange_idx", CK_INT, 0, 3, 1);
     c->rateRange_next = reg(d, "rateRange_next", CK_TRIGGER, 0, 1, 0);
-    c->rate_dir = reg(d, "rate_dir", CK_FLOAT, -1, 1, 1);
+    c->rate_dir = reg(d, "rate_dir", CK_FLOAT, -1, 1, -1);      /* Mixxx default: the slider up = slower (the + at the bottom, like a CDJ) */
     c->rate_ratio = reg(d, "rate_ratio", CK_FLOAT, 0, 5, 1);
     c->rate_set_default = reg(d, "rate_set_default", CK_TRIGGER, 0, 1, 0);
     c->rate_temp_up = reg(d, "rate_temp_up", CK_TOGGLE, 0, 1, 0);
@@ -449,7 +449,7 @@ void deck_register_controls(rx_deck_t *d) {
     c->pfl = reg(d, "pfl", CK_TOGGLE, 0, 1, 0);
     c->volume = reg(d, "volume", CK_FLOAT, 0, 1, 1);
     c->pregain = reg(d, "pregain", CK_FLOAT, 0, 4, 1);
-    c->orientation = reg(d, "orientation", CK_INT, 0, 2, 1);
+    c->orientation = reg(d, "orientation", CK_INT, 0, 2, (d->index & 1) ? 2 : 0);   /* decks 1 and 3 on the left of the crossfader, 2 and 4 on the right */
     c->key = reg(d, "key", CK_FLOAT, 0, 24, 0);
     c->key_sync = reg(d, "key_sync", CK_TRIGGER, 0, 1, 0);
     c->cues_dirty = reg(d, "cues_dirty", CK_TOGGLE, 0, 1, 0);
@@ -687,7 +687,7 @@ static void scratch_block(rx_deck_t *d, int frames) {
         ctl_set(d->c.scratch2_enable, 1);
     } else if (req == 2 && d->sc_active) {
         d->sc_ramp = 1; d->sc_ramp_blocks = 0;
-        d->sc_ramp_to = ctlb(d->c.play) ? (1.0 + ctlv(d->c.rate) * ctlv(d->c.rateRange)) * (ctlb(d->c.reverse) ? -1 : 1) : 0.0;
+        d->sc_ramp_to = ctlb(d->c.play) ? (1.0 + ctlv(d->c.rate_dir) * ctlv(d->c.rate) * ctlv(d->c.rateRange)) * (ctlb(d->c.reverse) ? -1 : 1) : 0.0;
     }
     if (!d->sc_active) return;
     int32_t ticks_fp = __atomic_exchange_n(&d->sc_ticks_fp, 0, __ATOMIC_ACQ_REL);

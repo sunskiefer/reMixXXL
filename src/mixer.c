@@ -164,7 +164,7 @@ void mixer_register_controls(rx_mixer_t *m) {
         snprintf(g, sizeof g, "[Channel%d]", i + 1);
         c->volume = ctl_register(g, "volume", CK_FLOAT, 0, 1, 1);
         c->pregain = ctl_register(g, "pregain", CK_FLOAT, 0, 4, 1);
-        c->orientation = ctl_register(g, "orientation", CK_INT, 0, 2, 1);
+        c->orientation = ctl_register(g, "orientation", CK_INT, 0, 2, (i & 1) ? 2 : 0);
         c->pfl = ctl_register(g, "pfl", CK_TOGGLE, 0, 1, 0);
         c->mute = ctl_register(g, "mute", CK_TOGGLE, 0, 1, 0);
         c->vu_meter = ctl_register(g, "vu_meter", CK_FLOAT, 0, 1, 0);

@@ -62,6 +62,7 @@ struct rx_engine {
     /* our own controls */
     ctl_id c_deck_sel, c_wheel_l, c_wheel_r, c_zoom, c_readout, c_cpu_text, c_browse_sel, c_brow, c_browse_page, c_prev, c_next,
            c_folder, c_up, c_sort, c_scroll, c_xf_mode, c_path, c_ov_tap[RX_DECKS], c_midi_map, c_midi_learn, c_midi_text,
+           c_maps_row[RX_BROWSE_ROWS], c_maps_sel, c_maps_cur, c_maps_page, c_maps_prev, c_maps_next, c_maps_load, c_maps_none, c_maps_status,
            c_wheel_l_text, c_wheel_r_text, c_touch_text, c_browse_row[RX_BROWSE_ROWS], c_load[RX_DECKS], c_track_step[RX_DECKS];
     /* browse */
     pthread_mutex_t br_lock;                /* the list is rebuilt by the worker; readers copy under this lock */
@@ -69,6 +70,8 @@ struct rx_engine {
     int br_n, br_sel, br_page, br_sort, br_dirs;       /* br_dirs: the rows show folders (FOLDER mode) */
     char br_dir[RX_PATH];
     int br_rows_dirty;
+    /* CONTROLLERS page */
+    int mp_page, mp_dirty, mp_report_seen;
     /* the worker */
     pthread_t worker;
     pthread_mutex_t wlock;
@@ -116,7 +119,7 @@ static double knob_to_ctl(int i, double v) {
     size_t kl = strlen(k);
     if (p->kind != RXK_KNOB) return v;
     if (!strcmp(k, "xfader")) return v * 2 - 1;
-    if (kl > 5 && !strcmp(k + kl - 5, "_rate")) return v * 2 - 1;                 /* d1_rate: -1..1 */
+    if (kl > 5 && !strcmp(k + kl - 5, "_rate")) return 1 - v * 2;                 /* d1_rate: -1..1; the knob/fader 0 = the top = rate +1 (slower with rate_dir -1) */
     if ((kl > 5 && !strcmp(k + kl - 5, "_gain") && k[0] == 'd') || !strcmp(k, "master_gain") ||
         (kl > 3 && (!strcmp(k + kl - 3, "_hi") || !strcmp(k + kl - 4, "_mid") || !strcmp(k + kl - 4, "_low"))))
         return v < 0.5 ? v * 2 : 1 + (v - 0.5) * 6;                              /* 0..4, unity at 0.5 (Mixxx EQ/gain) */
@@ -128,7 +131,7 @@ static double ctl_to_knob(int i, double c) {
     size_t kl = strlen(k);
     if (p->kind != RXK_KNOB) return c;
     if (!strcmp(k, "xfader")) return (c + 1) * 0.5;
-    if (kl > 5 && !strcmp(k + kl - 5, "_rate")) return (c + 1) * 0.5;
+    if (kl > 5 && !strcmp(k + kl - 5, "_rate")) return (1 - c) * 0.5;
     if ((kl > 5 && !strcmp(k + kl - 5, "_gain") && k[0] == 'd') || !strcmp(k, "master_gain") ||
         (kl > 3 && (!strcmp(k + kl - 3, "_hi") || !strcmp(k + kl - 4, "_mid") || !strcmp(k + kl - 4, "_low"))))
         return c < 1 ? c * 0.5 : 0.5 + (c - 1) / 6;
@@ -288,6 +291,75 @@ static void browse_rows_update(rx_engine_t *e) {
     pthread_mutex_unlock(&e->br_lock);
 }
 
+static void queue_job(rx_engine_t *e, int kind, int deck, const char *path);
+/* CONTROLLERS page: six rows of Mixxx maps (file names), the loaded one marked with a star; the status line says what is loaded */
+static void maps_rows_update(rx_engine_t *e) {
+    int total = midi_mapping_total(e->midi);
+    if (total < 0) return;                                   /* the list is being rebuilt: next block */
+    char loaded[RX_PATH] = "", lname[128] = "", t[200];
+    int nin = 0, nscript = 0, nunk = 0;
+    int have = midi_report(e->midi, loaded, sizeof loaded, lname, sizeof lname, &nin, &nscript, &nunk, NULL, 0, 1);
+    if (have < 0) return;
+    const char *lb = strrchr(loaded, '/'); lb = lb ? lb + 1 : loaded;
+    int base = e->mp_page * RX_BROWSE_ROWS;
+    for (int r = 0; r < RX_BROWSE_ROWS; r++) {
+        char nm[RX_PATH], path[RX_PATH];
+        t[0] = 0;
+        if (base + r < total && !midi_mapping_name_at(e->midi, base + r, nm, sizeof nm) && !midi_mapping_path_at(e->midi, base + r, path, sizeof path)) {
+            const char *pb = strrchr(path, '/'); pb = pb ? pb + 1 : path;
+            snprintf(t, sizeof t, "%s%.100s", have && !strcmp(pb, lb) ? "* " : "   ", nm);
+        }
+        ctl_set_text(e->c_maps_row[r], t);
+    }
+    int pages = (total + RX_BROWSE_ROWS - 1) / RX_BROWSE_ROWS;
+    if (have) snprintf(t, sizeof t, "LOADED %.26s  %d ctl  %d n/a", lname, nin, nunk);
+    else snprintf(t, sizeof t, "NO CONTROLLER LOADED  (%d found)", total);
+    ctl_set_text(e->c_maps_status, t);
+    ctl_set(e->c_maps_page, e->mp_page);
+    (void)pages;
+    e->mp_dirty = 0;
+}
+
+/* the CONTROLLERS page's buttons and cursor (the same wheel/tap logic as the browse list) */
+static void maps_actions(rx_engine_t *e) {
+    if (!e->midi) return;
+    int total = midi_mapping_total(e->midi);
+    if (total < 0) return;
+    if (ctl_get(e->c_maps_prev) >= 0.5) { ctl_set(e->c_maps_prev, 0); if (e->mp_page > 0) { e->mp_page--; e->mp_dirty = 1; } }
+    if (ctl_get(e->c_maps_next) >= 0.5) { ctl_set(e->c_maps_next, 0); if ((e->mp_page + 1) * RX_BROWSE_ROWS < total) { e->mp_page++; e->mp_dirty = 1; } }
+    int sel = (int)ctl_get(e->c_maps_sel), v = (int)lround(ctl_get(e->c_maps_cur));
+    int idx = e->mp_page * RX_BROWSE_ROWS + sel;
+    if (v != sel + 1) { if (v <= 0) idx--; else if (v >= 7) idx++; else idx = e->mp_page * RX_BROWSE_ROWS + (v - 1); }
+    if (idx >= total) idx = total - 1;
+    if (idx < 0) idx = 0;
+    int pg = idx / RX_BROWSE_ROWS, rw = idx % RX_BROWSE_ROWS;
+    if (pg != e->mp_page) { e->mp_page = pg; e->mp_dirty = 1; }
+    if (rw != sel) { ctl_set(e->c_maps_sel, rw); e->mp_dirty = 1; }
+    if (v != rw + 1) ctl_set(e->c_maps_cur, rw + 1);
+    int bp = (int)ctl_get(e->c_maps_page);
+    if (bp != e->mp_page && bp >= 0 && bp * RX_BROWSE_ROWS < total) { e->mp_page = bp; e->mp_dirty = 1; }
+    if (ctl_get(e->c_maps_load) >= 0.5) {
+        ctl_set(e->c_maps_load, 0);
+        char path[RX_PATH];
+        if (total > 0 && !midi_mapping_path_at(e->midi, e->mp_page * RX_BROWSE_ROWS + (int)ctl_get(e->c_maps_sel), path, sizeof path)) queue_job(e, 5, 0, path);
+    }
+    if (ctl_get(e->c_maps_none) >= 0.5) { ctl_set(e->c_maps_none, 0); queue_job(e, 6, 0, NULL); }
+    /* the status line also follows loads made elsewhere (the MIDI MAP Q-Link, the web page) */
+    char f[RX_PATH]; int nin = 0, ns = 0, nu = 0;
+    int have = midi_report(e->midi, f, sizeof f, NULL, 0, &nin, &ns, &nu, NULL, 0, 1);
+    if (have >= 0) {
+        int key = have ? nin * 1000 + nu + (int)strlen(f) * 100000 : -1;
+        if (key != e->mp_report_seen) { e->mp_report_seen = key; e->mp_dirty = 1; }
+    }
+    if (e->mp_dirty) maps_rows_update(e);
+}
+
+/* the web page's access: a saved map is looked for again, a load goes through the worker */
+void engine_map_rescan(rx_engine_t *e) { if (e) queue_job(e, 7, 0, NULL); }
+void engine_map_pick(rx_engine_t *e, const char *path) { if (e) queue_job(e, 5, 0, path); }
+void engine_map_none(rx_engine_t *e) { if (e) queue_job(e, 6, 0, NULL); }
+rx_midi_t *engine_midi(rx_engine_t *e) { return e ? e->midi : NULL; }
+
 /* ------------------------------------------------------------------------------------------------ the worker */
 static void queue_job(rx_engine_t *e, int kind, int deck, const char *path) {
     pthread_mutex_lock(&e->wlock);
@@ -382,6 +454,10 @@ static void *worker_main(void *p) {
         if (kind == 1) do_load(e, deck, path);
         else if (kind == 2) browse_scan(e);
         else if (kind == 4) { browse_up_dir(e); browse_scan(e); }   /* BACK */
+        else if (kind == 5) { if (e->midi) midi_pick_mapping(e->midi, path); e->mp_dirty = 1; }   /* CONTROLLERS: LOAD */
+        else if (kind == 6) { if (e->midi) midi_pick_none(e->midi); e->mp_dirty = 1; }             /* CONTROLLERS: NONE */
+        else if (kind == 7) { if (e->midi) midi_rescan(e->midi); e->mp_dirty = 1; }                /* a map was saved: look again */
+        else if (kind == 8) { if (e->midi) { midi_autoload(e->midi); } e->mp_dirty = 1; }
         else if (kind == 3) {   /* save the sidecar of a deck's track */
             rx_deck_t *d = e->deck[deck];
             const char *tp = deck_track_path(d);
@@ -463,6 +539,7 @@ static void *create(const char *data_dir) {
     e->c_wheel_l_text = ctl_register("[reMixXXL]", "wheel_l_text", CK_TEXT, 0, 0, 0);
     e->c_wheel_r_text = ctl_register("[reMixXXL]", "wheel_r_text", CK_TEXT, 0, 0, 0);
     e->c_touch_text = ctl_register("[reMixXXL]", "touch_text", CK_TEXT, 0, 0, 0);
+    compat_init();
     /* the parameters' controls */
     int missing = 0;
     for (int i = 0; i < RX_NPARAMS; i++) {
@@ -476,6 +553,12 @@ static void *create(const char *data_dir) {
         if (e->pctl[i] != CTL_NONE && RX_PARAMS[i].kind != RXK_TEXT && RX_PARAMS[i].kind != RXK_TRIGGER) ctl_set(e->pctl[i], knob_to_ctl(i, RX_PARAMS[i].def));
     }
     if (missing) rx_log("%d parameters had no control registered by their part (registered here)", missing);
+    for (int i = 0; i < RX_BROWSE_ROWS; i++) { char n[32]; snprintf(n, sizeof n, "maps_row%d", i + 1); e->c_maps_row[i] = ctl_lookup("[reMixXXL]", n); }
+    e->c_maps_sel = ctl_lookup("[reMixXXL]", "maps_sel"); e->c_maps_cur = ctl_lookup("[reMixXXL]", "maps_row");
+    e->c_maps_page = ctl_lookup("[reMixXXL]", "maps_page"); e->c_maps_prev = ctl_lookup("[reMixXXL]", "maps_page_prev");
+    e->c_maps_next = ctl_lookup("[reMixXXL]", "maps_page_next"); e->c_maps_load = ctl_lookup("[reMixXXL]", "maps_load");
+    e->c_maps_none = ctl_lookup("[reMixXXL]", "maps_none"); e->c_maps_status = ctl_lookup("[reMixXXL]", "maps_status");
+    e->mp_dirty = 1;
     snprintf(e->br_dir, sizeof e->br_dir, "%s", e->tracks_dir);
     mkdir(e->tracks_dir, 0777);
     ctl_set_text(e->c_readout, "reMixXXL " RX_VERSION_STR);
@@ -490,6 +573,7 @@ static void *create(const char *data_dir) {
         rx_log("touch: %s", touch_available(e->touch) ? "reading the touchscreen directly" : "no direct touch (see the log above)");
         e->web = web_start(e);
         e->midi = midi_start(e->plugin_dir, e);
+        queue_job(e, 8, 0, NULL);        /* the controller picked last time loads again (worker) */
         char t[128]; snprintf(t, sizeof t, "MIDI: %d mappings, learn off", midi_mapping_count(e->midi));
         ctl_set_text(e->c_midi_text, t);
         ctl_set_text(e->c_touch_text, touch_available(e->touch) ? "TOUCH: DIRECT" : "TOUCH: OFF");
@@ -597,7 +681,12 @@ static int get_param(void *p, const char *key, char *buf, int len) {
         int i = find_param(base);
         if (i < 0 || e->pctl[i] == CTL_NONE) return 0;
         double v = ctl_get(e->pctl[i]);
-        if (kl > 13 && !strcmp(base + strlen(base) - 5, "_rate")) return snprintf(buf, (size_t)len, "%+.2f%%", v * 100) + 1;
+        if (kl > 13 && !strcmp(base + strlen(base) - 5, "_rate")) {   /* the real speed change: + faster, - slower (the + is at the bottom of the fader) */
+            char g[24]; snprintf(g, sizeof g, "[Channel%c]", base[1]);
+            ctl_id rr = ctl_lookup(g, "rateRange"), rd = ctl_lookup(g, "rate_dir");
+            double sp = v * (rr != CTL_NONE ? ctl_get(rr) : 0.1) * (rd != CTL_NONE ? ctl_get(rd) : -1);
+            return snprintf(buf, (size_t)len, "%+.2f%%", sp * 100) + 1;
+        }
         if (!strncmp(base, "fx", 2) && strstr(base, "_p")) {   /* an effect parameter: the effect's own value text */
             int u = base[2] - '1', s = base[4] - '1';
             char g[64]; snprintf(g, sizeof g, "[EffectRack1_EffectUnit%d_Effect%d]", u + 1, s + 1);
@@ -709,6 +798,7 @@ static void engine_actions(rx_engine_t *e) {
     int bp = (int)ctl_get(e->c_browse_page);
     if (bp != e->br_page && bp * RX_BROWSE_ROWS < e->br_n && bp >= 0) { e->br_page = bp; e->br_rows_dirty = 1; }
     if (e->br_rows_dirty) browse_rows_update(e);
+    maps_actions(e);
     /* MIDI mapping select and learn */
     if (e->midi) {
         static int last_map = -1;
@@ -740,6 +830,7 @@ static void render(void *p, int16_t *out, int frames) {
     clock_gettime(CLOCK_MONOTONIC, &t0);
     ctl_drain();
     for (int i = 0; i < RX_DECKS; i++) deck_tick_controls(e->deck[i]);
+    compat_tick();
     engine_actions(e);
     if (e->midi) midi_tick(e->midi);
     for (int i = 0; i < RX_DECKS; i++) { rx_deck_view_t dv; deck_view(e->deck[i], &dv); fx_set_channel_tempo(e->fx, i, dv.bpm > 0 ? dv.bpm : (e->host_bpm > 0 ? e->host_bpm : 120)); }
