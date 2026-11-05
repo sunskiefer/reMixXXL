@@ -50,8 +50,11 @@
 #include <stdatomic.h>
 #include <dirent.h>
 #include <dlfcn.h>
+#include <ctype.h>
 #include <errno.h>
+#include <sys/stat.h>
 #include <math.h>
+#include <pthread.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -60,7 +63,7 @@
 #define MAX_LEARN 256
 #define MAX_SCRIPTS 8
 #define FB_RING 512
-#define MAX_MAPPING_FILES 32
+#define MAX_MAPPING_FILES 512
 
 /* Mixxx MidiOption bits */
 enum {
@@ -131,7 +134,19 @@ struct rx_midi {
     int alsa_ok;
 
     char files[MAX_MAPPING_FILES][RX_PATH]; int nfiles;
+    pthread_mutex_t files_lock;          /* the list is rebuilt by midi_rescan (worker); readers try-lock */
     atomic_int dropped_logged;
+
+    /* the last raw note/CC/bend message (the web map builder shows it and learns from it) */
+    atomic_int last_seq, last_st, last_d1, last_d2;
+    uint8_t unseen[65536 / 8];           /* messages seen with no binding (audio thread sets, the idle hook logs each once) */
+    atomic_uint un_w, un_r; atomic_int un_q[32];
+
+    /* what the last midi_load_mapping found (text for the web page; written by the loader, read by the web thread) */
+    pthread_mutex_t rep_lock;
+    char rep_file[RX_PATH], rep_name[128];
+    int rep_in, rep_script, rep_unknown, rep_out, rep_out_unknown;
+    char rep_unknown_list[2048];
 };
 
 /* ------------------------------------------------------------------------------------------------ ALSA (dlopen) */
@@ -320,9 +335,10 @@ static int ends_with(const char *s, const char *suffix) {
 static void scan_mappings(rx_midi_t *m) {
     char dir[RX_PATH + 16];
     snprintf(dir, sizeof dir, "%s/Mappings", m->plugin_dir);
+    pthread_mutex_lock(&m->files_lock);
     m->nfiles = 0;
     DIR *d = opendir(dir);
-    if (!d) { rx_log("midi: no %s folder: no controller mappings", dir); return; }
+    if (!d) { pthread_mutex_unlock(&m->files_lock); rx_log("midi: no %s folder: no controller mappings", dir); return; }
     struct dirent *e;
     while ((e = readdir(d)) && m->nfiles < MAX_MAPPING_FILES) {
         if (!ends_with(e->d_name, ".midi.xml")) continue;
@@ -334,8 +350,9 @@ static void scan_mappings(rx_midi_t *m) {
         for (int k = i; k > 0 && strcasecmp(m->files[k - 1], m->files[k]) > 0; k--) {
             char t[RX_PATH]; memcpy(t, m->files[k], RX_PATH); memcpy(m->files[k], m->files[k - 1], RX_PATH); memcpy(m->files[k - 1], t, RX_PATH);
         }
+    pthread_mutex_unlock(&m->files_lock);
     rx_log("midi: %d mapping file(s) in %s", m->nfiles, dir);
-    for (int i = 0; i < m->nfiles; i++) rx_log("midi:   %s", strrchr(m->files[i], '/') + 1);
+    for (int i = 0; i < m->nfiles && i < 40; i++) rx_log("midi:   %s", strrchr(m->files[i], '/') + 1);
 }
 
 int midi_mapping_count(rx_midi_t *m) {
@@ -411,6 +428,7 @@ int midi_load_mapping(rx_midi_t *m, const char *xml_path) {
 
     /* <controls><control> */
     int unknown = 0, scripts = 0;
+    char unk_list[2048]; unk_list[0] = 0; size_t unk_len = 0;
     xml_node_t *controls = xml_child(controller, "controls");
     for (xml_node_t *c = controls ? xml_child(controls, "control") : NULL; c; c = xml_next(c, "control")) {
         if (map->nin >= MAX_INPUTS) { rx_log("midi: more than %d controls, the rest is ignored", MAX_INPUTS); break; }
@@ -423,7 +441,11 @@ int midi_load_mapping(rx_midi_t *m, const char *xml_path) {
         if (im->options & OPT_SCRIPT) { im->ctl = CTL_NONE; scripts++; }
         else {
             im->ctl = ctl_lookup(im->group, im->name);
-            if (im->ctl == CTL_NONE) { unknown++; if (unknown <= 40) rx_log("midi:   control %s,%s (status 0x%02X midino 0x%02X) does not exist here: ignored", im->group, im->name, status, midino); }
+            if (im->ctl == CTL_NONE) {
+                unknown++;
+                if (unk_len < sizeof unk_list - 100) { int w = snprintf(unk_list + unk_len, sizeof unk_list - unk_len, "%s%s,%s", unk_len ? "\n" : "", im->group, im->name); if (w > 0) unk_len += (size_t)w; }
+              }
+            if (im->ctl == CTL_NONE) { if (unknown <= 40) rx_log("midi:   control %s,%s (status 0x%02X midino 0x%02X) does not exist here: ignored", im->group, im->name, status, midino); }
         }
         map->nin++;
     }
@@ -496,8 +518,136 @@ int midi_load_mapping(rx_midi_t *m, const char *xml_path) {
         output_listener(om->ctl, ctl_get(om->ctl), om);     /* Mixxx's updateAllOutputs */
     }
     if (m->js) for (int i = 0; i < map->nprefix; i++) js_call_init(m->js, map->prefixes[i], map->controller_id);
+    pthread_mutex_lock(&m->rep_lock);
+    snprintf(m->rep_file, sizeof m->rep_file, "%s", xml_path);
+    snprintf(m->rep_name, sizeof m->rep_name, "%s", map->name);
+    m->rep_in = map->nin; m->rep_script = scripts; m->rep_unknown = unknown; m->rep_out = map->nout; m->rep_out_unknown = bad_out;
+    snprintf(m->rep_unknown_list, sizeof m->rep_unknown_list, "%s", unk_list);
+    pthread_mutex_unlock(&m->rep_lock);
     rx_log("midi: mapping \"%s\" loaded: %d controls (%d script bindings, %d unknown here), %d outputs (%d unknown), %d script file(s)",
            map->name, map->nin, scripts, unknown, map->nout, bad_out, nscript);
+    return 0;
+}
+
+
+/* ------------------------------------------------------------------------------------------------ the CONTROLLERS page and the web map builder
+ * Everything below runs on the engine's worker thread or the web thread, never the audio thread (except the two try-lock readers). */
+void midi_rescan(rx_midi_t *m) { if (m) scan_mappings(m); }
+
+/* the list entry i: its path / its shown name (file name without ".midi.xml"); -1 when the list is being rebuilt */
+int midi_mapping_path_at(rx_midi_t *m, int i, char *out, int n) {
+    if (!m || n < 1 || pthread_mutex_trylock(&m->files_lock)) return -1;
+    int ok = i >= 0 && i < m->nfiles;
+    if (ok) snprintf(out, (size_t)n, "%s", m->files[i]); else out[0] = 0;
+    pthread_mutex_unlock(&m->files_lock);
+    return ok ? 0 : -1;
+}
+int midi_mapping_name_at(rx_midi_t *m, int i, char *out, int n) {
+    char path[RX_PATH];
+    if (midi_mapping_path_at(m, i, path, sizeof path)) { if (n > 0) out[0] = 0; return -1; }
+    const char *b = strrchr(path, '/'); b = b ? b + 1 : path;
+    snprintf(out, (size_t)n, "%s", b);
+    size_t l = strlen(out), e = strlen(".midi.xml");
+    if (l > e && !strcasecmp(out + l - e, ".midi.xml")) out[l - e] = 0;
+    return 0;
+}
+int midi_mapping_total(rx_midi_t *m) {
+    if (!m || pthread_mutex_trylock(&m->files_lock)) return -1;
+    int n = m->nfiles;
+    pthread_mutex_unlock(&m->files_lock);
+    return n;
+}
+
+/* the last note / CC / pitch-bend message: returns a counter that grows with each one */
+int midi_last_msg(rx_midi_t *m, int *st, int *d1, int *d2) {
+    if (!m) return 0;
+    *st = atomic_load(&m->last_st); *d1 = atomic_load(&m->last_d1); *d2 = atomic_load(&m->last_d2);
+    return atomic_load(&m->last_seq);
+}
+
+/* what the loaded mapping is: name, counts, and the controls it names that this plugin does not have ("[Group],key" lines) */
+int midi_report(rx_midi_t *m, char *file, int fn, char *name, int nn, int *nin, int *nscript, int *nunknown, char *unknown_list, int un, int try_only) {
+    if (!m) return 0;
+    if (try_only) { if (pthread_mutex_trylock(&m->rep_lock)) return -1; } else pthread_mutex_lock(&m->rep_lock);
+    int ok = m->rep_file[0] != 0;
+    if (file) snprintf(file, (size_t)fn, "%s", m->rep_file);
+    if (name) snprintf(name, (size_t)nn, "%s", m->rep_name);
+    if (nin) *nin = m->rep_in;
+    if (nscript) *nscript = m->rep_script;
+    if (nunknown) *nunknown = m->rep_unknown;
+    if (unknown_list) snprintf(unknown_list, (size_t)un, "%s", m->rep_unknown_list);
+    pthread_mutex_unlock(&m->rep_lock);
+    return ok;
+}
+
+int midi_unload_mapping(rx_midi_t *m) {
+    if (!m) return -1;
+    if (m->js) js_unload(m->js);
+    mapping_t *old = atomic_exchange(&m->map, NULL);
+    if (old) {
+        for (int i = 0; i < old->nout; i++) if (old->out[i].listener >= 0) { ctl_remove_listener(old->out[i].listener); old->out[i].listener = -1; }
+        m->old_map = old;
+        struct timespec ts = { 0, 20 * 1000000L };
+        nanosleep(&ts, NULL);
+        free_mapping(m, m->old_map);
+        m->old_map = NULL;
+    }
+    pthread_mutex_lock(&m->rep_lock);
+    m->rep_file[0] = 0; m->rep_name[0] = 0; m->rep_in = m->rep_script = m->rep_unknown = 0; m->rep_unknown_list[0] = 0;
+    pthread_mutex_unlock(&m->rep_lock);
+    rx_log("midi: mapping unloaded");
+    return 0;
+}
+
+/* the picked controller is remembered in <plugin>/midi_pick.txt (the mapping's file name) and loaded again at the next start */
+static void pick_save(rx_midi_t *m, const char *path) {
+    char p[RX_PATH + 24]; snprintf(p, sizeof p, "%s/midi_pick.txt", m->plugin_dir);
+    if (!path || !path[0]) { unlink(p); return; }
+    const char *b = strrchr(path, '/'); b = b ? b + 1 : path;
+    FILE *f = fopen(p, "w"); if (!f) return;
+    fprintf(f, "%s\n", b); fclose(f);
+}
+int midi_pick_mapping(rx_midi_t *m, const char *path) {
+    int r = midi_load_mapping(m, path);
+    if (r == 0) pick_save(m, path);
+    return r;
+}
+int midi_pick_none(rx_midi_t *m) { int r = midi_unload_mapping(m); pick_save(m, NULL); return r; }
+void midi_autoload(rx_midi_t *m) {
+    if (!m) return;
+    char p[RX_PATH + 24], line[512]; snprintf(p, sizeof p, "%s/midi_pick.txt", m->plugin_dir);
+    FILE *f = fopen(p, "r"); if (!f) return;
+    if (!fgets(line, sizeof line, f)) { fclose(f); return; }
+    fclose(f);
+    line[strcspn(line, "\r\n")] = 0;
+    if (!line[0] || strchr(line, '/')) return;
+    char path[RX_PATH]; snprintf(path, sizeof path, "%s/Mappings/%s", m->plugin_dir, line);
+    if (access(path, R_OK) == 0) { rx_log("midi: loading the remembered controller %s", line); midi_load_mapping(m, path); }
+}
+
+/* write a map from the web builder into Mappings/<name>.midi.xml: the name keeps letters, digits, space . _ - only */
+int midi_save_map(rx_midi_t *m, const char *name, const char *data, size_t len, char *saved, int sn) {
+    if (!m || !name || !data || len < 20 || len > 262144) return -1;
+    if (!strstr(data, "<MixxxMIDIPreset")) return -2;
+    char clean[96]; int k = 0;
+    for (const char *c = name; *c && k < 80; c++) if (isalnum((unsigned char)*c) || *c == ' ' || *c == '.' || *c == '_' || *c == '-') clean[k++] = *c;
+    clean[k] = 0;
+    while (clean[0] == '.' || clean[0] == ' ') memmove(clean, clean + 1, strlen(clean));
+    size_t cl = strlen(clean), e = strlen(".midi.xml");
+    if (cl > e && !strcasecmp(clean + cl - e, ".midi.xml")) clean[cl - e] = 0;
+    if (!clean[0]) return -3;
+    char dir[RX_PATH + 16], path[RX_PATH + 120], tmp[RX_PATH + 130];
+    snprintf(dir, sizeof dir, "%s/Mappings", m->plugin_dir);
+    mkdir(dir, 0777);
+    snprintf(path, sizeof path, "%s/%s.midi.xml", dir, clean);
+    snprintf(tmp, sizeof tmp, "%s.new", path);
+    FILE *f = fopen(tmp, "wb"); if (!f) return -4;
+    int ok = fwrite(data, 1, len, f) == len;
+    ok = (fclose(f) == 0) && ok;
+    if (!ok) { unlink(tmp); return -4; }
+    if (rename(tmp, path)) { unlink(tmp); return -4; }
+    if (saved) snprintf(saved, (size_t)sn, "%s", path);
+    rx_log("midi: map builder saved %s (%zu bytes)", path, len);
     return 0;
 }
 
@@ -563,6 +713,7 @@ static void apply_to_control(rx_midi_t *m, ctl_id id, uint32_t o, int opcode, do
     if (mv < 0) mv = 0;
     if (mv > 127) mv = 127;
     double v = lo + (mv / 127.0) * (hi - lo);
+    if (kind == CK_FLOAT && lo == 0.0 && hi == 4.0) { double p = mv / 127.0; v = p < 0.5 ? p * 2 : 1 + (p - 0.5) * 6; }   /* Mixxx EQ / gain pots: 64 = unity (1.0), 127 = 4.0 */
     if (kind == CK_INT) v = floor(v + 0.5);
     if (kind == CK_TOGGLE) v = mv >= 64 ? 1 : 0;
     if (kind == CK_TRIGGER) { if (mv != 0) ctl_post(id, 1); return; }
@@ -641,6 +792,10 @@ void midi_in(rx_midi_t *m, const uint8_t *msg, int len) {
     int opcode = status & 0xf0;
     if (opcode < 0x80) return;
     uint16_t key = midi_key(status, d1);
+    if (opcode == 0xB0 || opcode == 0xE0 || (opcode == 0x90 && d2 > 0)) {   /* for the web map builder: a release must not hide the press */
+        atomic_store(&m->last_st, status); atomic_store(&m->last_d1, d1); atomic_store(&m->last_d2, d2);
+        atomic_fetch_add(&m->last_seq, 1);
+    }
 
     /* learn: the armed target takes the next note/CC/bend message */
     int target = atomic_load(&m->learn_target);
@@ -671,8 +826,13 @@ void midi_in(rx_midi_t *m, const uint8_t *msg, int len) {
     for (int i = 0; i < n; i++) if (m->learn[i].key == key) { handle_learned(m, &m->learn[i], status, d1, d2); hit = 1; }
     if (hit) return;
     mapping_t *map = atomic_load(&m->map);
-    if (!map) return;
-    for (int i = 0; i < map->nin; i++) if (map->in[i].key == key) handle_entry(m, map, &map->in[i], status, d1, d2);
+    int matched = 0;
+    if (map) for (int i = 0; i < map->nin; i++) if (map->in[i].key == key) { matched = 1; handle_entry(m, map, &map->in[i], status, d1, d2); }
+    if (!matched && !(m->unseen[key >> 3] & (1u << (key & 7)))) {      /* a control of the hardware nothing is mapped to: say so once in the log */
+        m->unseen[key >> 3] |= (uint8_t)(1u << (key & 7));
+        unsigned w = atomic_load(&m->un_w);
+        if (w - atomic_load(&m->un_r) < 32) { atomic_store(&m->un_q[w & 31], (int)key); atomic_store(&m->un_w, w + 1); }
+    }
 }
 
 void midi_tick(rx_midi_t *m) {
@@ -685,6 +845,12 @@ void midi_tick(rx_midi_t *m) {
 static void hook_idle(void *user) {
     rx_midi_t *m = (rx_midi_t *)user;
     fb_drain(m);
+    while (atomic_load(&m->un_r) != atomic_load(&m->un_w)) {
+        unsigned r = atomic_load(&m->un_r); int k = atomic_load(&m->un_q[r & 31]); atomic_store(&m->un_r, r + 1);
+        static int nlog; if (++nlog > 300) continue;
+        mapping_t *mp = atomic_load(&m->map);
+        rx_log("midi: message 0x%02X %d (channel %d) has no binding%s", k >> 8, k & 0xFF, (k >> 8 & 15) + 1, mp ? " in the loaded map" : " (no map loaded: pick one on the MAPS page)");
+    }
     if (atomic_exchange(&m->learn_dirty, 0)) learn_save(m);
     int d = js_dropped_messages(m->js);
     if (d) rx_log("midi: %d script-binding messages dropped (JS worker behind)", d);
@@ -706,6 +872,8 @@ rx_midi_t *midi_start(const char *plugin_dir, rx_engine_t *e) {
     snprintf(m->plugin_dir, sizeof m->plugin_dir, "%s", plugin_dir ? plugin_dir : ".");
     m->engine = e;
     atomic_store(&m->learn_target, CTL_NONE);
+    pthread_mutex_init(&m->files_lock, NULL);
+    pthread_mutex_init(&m->rep_lock, NULL);
     alsa_open(m);
     rx_js_hooks_t hooks = { hook_send, hook_idle, m };
     m->js = js_start(e, &hooks);

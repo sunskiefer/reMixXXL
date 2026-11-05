@@ -267,7 +267,7 @@ static void finger_down(rx_touch_t *t, slot_t *s, int page) {
         case A_TRIGGER_HOLD: case A_HOLD: ctl_post(c, 1); s->hold_ctl = c; break;
         case A_VFADER_INV:
             s->tempo_ctl = c; s->box_y = b->y; s->box_h = b->h;
-            ctl_post(c, ((double)(s->y - b->y) / (b->h > 1 ? b->h - 1 : 1)) * 2.0 - 1.0);   /* top -1 (slower), bottom +1 */
+            ctl_post(c, 1.0 - ((double)(s->y - b->y) / (b->h > 1 ? b->h - 1 : 1)) * 2.0);   /* top +1 (slower with rate_dir -1), bottom -1 (faster) */
             break;
         case A_KNOB: s->knob_ctl = c; s->knob_y0 = s->y; s->knob_v0 = ctl_get(c); break;
         }
@@ -302,7 +302,7 @@ static void finger_move(rx_touch_t *t, slot_t *s, int page) {
     if (s->tempo_ctl != CTL_NONE) {
         double f = (double)(s->y - s->box_y) / (s->box_h > 1 ? s->box_h - 1 : 1);
         f = f < 0 ? 0 : f > 1 ? 1 : f;
-        ctl_post(s->tempo_ctl, f * 2.0 - 1.0);
+        ctl_post(s->tempo_ctl, 1.0 - f * 2.0);
     }
     if (s->knob_ctl != CTL_NONE) {
         double v = s->knob_v0 - (double)(s->y - s->knob_y0) / 200.0;   /* up = more */

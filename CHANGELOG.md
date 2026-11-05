@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.15 (release)
+Packaged build `reMixXXL-0.1.15-mpc-armv7.zip` (install.sh, uninstall.sh, ARMv7 `remixxxl.so`, skin, Mappings, Screen, Layout). The source in this repo is the 0.1.15 source (it includes the 0.1.13 MAPS page and map builder). Changes made in 0.1.14 and 0.1.15 are not itemised here.
+New: `reMixXXL-map-builder.html`, a saved copy of the map builder you open from your computer and connect to the Force (address, port 6731). Its **Mixer** tab now lists exactly the controls of the plugin's MIXER page, in page order (per deck VOLUME, FILTER, GAIN, HIGH, MID, LOW, PFL, FX 1, FX 2, XF SIDE; then MASTER, CUE MIX, CROSSFADER) under the page's own names; the per-deck FX enables also show on the FX tab; controls the page does not have (EQ kills, VU meters, Library, Playlist and the like) are under Other. From a saved copy SAVE TO FORCE is hidden (the browser blocks it): use DOWNLOAD `.midi.xml` and put the file in the plugin's `Mappings` folder. The plugin's own `/map` page is unchanged in this release (the fix is in the saved copy only).
+
+## 0.1.13 (test build, not yet tested on a Force)
+New MAPS page (second page of the BROWSE key): every `.midi.xml` in `Mappings`, LOAD / NONE, remembered at start. New map builder web page (`/map` on the companion address) that makes a `.midi.xml` for any controller by pressing its controls, with AUTO NEXT and a deck 1 to 2-4 copy; saves to the Force or downloads. 14 parameters appended (the wrapper's hidden popup parameters move up by 14). See docs/MAP_BUILDER.md.
+
 ## 0.1.12 (release)
 The engine's own touch layer (`src/boxes.h`) now uses the WHEEL page's new button places (generated from `tools/wheel_geom.py` by `tools/remix_pages.py`), so a tap on track search / search / beat jump / slip / reverse hits only its own button; with 0.1.11 an old box could also fire. Skin as in 0.1.11. Source in this repo builds the release's `remixxxl.so` (SHA-256 00a9bafa62ddf93ed0fa2a7f8c4ce7aaba855dddf51344d988920f05a86b60c0).
 

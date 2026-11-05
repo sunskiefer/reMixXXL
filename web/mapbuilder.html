@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>reMixXXL MAP BUILDER</title>
+<style>
+:root{--bg:#101010;--panel:#1b1b1b;--line:#333;--ink:#f0f0f0;--dim:#9a9a9a;--acc:#ff9f1c;--ok:#4cd07a;--bad:#ff5a5a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.35 "Titillium Web",system-ui,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#0b0b0b;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+h1{font-size:24px;margin:0;letter-spacing:.5px}
+h1 b{color:var(--acc)}
+h2{font-size:19px;margin:0 0 8px;color:var(--acc)}
+.mon{font:700 20px ui-monospace,Consolas,monospace;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 12px;min-width:330px}
+.mon small{color:var(--dim);font-weight:400}
+main{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,1.2fr);gap:14px;padding:14px;max-width:1500px;margin:0 auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+button,select,input{font:inherit;color:var(--ink);background:#262626;border:1px solid #444;border-radius:8px;padding:9px 13px}
+button{cursor:pointer;font-weight:700}
+button.acc{background:var(--acc);color:#111;border-color:var(--acc)}
+button.big{padding:13px 18px;font-size:18px}
+button:active{filter:brightness(1.25)}
+input[type=text],input[type=number],select{min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.chips button{padding:6px 12px;border-radius:99px;font-weight:600}
+.chips button.on{background:var(--acc);color:#111;border-color:var(--acc)}
+#list{max-height:56vh;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.ctl{display:flex;justify-content:space-between;gap:8px;padding:9px 12px;border-bottom:1px solid #262626;cursor:pointer}
+.ctl:hover{background:#242424}
+.ctl.armed{background:#3a2a0a;outline:2px solid var(--acc)}
+.ctl.done .n{color:var(--ok)}
+.ctl .g{color:var(--dim);font-size:15px}
+.ctl .k{color:var(--dim);font-size:14px}
+table{width:100%;border-collapse:collapse}
+td,th{padding:7px 8px;border-bottom:1px solid #2a2a2a;text-align:left;vertical-align:middle}
+th{color:var(--dim);font-weight:600;font-size:15px}
+td select{padding:5px 8px}
+td button{padding:5px 11px}
+#tbl{max-height:52vh;overflow:auto}
+.hint{color:var(--dim);font-size:15px}
+.msg{padding:8px 12px;border-radius:8px;margin-top:8px}
+.msg.ok{background:#12301e;color:var(--ok)}.msg.bad{background:#3a1515;color:var(--bad)}
+pre{white-space:pre-wrap;background:#0c0c0c;border:1px solid var(--line);border-radius:8px;padding:8px;max-height:160px;overflow:auto;font-size:14px}
+label{display:inline-flex;align-items:center;gap:6px}
+input[type=checkbox]{width:20px;height:20px;padding:0}
+</style></head><body>
+<header>
+  <h1>re<b>Mix</b>XXL &middot; MAP BUILDER</h1>
+  <div class="mon" id="mon">waiting for MIDI&hellip; <small>press anything on your controller</small></div>
+  <div class="hint" id="net"></div>
+</header>
+<main>
+<section>
+  <h2>1 &middot; Pick a control, then press it on your controller</h2>
+  <div class="row chips" id="chips"></div>
+  <div class="row">
+    <input type="text" id="q" placeholder="search (play, hotcue, eq, loop...)" style="flex:1;min-width:180px">
+    <label><input type="checkbox" id="auto" checked> AUTO NEXT</label>
+  </div>
+  <div class="hint" id="armtxt">Tap a control below. The next note, button, knob, fader or jog you move on the controller is bound to it.
+  With AUTO NEXT on, it jumps to the next control by itself, so you can walk down the list pressing as you go.</div>
+  <div class="row"><button id="skip">SKIP</button><button id="stop">STOP LISTENING</button></div>
+  <div id="list"></div>
+</section>
+<section>
+  <h2>2 &middot; Your map <span class="hint" id="count"></span></h2>
+  <div class="row">
+    <input type="text" id="mname" placeholder="map name (for example My Controller)" style="flex:1;min-width:200px">
+  </div>
+  <div class="row">
+    <button class="acc big" id="save">SAVE TO FORCE</button>
+    <button class="big" id="dl">DOWNLOAD .midi.xml</button>
+    <button id="clear">CLEAR ALL</button>
+  </div>
+  <div id="res"></div>
+  <div class="row"><label>COPY DECK 1 TO DECKS 2-4 by
+    <select id="cmode"><option value="chan">next MIDI channel</option><option value="num">note / CC number +</option></select></label>
+    <input type="number" id="cstep" value="1" min="0" max="64" style="width:80px">
+    <button id="copy">COPY</button></div>
+  <div id="tbl"><table><thead><tr><th>CONTROL</th><th>MESSAGE</th><th>MODE</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="row"><label>IMPORT a .midi.xml to edit it <input type="file" id="imp" accept=".xml"></label></div>
+  <h2 style="margin-top:14px">On the Force now</h2>
+  <div id="loaded" class="hint">&hellip;</div>
+  <div class="row"><button id="unload">UNLOAD MAP</button></div>
+</section>
+</main>
+<script>
+"use strict";
+var $=function(i){return document.getElementById(i)};
+var controls=[],cat="ALL",armed=null,maps=[],rowsData=[],seen=-1,lastRec=null,lastT=0;
+var PRI=["play","cue_default","cue_gotoandplay","beatsync","sync_enabled","sync_master","loop_in","loop_out","reloop_toggle","loop_halve","loop_double","beatloop_4_toggle","hotcue_1_activate","hotcue_2_activate","hotcue_3_activate","hotcue_4_activate","hotcue_5_activate","hotcue_6_activate","hotcue_7_activate","hotcue_8_activate","rate","volume","pregain","filterHigh","filterMid","filterLow","LoadSelectedTrack","keylock","vinyl_mode","slip_enabled","beatjump_forward","beatjump_backward","crossfader","gain","headMix","jog","scratch2","back","fwd"];
+function catOf(g,n){n=n||"";if(/EqualizerRack/.test(g))return"Mixer";var m=g.match(/\[Channel(\d)\]/);if(m){if(/^(volume|pregain|pfl|orientation|filter(Low|Mid|High)(Kill)?)$/.test(n))return"Mixer";return"Deck "+m[1]}if(/Effect|Quick/.test(g))return"FX";if(/Master|Mixer|Sampler|Playlist|Library|Microphone|Auxiliary/.test(g))return"Mixer";return"Other"}
+function pri(n){var i=PRI.indexOf(n);return i<0?999:i}
+function key(g,n){return g+"\u0001"+n}
+function msgText(r){var t=r.st&0xF0,c=(r.st&15)+1;return(t==0x90?"Note ":t==0xB0?"CC ":t==0xE0?"Bend":"Msg ")+(t==0xE0?"":r.d1)+" ch"+c}
+function hex(v){return"0x"+(v<16?"0":"")+v.toString(16)}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function used(){var o={};rowsData.forEach(function(r){o[key(r.g,r.n)]=1});return o}
+
+function drawChips(){
+  var cs={ALL:1};controls.forEach(function(c){cs[catOf(c.g,c.n)]=1});
+  var names=Object.keys(cs).sort(function(a,b){return a=="ALL"?-1:b=="ALL"?1:a<b?-1:1});
+  $("chips").innerHTML="";
+  names.forEach(function(n){var b=document.createElement("button");b.textContent=n;if(n==cat)b.className="on";
+    b.onclick=function(){cat=n;drawChips();drawList()};$("chips").appendChild(b)})}
+function visible(){
+  var q=$("q").value.toLowerCase().trim();
+  return controls.filter(function(c){return(cat=="ALL"||catOf(c.g,c.n)==cat)&&(!q||(c.g+" "+c.n).toLowerCase().indexOf(q)>=0)})
+   .sort(function(a,b){return catOf(a.g,a.n)<catOf(b.g,b.n)?-1:catOf(a.g,a.n)>catOf(b.g,b.n)?1:a.g<b.g?-1:a.g>b.g?1:(pri(a.n)-pri(b.n))||(a.n<b.n?-1:1)})}
+function drawList(){
+  var u=used(),L=$("list");L.innerHTML="";
+  visible().forEach(function(c){
+    var d=document.createElement("div");d.className="ctl"+(armed&&armed.g==c.g&&armed.n==c.n?" armed":"")+(u[key(c.g,c.n)]?" done":"");
+    d.innerHTML='<span><span class="n">'+esc(c.n)+'</span> <span class="g">'+esc(c.g)+'</span></span><span class="k">'+c.k+'</span>';
+    d.onclick=function(){arm(c)};L.appendChild(d)})}
+function arm(c){armed=c;$("armtxt").innerHTML="LISTENING for <b>"+esc(c.g)+" "+esc(c.n)+"</b> &mdash; press / turn it on your controller";drawList();
+  var a=document.querySelector(".ctl.armed");if(a&&a.scrollIntoView)a.scrollIntoView({block:"nearest"})}
+function next(){
+  if(!armed)return;var v=visible(),i=-1;
+  for(var k=0;k<v.length;k++)if(v[k].g==armed.g&&v[k].n==armed.n){i=k;break}
+  var u=used();for(var j=i+1;j<v.length;j++)if(!u[key(v[j].g,v[j].n)]){arm(v[j]);return}
+  armed=null;$("armtxt").textContent="End of the list. Change the filter to continue, or save your map.";drawList()}
+$("skip").onclick=next;
+$("stop").onclick=function(){armed=null;$("armtxt").textContent="Not listening. Tap a control to start.";drawList()};
+$("q").oninput=drawList;
+
+/* classify a controller message stream into a Mixxx option */
+function guess(r,kind){
+  var t=r.st&0xF0;
+  if(t==0x90||t==0x80)return"button";
+  if(t==0xE0)return"normal";
+  var v=r.vals,n=v.length,mn=Math.min.apply(0,v),mx=Math.max.apply(0,v),dist={};v.forEach(function(x){dist[x]=1});
+  var nd=Object.keys(dist).length;
+  if(kind=="trigger"||kind=="toggle")return"button";
+  if(n>=3){
+    if(nd<=2&&mx-mn>=100)return"button";
+    if(v.every(function(x){return x>=56&&x<=72})&&nd>1)return"rot64";
+    if(v.every(function(x){return x<=15||x>=113})&&nd>1)return"diff";
+  }
+  return"normal"}
+function onMsg(m){
+  var t=m.st&0xF0;
+  if(!(t==0x80||t==0x90||t==0xB0||t==0xE0))return;
+  var now=Date.now();
+  if(lastRec&&lastRec.st==m.st&&lastRec.d1==m.d1&&now-lastT<900){
+    lastRec.vals.push(m.d2);lastT=now;
+    if(!lastRec.manual){lastRec.opt=guess(lastRec,lastRec.k);drawRows()}
+    return}
+  if(!armed)return;
+  if(t==0x80||(t==0x90&&m.d2==0))return;             /* a release alone does not bind */
+  var st=t==0x80?0x90|(m.st&15):m.st;
+  var rec={g:armed.g,n:armed.n,k:armed.k,st:st,d1:t==0xE0?0:m.d1,vals:[m.d2],opt:"normal",manual:false};
+  rec.opt=guess(rec,rec.k);
+  rowsData=rowsData.filter(function(r){return key(r.g,r.n)!=key(rec.g,rec.n)&&!(r.st==rec.st&&r.d1==rec.d1)});
+  rowsData.push(rec);lastRec=rec;lastT=now;
+  drawRows();save();
+  if($("auto").checked)next();else{armed=null;$("armtxt").textContent="Bound "+rec.n+". Tap the next control.";drawList()}}
+
+var OPTS=["normal","button","invert","selectknob","diff","rot64","spread64","soft-takeover"];
+function drawRows(){
+  var tb=$("rows");tb.innerHTML="";
+  rowsData.slice().reverse().forEach(function(r){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+esc(r.n)+'<div class="hint">'+esc(r.g)+"</div></td><td>"+msgText(r)+"</td>";
+    var td=document.createElement("td"),s=document.createElement("select");
+    OPTS.forEach(function(o){var op=document.createElement("option");op.value=o;op.textContent=o;if(o==r.opt)op.selected=true;s.appendChild(op)});
+    s.onchange=function(){r.opt=s.value;r.manual=true;save()};td.appendChild(s);tr.appendChild(td);
+    var tx=document.createElement("td"),b=document.createElement("button");b.textContent="X";
+    b.onclick=function(){rowsData=rowsData.filter(function(x){return x!==r});drawRows();drawList();save()};tx.appendChild(b);tr.appendChild(tx);
+    tb.appendChild(tr)});
+  $("count").textContent="("+rowsData.length+" controls)";drawList()}
+
+function xml(){
+  var name=$("mname").value.trim()||"My Controller",L=[];
+  L.push('<?xml version="1.0" encoding="utf-8"?>','<MixxxMIDIPreset mixxxVersion="2.3.0" schemaVersion="1">','  <info>','    <name>'+esc(name)+'</name>','    <author>reMixXXL map builder</author>','    <description>Made with the reMixXXL map builder</description>','  </info>','  <controller id="'+esc(name)+'">','    <controls>');
+  rowsData.forEach(function(r){
+    var o=r.opt=="normal"?"<normal/>":"<"+r.opt+"/>";
+    L.push("      <control>","        <status>"+hex(r.st)+"</status>","        <midino>"+hex(r.d1)+"</midino>","        <group>"+esc(r.g)+"</group>","        <key>"+esc(r.n)+"</key>","        <options>"+o+"</options>","      </control>")});
+  L.push("    </controls>","  </controller>","</MixxxMIDIPreset>","");return L.join("\n")}
+function show(t,ok){$("res").innerHTML='<div class="msg '+(ok?"ok":"bad")+'">'+esc(t)+"</div>"}
+function fname(){return($("mname").value.trim()||"My Controller")}
+$("dl").onclick=function(){
+  if(!rowsData.length)return show("The map is empty.",false);
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([xml()],{type:"text/xml"}));a.download=fname()+".midi.xml";document.body.appendChild(a);a.click();a.remove()};
+$("save").onclick=function(){
+  if(!rowsData.length)return show("The map is empty.",false);
+  fetch("/api/savemap?load=1&name="+encodeURIComponent(fname()),{method:"POST",headers:{"X-Rx":"1","Content-Type":"text/xml"},body:xml()})
+   .then(function(r){return r.json()}).then(function(j){
+     if(j.ok){show("Saved on the Force and loading it now. It is on the CONTROLLERS page too.",true);setTimeout(loadMaps,1200)}else show("Not saved (error "+j.error+"). Use a name with letters and numbers.",false)})
+   .catch(function(){show("Could not reach the Force. Is the page open from its address?",false)})};
+$("clear").onclick=function(){if(rowsData.length&&!confirm("Clear the whole map?"))return;rowsData=[];lastRec=null;drawRows();save()};
+$("copy").onclick=function(){
+  var step=parseInt($("cstep").value,10)||0,mode=$("cmode").value,add=0,have={};
+  rowsData.forEach(function(r){have[r.st+"/"+r.d1]=1});
+  rowsData.slice().forEach(function(r){
+    if(r.g.indexOf("[Channel1]")<0)return;
+    for(var d=2;d<=4;d++){
+      var g=r.g.replace("[Channel1]","[Channel"+d+"]"),st=r.st,d1=r.d1;
+      if(mode=="chan")st=(r.st&0xF0)|(((r.st&15)+(d-1)*step)&15);else d1=r.d1+(d-1)*step;
+      if(d1>127||have[st+"/"+d1])continue;
+      if(rowsData.some(function(x){return x.g==g&&x.n==r.n}))continue;
+      have[st+"/"+d1]=1;add++;
+      rowsData.push({g:g,n:r.n,k:r.k,st:st,d1:d1,vals:[],opt:r.opt,manual:true})}});
+  show(add?("Added "+add+" controls for decks 2-4. Check them in the table."):"Nothing to add (no deck 1 controls, or the numbers were already used).",add>0);drawRows();save()};
+function save(){try{localStorage.setItem("rxmap",JSON.stringify({name:$("mname").value,rows:rowsData.map(function(r){return{g:r.g,n:r.n,k:r.k,st:r.st,d1:r.d1,opt:r.opt}})}))}catch(e){}}
+function restore(){try{var s=JSON.parse(localStorage.getItem("rxmap")||"null");if(s){$("mname").value=s.name||"";rowsData=(s.rows||[]).map(function(r){r.vals=[];r.manual=true;return r})}}catch(e){}}
+$("mname").oninput=save;
+$("imp").onchange=function(){
+  var f=this.files[0];if(!f)return;var fr=new FileReader();
+  fr.onload=function(){
+    var d=new DOMParser().parseFromString(fr.result,"text/xml"),cs=d.getElementsByTagName("control"),add=0,skip=0;
+    var nm=d.getElementsByTagName("name")[0];if(nm&&!$("mname").value)$("mname").value=nm.textContent.trim();
+    var kinds={};controls.forEach(function(c){kinds[key(c.g,c.n)]=c.k});
+    for(var i=0;i<cs.length;i++){
+      var c=cs[i],g=(c.getElementsByTagName("group")[0]||{}).textContent,k=(c.getElementsByTagName("key")[0]||{}).textContent,
+          st=parseInt((c.getElementsByTagName("status")[0]||{}).textContent,0),no=parseInt((c.getElementsByTagName("midino")[0]||{}).textContent,0);
+      if(!g||!k||isNaN(st)||isNaN(no)||c.getElementsByTagName("script-binding").length){skip++;continue}
+      g=g.trim();k=k.trim();var o="normal",ops=c.getElementsByTagName("options")[0];
+      if(ops)for(var j=0;j<ops.children.length;j++){var t=ops.children[j].tagName.toLowerCase();if(OPTS.indexOf(t)>0){o=t;break}}
+      rowsData.push({g:g,n:k,k:kinds[key(g,k)]||"float",st:st,d1:no,vals:[],opt:o,manual:true});add++}
+    show("Imported "+add+" controls ("+skip+" script bindings left out).",true);drawRows();save()};
+  fr.readAsText(f)};
+$("unload").onclick=function(){fetch("/api/nomap",{method:"POST",headers:{"X-Rx":"1"}}).then(function(){setTimeout(loadMaps,900)})};
+function loadMaps(){
+  fetch("/api/maps").then(function(r){return r.json()}).then(function(j){
+    maps=j.maps||[];var l=j.loaded,h;
+    if(!l)h="No controller map loaded. "+maps.length+" in the Mappings folder.";
+    else{h="<b>"+esc(l.name)+"</b> ("+esc(l.file)+"): "+l.controls+" controls, "+l.script+" script bindings, <b>"+l.unsupported+" the plugin does not have</b>";
+      if(l.unsupported>0)h+="<pre>"+esc(l.unsupported_list)+"</pre>"}
+    $("loaded").innerHTML=h}).catch(function(){})}
+function poll(){
+  fetch("/api/midi").then(function(r){return r.json()}).then(function(m){
+    $("net").textContent="";
+    if(seen<0){seen=m.seq}
+    else if(m.seq!=seen){seen=m.seq;onMsg(m)}
+    if(m.seq>0){var t=m.st&0xF0;$("mon").innerHTML=hex(m.st)+" "+m.d1+" "+m.d2+" <small>"+(t==0x90?"note":t==0xB0?"CC":t==0xE0?"bend":"msg")+" ch"+((m.st&15)+1)+"</small>"}})
+   .catch(function(){$("net").textContent="no connection to the Force"})
+   .then(function(){setTimeout(poll,70)})}
+fetch("/api/controls").then(function(r){return r.json()}).then(function(c){controls=c;restore();drawChips();drawRows();loadMaps();poll()})
+ .catch(function(){$("net").textContent="open this page from the Force: http://<its address>:6731/map"});
+</script></body></html>

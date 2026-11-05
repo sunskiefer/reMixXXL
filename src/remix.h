@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include <pthread.h>
 
-#define RX_VERSION_STR "0.1.0"
+#define RX_VERSION_STR "0.1.15"
 #define RX_SR 44100
 #define RX_BLOCK 128
 #define RX_DECKS 4
@@ -254,6 +254,18 @@ int midi_load_mapping(rx_midi_t *m, const char *xml_path);      /* a Mixxx <name
 const char *midi_mapping_name(rx_midi_t *m);
 int midi_mapping_count(rx_midi_t *m);                           /* mappings found in <plugin>/Mappings */
 const char *midi_mapping_file(rx_midi_t *m, int i);
+/* CONTROLLERS page / web map builder (midi.c; worker and web threads only) */
+void midi_rescan(rx_midi_t *m);
+int midi_mapping_total(rx_midi_t *m);                           /* -1 while the list is rebuilt */
+int midi_mapping_path_at(rx_midi_t *m, int i, char *out, int n);
+int midi_mapping_name_at(rx_midi_t *m, int i, char *out, int n);
+int midi_last_msg(rx_midi_t *m, int *st, int *d1, int *d2);     /* returns a counter that grows with each note/CC/bend */
+int midi_report(rx_midi_t *m, char *file, int fn, char *name, int nn, int *nin, int *nscript, int *nunknown, char *unknown_list, int un, int try_only);   /* 1 loaded, 0 none, -1 busy (try_only) */
+int midi_unload_mapping(rx_midi_t *m);
+int midi_pick_mapping(rx_midi_t *m, const char *path);          /* load and remember */
+int midi_pick_none(rx_midi_t *m);
+void midi_autoload(rx_midi_t *m);
+int midi_save_map(rx_midi_t *m, const char *name, const char *data, size_t len, char *saved, int sn);
 /* LED/controller feedback: MPC OS ignores VST MIDI out, so midi.c opens an ALSA sequencer port when libasound is there
  * (dlopen at runtime: never a link dependency); without it, feedback is logged only */
 
@@ -264,4 +276,10 @@ const char *rx_plugin_dir(void);
 
 /* deck access for the other parts (touch.c, midi.c) */
 rx_deck_t *rx_deck(rx_engine_t *e, int i);
+void compat_init(void);                                          /* compat.c: Mixxx control names older maps use (aliases) */
+void compat_tick(void);
+void engine_map_rescan(rx_engine_t *e);                          /* web map builder: a map file was saved (worker looks again) */
+void engine_map_pick(rx_engine_t *e, const char *path);          /* load a map and remember it (worker) */
+void engine_map_none(rx_engine_t *e);
+rx_midi_t *engine_midi(rx_engine_t *e);
 rx_engine_t *rx_engine_instance(void);                           /* the one instance that owns the screen/touch/MIDI */

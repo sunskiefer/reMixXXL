@@ -14,6 +14,7 @@
 #define _GNU_SOURCE
 #include "remix.h"
 #include "web_page.h"
+#include "map_page.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <ifaddrs.h>
@@ -239,7 +240,7 @@ static void web_cmd(rx_web_t *w, web_conn_t *cn, char *m) {
         ctl_id r = ctl_lookup(g, "rate"), rr = ctl_lookup(g, "rateRange");
         if (r < 0 || rr < 0) return;
         double range = ctl_get(rr); if (range < 0.01) range = 0.1;
-        cn->pr[d] += dl / range;                              /* ratio = 1 + range * rate, so a change of dl in the tempo is dl / range of the fader */
+        { ctl_id rd = ctl_lookup(g, "rate_dir"); double dir = rd >= 0 ? ctl_get(rd) : -1; if (dir == 0) dir = -1; cn->pr[d] += dl / (range * dir); }                              /* ratio = 1 + range * rate, so a change of dl in the tempo is dl / range of the fader */
         if (cn->pr[d] > 1) cn->pr[d] = 1; if (cn->pr[d] < -1) cn->pr[d] = -1;
         ctl_post(r, cn->pr[d]);
         break;
@@ -334,25 +335,169 @@ static void serve_ws(rx_web_t *w, int fd, const char *key) {
     free(v); free(js);
 }
 
+
+/* ------------------------------------------------------------------------------------------------ the map builder's API
+ *   GET  /map             the builder page (web/mapbuilder.html)
+ *   GET  /api/controls    every control the plugin has: [{"g":"[Channel1]","n":"play","k":"trigger","lo":0,"hi":1}, ...]
+ *   GET  /api/midi        the last note/CC/bend the plugin received: {"seq":n,"st":176,"d1":22,"d2":127}
+ *   GET  /api/maps        the maps in the Mappings folder and what is loaded now (with the controls this plugin does not have)
+ *   POST /api/savemap?name=X[&load=1]   body = the .midi.xml; written to Mappings (needs the header X-Rx: 1, so another web page cannot call it)
+ *   POST /api/loadmap?name=X            loads a map from Mappings (same header)
+ *   POST /api/nomap                     unloads the map */
+static int url_arg(const char *query, const char *key, char *out, size_t cap) {
+    out[0] = 0;
+    size_t kl = strlen(key);
+    for (const char *q = query; q && *q; ) {
+        if (!strncmp(q, key, kl) && q[kl] == '=') {
+            const char *v = q + kl + 1; size_t o = 0;
+            while (*v && *v != '&' && o + 1 < cap) {
+                if (*v == '%' && v[1] && v[2]) { char h[3] = {v[1], v[2], 0}; out[o++] = (char)strtol(h, NULL, 16); v += 3; }
+                else if (*v == '+') { out[o++] = ' '; v++; }
+                else out[o++] = *v++;
+            }
+            out[o] = 0;
+            return 1;
+        }
+        q = strchr(q, '&'); if (q) q++;
+    }
+    return 0;
+}
+
+static void api_controls(int fd) {
+    int n = ctl_count();
+    size_t cap = (size_t)n * 190 + 64, o = 0;
+    char *b = malloc(cap);
+    if (!b) { http_reply(fd, "500 Error", "text/plain", "memory", 6); return; }
+    static const char *const KIND[] = {"float", "toggle", "trigger", "int", "text"};
+    o += (size_t)snprintf(b + o, cap - o, "[");
+    int first = 1;
+    for (int i = 0; i < n; i++) {
+        const char *g = ctl_group(i), *nm = ctl_name(i);
+        if (!g || !nm || !g[0] || ctl_kind(i) == CK_TEXT) continue;
+        if (!strcmp(g, "[reMixXXL]") && (!strncmp(nm, "qr", 2) || !strncmp(nm, "maps_", 5) || !strncmp(nm, "browse_row", 10) || !strcmp(nm, "midi_learn") || !strcmp(nm, "midi_map") || !strcmp(nm, "mt_led") || !strncmp(nm, "overview_tap", 12))) continue;
+        if (!strncmp(nm, "jog_", 4) || !strncmp(nm, "bpm_", 4) || !strcmp(nm, "cues_dirty") || !strcmp(nm, "jog_disp")) continue;
+        char eg[160], en[160];
+        json_str(eg, sizeof eg, g); json_str(en, sizeof en, nm);
+        int k = ctl_kind(i); if (k < 0 || k > 4) k = 0;
+        o += (size_t)snprintf(b + o, cap - o, "%s{\"g\":\"%s\",\"n\":\"%s\",\"k\":\"%s\",\"lo\":%g,\"hi\":%g}", first ? "" : ",", eg, en, KIND[k], ctl_min(i), ctl_max(i));
+        first = 0;
+        if (o + 240 > cap) break;
+    }
+    o += (size_t)snprintf(b + o, cap - o, "]");
+    http_reply(fd, "200 OK", "application/json", b, o);
+    free(b);
+}
+
+static void api_maps(rx_web_t *w, int fd) {
+    rx_midi_t *m = engine_midi(w->eng);
+    char *b = malloc(16384);
+    if (!b) { http_reply(fd, "500 Error", "text/plain", "memory", 6); return; }
+    size_t o = 0, cap = 16384;
+    o += (size_t)snprintf(b + o, cap - o, "{\"maps\":[");
+    int total = midi_mapping_total(m);
+    for (int i = 0; i < total && o + 400 < cap - 2200; i++) {
+        char nm[256], e[300];
+        if (midi_mapping_name_at(m, i, nm, sizeof nm)) continue;
+        json_str(e, sizeof e, nm);
+        o += (size_t)snprintf(b + o, cap - o, "%s\"%s\"", i ? "," : "", e);
+    }
+    char file[RX_PATH], name[128], unk[2048]; int nin = 0, ns = 0, nu = 0;
+    int have = midi_report(m, file, sizeof file, name, sizeof name, &nin, &ns, &nu, unk, sizeof unk, 0);
+    const char *fb = strrchr(file, '/'); fb = fb ? fb + 1 : file;
+    char ef[300], en[300], eu[4200];
+    json_str(ef, sizeof ef, fb); json_str(en, sizeof en, name); json_str(eu, sizeof eu, unk);
+    if (have > 0) o += (size_t)snprintf(b + o, cap - o, "],\"loaded\":{\"file\":\"%s\",\"name\":\"%s\",\"controls\":%d,\"script\":%d,\"unsupported\":%d,\"unsupported_list\":\"%s\"}}", ef, en, nin, ns, nu, eu);
+    else o += (size_t)snprintf(b + o, cap - o, "],\"loaded\":null}");
+    http_reply(fd, "200 OK", "application/json", b, o);
+    free(b);
+}
+
+static void api_post(rx_web_t *w, int fd, const char *path, const char *query, const char *hdr, char *body, size_t blen) {
+    if (!strcasestr(hdr, "\nX-Rx: 1")) { http_reply(fd, "403 Forbidden", "text/plain", "forbidden", 9); return; }
+    rx_midi_t *m = engine_midi(w->eng);
+    if (!m) { http_reply(fd, "503 Unavailable", "text/plain", "no MIDI engine", 14); return; }
+    char name[160];
+    url_arg(query, "name", name, sizeof name);
+    if (!strcmp(path, "/api/savemap")) {
+        char saved[RX_PATH + 130];
+        int r = midi_save_map(m, name, body, blen, saved, sizeof saved);
+        if (r) { char msg[64]; int l = snprintf(msg, sizeof msg, "{\"ok\":false,\"error\":%d}", r); http_reply(fd, "400 Bad Request", "application/json", msg, (size_t)l); return; }
+        engine_map_rescan(w->eng);
+        char tmp[8]; if (url_arg(query, "load", tmp, sizeof tmp) && tmp[0] == '1') engine_map_pick(w->eng, saved);
+        char es[RX_PATH + 160], out[RX_PATH + 200]; json_str(es, sizeof es, saved);
+        int l = snprintf(out, sizeof out, "{\"ok\":true,\"saved\":\"%s\"}", es);
+        http_reply(fd, "200 OK", "application/json", out, (size_t)l);
+    } else if (!strcmp(path, "/api/loadmap")) {
+        char p[RX_PATH + 40], clean[160]; int k = 0;
+        for (const char *c = name; *c && k < 150; c++) if (*c != '/' && *c != '\\') clean[k++] = *c;   /* a name in Mappings, no path */
+        clean[k] = 0;
+        if (!clean[0] || strstr(clean, "..")) { http_reply(fd, "400 Bad Request", "text/plain", "name", 4); return; }
+        char dir[RX_PATH]; int has = 0;
+        char nm[300];
+        for (int i = 0, t = midi_mapping_total(m); i < t && !has; i++) {
+            if (midi_mapping_name_at(m, i, nm, sizeof nm) == 0 && (!strcasecmp(nm, clean))) { if (!midi_mapping_path_at(m, i, dir, sizeof dir)) { snprintf(p, sizeof p, "%s", dir); has = 1; } }
+        }
+        if (!has) { http_reply(fd, "404 Not Found", "text/plain", "no such map", 11); return; }
+        engine_map_pick(w->eng, p);
+        http_reply(fd, "200 OK", "application/json", "{\"ok\":true}", 11);
+    } else if (!strcmp(path, "/api/nomap")) {
+        engine_map_none(w->eng);
+        http_reply(fd, "200 OK", "application/json", "{\"ok\":true}", 11);
+    } else http_reply(fd, "404 Not Found", "text/plain", "not found", 9);
+}
+
 static void *conn_main(void *arg) {
     conn_t *c = arg; rx_web_t *w = c->w; int fd = c->fd; free(c);
     struct timeval tv = {5, 0};
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
     setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
     int one = 1; setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof one);
-    char req[2048]; int n = 0;
+    char req[4096]; int n = 0;
+    char *hend = NULL;
     while (n < (int)sizeof req - 1) {
         ssize_t r = recv(fd, req + n, sizeof req - 1 - (size_t)n, 0);
         if (r <= 0) break;
         n += (int)r; req[n] = 0;
-        if (strstr(req, "\r\n\r\n")) break;
+        if ((hend = strstr(req, "\r\n\r\n"))) break;
     }
     req[n] = 0;
+    if (strncmp(req, "POST ", 5) == 0 && hend) {
+        char *path = req + 5, *sp = strchr(path, ' ');
+        if (sp) *sp = 0;
+        char *query = strchr(path, '?'); if (query) *query++ = 0; else query = path + strlen(path);
+        long clen = 0;
+        const char *cl = strcasestr(sp ? sp + 1 : req, "Content-Length:");
+        if (cl) clen = atol(cl + 15);
+        if (clen < 0 || clen > 262144) { http_reply(fd, "413 Too Large", "text/plain", "too large", 9); goto done; }
+        char *body = malloc((size_t)clen + 1);
+        if (!body) { http_reply(fd, "500 Error", "text/plain", "memory", 6); goto done; }
+        long have = n - (int)(hend + 4 - req);
+        if (have > clen) have = clen;
+        if (have > 0) memcpy(body, hend + 4, (size_t)have);
+        while (have < clen) {
+            ssize_t r = recv(fd, body + have, (size_t)(clen - have), 0);
+            if (r <= 0) break;
+            have += r;
+        }
+        body[have] = 0;
+        if (have < clen) http_reply(fd, "400 Bad Request", "text/plain", "short body", 10);
+        else api_post(w, fd, path, query, sp ? sp + 1 : req, body, (size_t)have);
+        free(body);
+        goto done;
+    }
     if (strncmp(req, "GET ", 4) == 0) {
         char *path = req + 4, *sp = strchr(path, ' ');
         if (sp) *sp = 0;
         char *q = strchr(path, '?'); if (q) *q = 0;
         if (strcmp(path, "/") == 0 || strcmp(path, "/index.html") == 0) http_reply(fd, "200 OK", "text/html; charset=utf-8", RX_WEB_PAGE, strlen(RX_WEB_PAGE));
+        else if (strcmp(path, "/map") == 0 || strcmp(path, "/map/") == 0) http_reply(fd, "200 OK", "text/html; charset=utf-8", RX_MAP_PAGE, strlen(RX_MAP_PAGE));
+        else if (strcmp(path, "/api/controls") == 0) api_controls(fd);
+        else if (strcmp(path, "/api/maps") == 0) api_maps(w, fd);
+        else if (strcmp(path, "/api/midi") == 0) {
+            int st = 0, d1 = 0, d2 = 0, seq = midi_last_msg(engine_midi(w->eng), &st, &d1, &d2);
+            char out[96]; int l = snprintf(out, sizeof out, "{\"seq\":%d,\"st\":%d,\"d1\":%d,\"d2\":%d}", seq, st, d1, d2);
+            http_reply(fd, "200 OK", "application/json", out, (size_t)l);
+        }
         else if ((path[1] == 'w' || path[1] == 'o') && path[2] == '/' && path[3] >= '0' && path[3] <= '3' && path[4] == 0) serve_wave(fd, path[3] - '0', path[1] == 'o');
         else if (strcmp(path, "/ws") == 0) {
             const char *k = strcasestr(sp ? sp + 1 : req, "Sec-WebSocket-Key:");
@@ -361,6 +506,7 @@ static void *conn_main(void *arg) {
             if (key[0]) serve_ws(w, fd, key); else http_reply(fd, "400 Bad Request", "text/plain", "websocket only", 14);
         } else http_reply(fd, "404 Not Found", "text/plain", "not found", 9);
     }
+done:
     close(fd);
     atomic_fetch_sub(&w->clients, 1);
     return NULL;
