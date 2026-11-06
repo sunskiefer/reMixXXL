@@ -552,12 +552,88 @@ static void page_mixer(const rx_view_t *v) {
     vu_bar(RX_MX_MASTER_VU, v->master_vu_l, v->master_vu_r);
 }
 
+
+/* ------------------------------------------------------------------------------------------------ the WHEEL page's turning ring
+ * The ring picture (tools/gen_ring.py: ring_<D>.png, straight RGBA, and the fixed light ring_light_<D>.png) is turned to ANY angle each frame, as
+ * XYZ-STACK turns its wheel: every pixel of the ring's annulus is looked up in the picture turned back by the angle (bilinear), the light is laid
+ * over it (it does not turn), and the result replaces the buffer's pixels there. The skin's own ring (a film strip, same size and place) lies under
+ * it; its edges never differ, so only this one shows. */
+typedef struct { int d; float rin; uint8_t *ring, *light; } ring_pic_t;
+static ring_pic_t *g_ring_pic;
+
+void screen_set_ring(const uint8_t *ring_rgba, const uint8_t *light_rgba, int d) {
+    if (!ring_rgba || !light_rgba || d < 16) return;
+    ring_pic_t *R = calloc(1, sizeof *R);
+    if (!R) return;
+    R->d = d;
+    R->ring = malloc((size_t)d * d * 4);
+    R->light = malloc((size_t)d * d * 4);
+    if (!R->ring || !R->light) { free(R->ring); free(R->light); free(R); return; }
+    memcpy(R->ring, ring_rgba, (size_t)d * d * 4);
+    memcpy(R->light, light_rgba, (size_t)d * d * 4);
+    /* the ring's inner edge: walking out from the middle along the centre row, the first pixel that is the ring */
+    int c = d / 2, k = 0;
+    while (k < c && R->ring[((size_t)c * d + c + k) * 4 + 3] > 10) k++;    /* the picture's own centre knob (the skin's centre disc covers it): skipped */
+    while (k < c && R->ring[((size_t)c * d + c + k) * 4 + 3] <= 10) k++;   /* the gap, then the ring itself */
+    R->rin = (float)k;
+    __atomic_store_n(&g_ring_pic, R, __ATOMIC_RELEASE);   /* an older picture (a skin reload) is left in place: never freed while the overlay thread may read it */
+}
+
+static inline float rclamp_(float v, float lo, float hi) { return v < lo ? lo : v > hi ? hi : v; }
+static float g_ring_turn_drawn = -10.0f;
+static int g_ring_force = 1;
+
+static inline void ring_texel(const ring_pic_t *R, int x, int y, float *pr, float *pg, float *pb, float *pa) {
+    if (x < 0 || y < 0 || x >= R->d || y >= R->d) { *pr = *pg = *pb = *pa = 0; return; }
+    const uint8_t *t = R->ring + ((size_t)y * R->d + x) * 4;
+    float a = t[3];
+    *pr = t[0] * a / 255.0f; *pg = t[1] * a / 255.0f; *pb = t[2] * a / 255.0f; *pa = a;
+}
+
+static void draw_ring_turned(int cx, int cy, float turn) {
+    const ring_pic_t *R = __atomic_load_n(&g_ring_pic, __ATOMIC_ACQUIRE);
+    if (!R) return;
+    turn -= floorf(turn);
+    if (!g_ring_force && fabsf(turn - g_ring_turn_drawn) < 0.0004f) return;   /* under 0.15 degree: nothing to redraw */
+    g_ring_turn_drawn = turn; g_ring_force = 0;
+    int D = R->d;
+    float h = (float)D * 0.5f, ang = turn * 6.2831853f, ca = cosf(ang), sa = sinf(ang);
+    float rin2 = (R->rin - 2.0f) * (R->rin - 2.0f), rout2 = (h + 2.0f) * (h + 2.0f);
+    for (int y = 0; y < D; y++) {
+        int py = cy - D / 2 + y;
+        if (py < 0 || py >= BH) continue;
+        float dy = (float)y + 0.5f - h;
+        for (int x = 0; x < D; x++) {
+            int px = cx - D / 2 + x;
+            if (px < 0 || px >= BW) continue;
+            float dx = (float)x + 0.5f - h, rr = dx * dx + dy * dy;
+            if (rr < rin2 || rr > rout2) continue;
+            float sx = dx * ca + dy * sa + h - 0.5f, sy = -dx * sa + dy * ca + h - 0.5f;   /* back to the unturned picture */
+            int x0 = (int)floorf(sx), y0 = (int)floorf(sy);
+            float fx = sx - (float)x0, fy = sy - (float)y0;
+            float r00, g00, b00, a00, r10, g10, b10, a10, r01, g01, b01, a01, r11, g11, b11, a11;
+            ring_texel(R, x0, y0, &r00, &g00, &b00, &a00); ring_texel(R, x0 + 1, y0, &r10, &g10, &b10, &a10);
+            ring_texel(R, x0, y0 + 1, &r01, &g01, &b01, &a01); ring_texel(R, x0 + 1, y0 + 1, &r11, &g11, &b11, &a11);
+            float w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+            float a = a00 * w00 + a10 * w10 + a01 * w01 + a11 * w11;
+            uint8_t *d = B + (size_t)py * BP + px * 4;
+            if (a < 0.5f) { d[0] = d[1] = d[2] = d[3] = 0; continue; }
+            float rr_ = r00 * w00 + r10 * w10 + r01 * w01 + r11 * w11, gg = g00 * w00 + g10 * w10 + g01 * w01 + g11 * w11, bb = b00 * w00 + b10 * w10 + b01 * w01 + b11 * w11;
+            const uint8_t *l = R->light + ((size_t)y * D + x) * 4;   /* the light does not turn: this pixel's own place */
+            float la = l[3] / 255.0f, ia = 1.0f - la, an = a / 255.0f;
+            rr_ = rr_ * ia + l[0] * la * an; gg = gg * ia + l[1] * la * an; bb = bb * ia + l[2] * la * an;
+            d[0] = (uint8_t)rclamp_(bb + 0.5f, 0, 255); d[1] = (uint8_t)rclamp_(gg + 0.5f, 0, 255); d[2] = (uint8_t)rclamp_(rr_ + 0.5f, 0, 255); d[3] = (uint8_t)rclamp_(a + 0.5f, 0, 255);
+        }
+    }
+}
+
 /* one wheel: the centre label spinning, the position arc, the touch-zone tint, the readouts above and below */
 static void wheel(int slot, int cx, int cy, int r, int rtop, int label_r, const rx_deck_view_t *d, int deck_no, int title_in_stripe) {
     wheel_state_t *ws = &S.wheel[slot];
+    if (slot == 2) draw_ring_turned(cx, cy, d->platter_angle);   /* the WHEEL page: the ring turned to the platter's exact angle (smooth, like XYZ-STACK's wheel) */
     /* the touch-zone tint: a faint ring over the top (zone 1) or the rim (zone 2); redrawn only when it changes,
      * the area under it cleared first (the label and arc are painted over it every frame) */
-    if (d->touch_zone != ws->zone_drawn) {
+    if (slot != 2 && d->touch_zone != ws->zone_drawn) {   /* (no zone tint on the WHEEL page: the ring itself shows the finger) */
         fill_rect(cx - r - 2, cy - r - 2, 2 * r + 4, 2 * r + 4, 0, 1);
         if (d->touch_zone == 1) ring(cx, cy, label_r + 12, rtop, COL_ACCENT, 48);
         else if (d->touch_zone == 2) ring(cx, cy, rtop, r, COL_ACCENT, 48);
@@ -658,6 +734,7 @@ void screen_draw(int page, const rx_view_t *v, uint8_t *argb, int w, int h, int 
         for (int y = 0; y < h; y++) memset(argb + (size_t)y * pitch, 0, (size_t)w * 4);
         S.last_page = page;
         for (int i = 0; i < 3; i++) S.wheel[i].zone_drawn = -1;
+        g_ring_force = 1;
     }
     switch (page) {
     case RX_PAGE_DECK: page_deck(v); break;

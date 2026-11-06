@@ -216,6 +216,7 @@ void overlay_set_platter_frames(rx_overlay_t *o, const uint8_t *argb, int w, int
 
 /* screen.c: draws one frame of a page into an ARGB buffer (w x h = the page, pitch bytes); overlay.c calls it */
 void screen_draw(int page, const rx_view_t *v, uint8_t *argb, int w, int h, int pitch, double now_s);
+void screen_set_ring(const uint8_t *ring_rgba, const uint8_t *light_rgba, int d);   /* the WHEEL page's turning ring and its fixed light (straight RGBA, d x d each) */
 void screen_set_panel_font(const char *ttf_path);              /* optional: a font file next to the plugin for text */
 
 /* ------------------------------------------------------------------------------------------------ touch */

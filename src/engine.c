@@ -484,6 +484,19 @@ static void load_platter_frames(rx_engine_t *e) {
     stbi_image_free(px);
 }
 
+/* the WHEEL page's ring, turned to any angle by the screen (tools/gen_ring.py) */
+static void load_ring(rx_engine_t *e) {
+    char p[RX_PATH], q[RX_PATH];
+    snprintf(p, sizeof p, "%s/Screen/ring_574.png", e->plugin_dir);
+    snprintf(q, sizeof q, "%s/Screen/ring_light_574.png", e->plugin_dir);
+    int w, h, comp, w2, h2;
+    unsigned char *a = stbi_load(p, &w, &h, &comp, 4), *b = stbi_load(q, &w2, &h2, &comp, 4);
+    if (a && b && w == h && w2 == w && h2 == h) { screen_set_ring(a, b, w); rx_log("screen: ring %dx%d (the WHEEL page's ring turns freely)", w, h); }
+    else rx_log("screen: no usable %s / %s: the WHEEL page keeps the skin's ring", p, q);
+    if (a) stbi_image_free(a);
+    if (b) stbi_image_free(b);
+}
+
 /* ------------------------------------------------------------------------------------------------ create / destroy */
 static void *create(const char *data_dir) {
     rx_engine_t *e = calloc(1, sizeof *e);
@@ -568,7 +581,7 @@ static void *create(const char *data_dir) {
         int ok = 0;
         e->ovl = overlay_start(e->plugin_dir, &ok);
         rx_log("screen: overlay %s", ok ? "started" : "not available (see remixxxl_overlay.log)");
-        if (e->ovl) load_platter_frames(e);
+        if (e->ovl) { load_platter_frames(e); load_ring(e); }
         e->touch = touch_start(e->plugin_dir, e->ovl, e);
         rx_log("touch: %s", touch_available(e->touch) ? "reading the touchscreen directly" : "no direct touch (see the log above)");
         e->web = web_start(e);

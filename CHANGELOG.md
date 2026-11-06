@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.16 (test build, not yet tested on a Force)
+WHEEL page only (the one-deck page): the wheel picture is the endless encoder, drawn by the live screen turned to any angle like XYZ-STACK's wheel (`tools/gen_ring.py` makes `Screen/ring_574.png` and `ring_light_574.png`; the skin's own ring stays under it as the fallback). It turns exactly with the finger around the wheel's centre and with the platter. A clockwise circle moves the track forward, an anticlockwise circle moves it back (one turn is about 1.8 s of track, scaled by JOG ADJUST), stopped or playing, VINYL or CDJ alike (a playing track scratches; a stopped one moves its playhead). The WHEELS page and the other pages are unchanged.
+
 ## 0.1.15 (release)
 Packaged build `reMixXXL-0.1.15-mpc-armv7.zip` (install.sh, uninstall.sh, ARMv7 `remixxxl.so`, skin, Mappings, Screen, Layout). The source in this repo is the 0.1.15 source (it includes the 0.1.13 MAPS page and map builder). Changes made in 0.1.14 and 0.1.15 are not itemised here.
 New: `reMixXXL-map-builder.html`, a saved copy of the map builder you open from your computer and connect to the Force (address, port 6731). Its **Mixer** tab now lists exactly the controls of the plugin's MIXER page, in page order (per deck VOLUME, FILTER, GAIN, HIGH, MID, LOW, PFL, FX 1, FX 2, XF SIDE; then MASTER, CUE MIX, CROSSFADER) under the page's own names; the per-deck FX enables also show on the FX tab; controls the page does not have (EQ kills, VU meters, Library, Playlist and the like) are under Other. From a saved copy SAVE TO FORCE is hidden (the browser blocks it): use DOWNLOAD `.midi.xml` and put the file in the plugin's `Mappings` folder. The plugin's own `/map` page is unchanged in this release (the fix is in the saved copy only).

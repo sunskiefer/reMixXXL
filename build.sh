@@ -20,6 +20,7 @@ python3 tools/gen_web.py                                 # src/web_page.h (the c
 python3 tools/remix_pages.py
 python3 tools/remix_skin.py --layout
 python3 tools/gen_platter_frames.py                      # build/Screen/platter_frames.png (the spinning centre label)
+python3 tools/gen_ring.py                                # build/Screen/ring_574.png + ring_light_574.png (the WHEEL page's ring, turned freely by the screen)
 
 mkdir -p build/tools build/arm
 [ -x build/tools/shadow_art ] || gcc -O2 -w -I"$MPC_VST/tools/vendor/force-shadow/tools" -x c -o build/tools/shadow_art "$MPC_VST/tools/shadow_art.c" -lm
