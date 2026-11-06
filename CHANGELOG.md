@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.18 (test build, not yet tested on a Force)
+The WHEEL page's wheel behaviour (tested: perfect) now also drives the two small wheels of the WHEELS page: each ring turns freely with the finger and with its deck's platter (`tools/gen_ring.py` now also makes `Screen/ring_420.png` and `ring_light_420.png`), and a clockwise circle moves that deck's track forward, anticlockwise back, stopped or playing. The live screen and the touch layer now work both pages. The wheels' faces are the skin's own again: the live screen no longer draws a photo label disc, a position arc or any text (deck, BPM, time) over or round the wheels, so the skin's centre and its BPM digits show as before. The ring turn is now integer maths (about 5 to 10 times cheaper): 0.1.17 took about 105 ms a frame on the Force (6 frames a second).
+
 ## 0.1.17 (test build, not yet tested on a Force)
 Fixes 0.1.16, which showed nothing new on the Force: the live screen (`src/overlay.c`) and the engine's touch reader (`src/touch.c`) both assumed the display is not turned, but the Force's panel is portrait (800 x 1280) and MPC draws its screen turned 90 degrees into it, so neither ever found the page or read a touch in the right place (that is also why the waveforms never showed). They now find the turn, the page and the plane the way XYZ-STACK does (rotation-aware marker search, the page turned into the plane, touch mapped back through the turn). Limited to the WHEEL page in this test: the live screen draws only that page, and the touch layer works only that page's wheel (the buttons stay the skin's own). Everything else as in 0.1.16.
 

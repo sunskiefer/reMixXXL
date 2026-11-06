@@ -15,21 +15,21 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 import remix_skin as K  # noqa: E402
 
 
-def wheel_d():
+def wheel_ds():
+    """the big wheel's square (WHEEL page) and the small wheels' (WHEELS page): twice the radius in src/boxes.h"""
     src = open(os.path.join(ROOT, "src", "boxes.h")).read()
-    return 2 * int(re.search(r"#define RX_WHEEL_0_R (\d+)", src).group(1))
+    return [2 * int(re.search(r"#define RX_%s_0_R (\d+)" % n, src).group(1)) for n in ("WHEEL", "WHEELS")]
 
 
 def main(out_dir):
     from PIL import Image
-    D = wheel_d()
     os.makedirs(out_dir, exist_ok=True)
-    big = K._jog_ring_square().resize((D * 2, D * 2), Image.LANCZOS)
-    ring = big.resize((D, D), Image.LANCZOS)
-    ring.save(os.path.join(out_dir, "ring_%d.png" % D))
-    K.jog_light(D).save(os.path.join(out_dir, "ring_light_%d.png" % D))
-    print("gen_ring: %dx%d -> %s" % (D, D, out_dir))
-
+    for D in wheel_ds():
+        big = K._jog_ring_square().resize((D * 2, D * 2), Image.LANCZOS)
+        ring = big.resize((D, D), Image.LANCZOS)
+        ring.save(os.path.join(out_dir, "ring_%d.png" % D))
+        K.jog_light(D).save(os.path.join(out_dir, "ring_light_%d.png" % D))
+        print("gen_ring: %dx%d -> %s" % (D, D, out_dir))
 
 if __name__ == "__main__":
     main(sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "build", "Screen"))

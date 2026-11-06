@@ -213,14 +213,14 @@ static void finger_down(rx_touch_t *t, slot_t *s, int page) {
         wheel_t *wh = &t->wheels[page][w];
         double dx = s->x - wh->cx, dy = s->y - wh->cy, dist = sqrt(dx * dx + dy * dy);
         if (dist > wh->r) continue;
-        if (page == RX_PAGE_WHEEL && dist < wh->r * 0.30) continue;     /* the small black circle in the middle is the QR switch */
+        if (dist < wh->r * 0.30) continue;     /* the middle: the QR switch (WHEEL) / the deck's centre disc (WHEELS) */
         int deck = wheel_deck_of(t, page, w);
         int vinyl = t->vinyl_ctl[deck] != CTL_NONE ? ctl_get(t->vinyl_ctl[deck]) > 0.5 : 1;
         s->kind = 1; s->deck = deck; s->wheel = w;
         s->zone = dist < wh->r_top ? 1 : 2;
         s->last_angle = atan2(dy, dx);
         deck_ext_jog(rx_deck(t->engine, deck), 1);
-        s->scratching = (vinyl || page == RX_PAGE_WHEEL) && deck_is_playing(rx_deck(t->engine, deck));   /* WHEEL page: a circle always moves the position (clockwise = forward), VINYL or CDJ */       /* stopped: the wheel moves the playhead itself (finger_move) */               /* VINYL: the whole wheel (disc and ring) spins the track; CDJ: it nudges the pitch (deck_jog, scaled by JOG ADJUST) */
+        s->scratching = (vinyl || page == RX_PAGE_WHEEL || page == RX_PAGE_WHEELS) && deck_is_playing(rx_deck(t->engine, deck));   /* WHEEL page: on the WHEEL and WHEELS pages a circle always moves the position (clockwise = forward), VINYL or CDJ */       /* stopped: the wheel moves the playhead itself (finger_move) */               /* VINYL: the whole wheel (disc and ring) spins the track; CDJ: it nudges the pitch (deck_jog, scaled by JOG ADJUST) */
         if (s->scratching) deck_scratch_enable(rx_deck(t->engine, deck), 1, SCRATCH_RPM, SCRATCH_ALPHA, SCRATCH_BETA);
         post_zone(t, deck, s->zone);
         pthread_mutex_unlock(&t->geom_lock);
@@ -359,7 +359,7 @@ static void sync_report(rx_touch_t *t) {
     int page = t->overlay ? overlay_page_shown(t->overlay) : -1;
     int ox = 0, oy = 0;
     if (t->overlay && !overlay_box_origin(t->overlay, &ox, &oy)) { ox = 0; oy = 110; }   /* no page found: MPC's 110 px header (docs/NOTES.md) */
-    int active = page == RX_PAGE_WHEEL;   /* 0.1.17 test: this layer works the WHEEL page's wheel only (it has never been live on a Force before) */
+    int active = page == RX_PAGE_WHEEL || page == RX_PAGE_WHEELS;   /* 0.1.17 test: this layer works the WHEEL page's wheel only (it has never been live on a Force before) */
     int fingers = 0;
     for (int i = 0; i < TOUCH_SLOTS; i++) {
         slot_t *s = &t->slot[i];

@@ -559,9 +559,10 @@ static void page_mixer(const rx_view_t *v) {
  * over it (it does not turn), and the result replaces the buffer's pixels there. The skin's own ring (a film strip, same size and place) lies under
  * it; its edges never differ, so only this one shows. */
 typedef struct { int d; float rin; uint8_t *ring, *light; } ring_pic_t;
-static ring_pic_t *g_ring_pic;
+static ring_pic_t *g_ring_pic[2];   /* 0: the WHEEL page's big wheel, 1: the WHEELS page's two small ones */
 
-void screen_set_ring(const uint8_t *ring_rgba, const uint8_t *light_rgba, int d) {
+void screen_set_ring(int which, const uint8_t *ring_rgba, const uint8_t *light_rgba, int d) {
+    if (which < 0 || which > 1) return;
     if (!ring_rgba || !light_rgba || d < 16) return;
     ring_pic_t *R = calloc(1, sizeof *R);
     if (!R) return;
@@ -571,58 +572,76 @@ void screen_set_ring(const uint8_t *ring_rgba, const uint8_t *light_rgba, int d)
     if (!R->ring || !R->light) { free(R->ring); free(R->light); free(R); return; }
     memcpy(R->ring, ring_rgba, (size_t)d * d * 4);
     memcpy(R->light, light_rgba, (size_t)d * d * 4);
+    /* 0.1.18: both stored premultiplied (colour * alpha / 255), so the per-frame turn is plain integer arithmetic */
+    for (size_t i = 0; i < (size_t)d * d; i++) {
+        uint8_t *t = R->ring + i * 4, *l = R->light + i * 4;
+        for (int c = 0; c < 3; c++) { t[c] = (uint8_t)((t[c] * t[3] + 127) / 255); l[c] = (uint8_t)((l[c] * l[3] + 127) / 255); }
+    }
     /* the ring's inner edge: walking out from the middle along the centre row, the first pixel that is the ring */
     int c = d / 2, k = 0;
     while (k < c && R->ring[((size_t)c * d + c + k) * 4 + 3] > 10) k++;    /* the picture's own centre knob (the skin's centre disc covers it): skipped */
     while (k < c && R->ring[((size_t)c * d + c + k) * 4 + 3] <= 10) k++;   /* the gap, then the ring itself */
     R->rin = (float)k;
-    __atomic_store_n(&g_ring_pic, R, __ATOMIC_RELEASE);   /* an older picture (a skin reload) is left in place: never freed while the overlay thread may read it */
+    __atomic_store_n(&g_ring_pic[which], R, __ATOMIC_RELEASE);   /* an older picture (a skin reload) is left in place: never freed while the overlay thread may read it */
 }
 
 static inline float rclamp_(float v, float lo, float hi) { return v < lo ? lo : v > hi ? hi : v; }
-static float g_ring_turn_drawn = -10.0f;
-static int g_ring_force = 1;
+static float g_ring_turn_drawn[3] = {-10.0f, -10.0f, -10.0f};
+static int g_ring_force[3] = {1, 1, 1};
 
-static inline void ring_texel(const ring_pic_t *R, int x, int y, float *pr, float *pg, float *pb, float *pa) {
-    if (x < 0 || y < 0 || x >= R->d || y >= R->d) { *pr = *pg = *pb = *pa = 0; return; }
-    const uint8_t *t = R->ring + ((size_t)y * R->d + x) * 4;
-    float a = t[3];
-    *pr = t[0] * a / 255.0f; *pg = t[1] * a / 255.0f; *pb = t[2] * a / 255.0f; *pa = a;
-}
-
-static void draw_ring_turned(int cx, int cy, float turn) {
-    const ring_pic_t *R = __atomic_load_n(&g_ring_pic, __ATOMIC_ACQUIRE);
+/* the ring turned to `turn` (0..1 of a turn), integer maths (16.16 fixed point, stepped along each row, only the annulus's own spans): every pixel
+ * is looked up in the picture turned back by the angle (bilinear), the fixed light laid over it, written premultiplied over the buffer's pixels */
+static void draw_ring_turned(int slot, int cx, int cy, float turn) {
+    const ring_pic_t *R = __atomic_load_n(&g_ring_pic[slot == 2 ? 0 : 1], __ATOMIC_ACQUIRE);
     if (!R) return;
     turn -= floorf(turn);
-    if (!g_ring_force && fabsf(turn - g_ring_turn_drawn) < 0.0004f) return;   /* under 0.15 degree: nothing to redraw */
-    g_ring_turn_drawn = turn; g_ring_force = 0;
-    int D = R->d;
-    float h = (float)D * 0.5f, ang = turn * 6.2831853f, ca = cosf(ang), sa = sinf(ang);
-    float rin2 = (R->rin - 2.0f) * (R->rin - 2.0f), rout2 = (h + 2.0f) * (h + 2.0f);
+    if (!g_ring_force[slot] && fabsf(turn - g_ring_turn_drawn[slot]) < 0.0004f) return;   /* under 0.15 degree: nothing to redraw */
+    g_ring_turn_drawn[slot] = turn; g_ring_force[slot] = 0;
+    const int D = R->d;
+    const float h = (float)D * 0.5f, ang = turn * 6.2831853f;
+    const int ca = (int)lrintf(cosf(ang) * 65536.0f), sa = (int)lrintf(sinf(ang) * 65536.0f);
+    const float rin = R->rin - 2.0f, rout = h + 2.0f;
+    const int32_t hc = (int32_t)lrintf((h - 0.5f) * 65536.0f);
     for (int y = 0; y < D; y++) {
         int py = cy - D / 2 + y;
         if (py < 0 || py >= BH) continue;
-        float dy = (float)y + 0.5f - h;
-        for (int x = 0; x < D; x++) {
-            int px = cx - D / 2 + x;
-            if (px < 0 || px >= BW) continue;
-            float dx = (float)x + 0.5f - h, rr = dx * dx + dy * dy;
-            if (rr < rin2 || rr > rout2) continue;
-            float sx = dx * ca + dy * sa + h - 0.5f, sy = -dx * sa + dy * ca + h - 0.5f;   /* back to the unturned picture */
-            int x0 = (int)floorf(sx), y0 = (int)floorf(sy);
-            float fx = sx - (float)x0, fy = sy - (float)y0;
-            float r00, g00, b00, a00, r10, g10, b10, a10, r01, g01, b01, a01, r11, g11, b11, a11;
-            ring_texel(R, x0, y0, &r00, &g00, &b00, &a00); ring_texel(R, x0 + 1, y0, &r10, &g10, &b10, &a10);
-            ring_texel(R, x0, y0 + 1, &r01, &g01, &b01, &a01); ring_texel(R, x0 + 1, y0 + 1, &r11, &g11, &b11, &a11);
-            float w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
-            float a = a00 * w00 + a10 * w10 + a01 * w01 + a11 * w11;
-            uint8_t *d = B + (size_t)py * BP + px * 4;
-            if (a < 0.5f) { d[0] = d[1] = d[2] = d[3] = 0; continue; }
-            float rr_ = r00 * w00 + r10 * w10 + r01 * w01 + r11 * w11, gg = g00 * w00 + g10 * w10 + g01 * w01 + g11 * w11, bb = b00 * w00 + b10 * w10 + b01 * w01 + b11 * w11;
-            const uint8_t *l = R->light + ((size_t)y * D + x) * 4;   /* the light does not turn: this pixel's own place */
-            float la = l[3] / 255.0f, ia = 1.0f - la, an = a / 255.0f;
-            rr_ = rr_ * ia + l[0] * la * an; gg = gg * ia + l[1] * la * an; bb = bb * ia + l[2] * la * an;
-            d[0] = (uint8_t)rclamp_(bb + 0.5f, 0, 255); d[1] = (uint8_t)rclamp_(gg + 0.5f, 0, 255); d[2] = (uint8_t)rclamp_(rr_ + 0.5f, 0, 255); d[3] = (uint8_t)rclamp_(a + 0.5f, 0, 255);
+        float dyf = (float)y + 0.5f - h;
+        /* this row's spans of dx: outside the inner circle, inside the outer */
+        float xo2 = rout * rout - dyf * dyf;
+        if (xo2 <= 0) continue;
+        float xo = sqrtf(xo2), xi2 = rin * rin - dyf * dyf, xi = xi2 > 0 ? sqrtf(xi2) : 0.0f;
+        int span[2][2], ns = 0;
+        if (xi2 > 0) { span[0][0] = (int)floorf(h - xo); span[0][1] = (int)ceilf(h - xi); span[1][0] = (int)floorf(h + xi); span[1][1] = (int)ceilf(h + xo); ns = 2; }
+        else { span[0][0] = (int)floorf(h - xo); span[0][1] = (int)ceilf(h + xo); ns = 1; }
+        int32_t dy16 = (int32_t)lrintf(dyf * 65536.0f);
+        for (int k = 0; k < ns; k++) {
+            int x0s = span[k][0] < 0 ? 0 : span[k][0], x1s = span[k][1] > D ? D : span[k][1];
+            if (cx - D / 2 + x0s < 0) x0s = D / 2 - cx;
+            if (cx - D / 2 + x1s > BW) x1s = BW - cx + D / 2;
+            if (x0s >= x1s) continue;
+            int32_t dx16 = (int32_t)lrintf(((float)x0s + 0.5f - h) * 65536.0f);
+            /* sx = dx*cos + dy*sin + h - 0.5, sy = -dx*sin + dy*cos + h - 0.5 */
+            int64_t sx = ((int64_t)dx16 * ca >> 16) + ((int64_t)dy16 * sa >> 16) + hc;
+            int64_t sy = -((int64_t)dx16 * sa >> 16) + ((int64_t)dy16 * ca >> 16) + hc;
+            uint8_t *d = B + (size_t)py * BP + (cx - D / 2 + x0s) * 4;
+            const uint8_t *lt = R->light + ((size_t)y * D + x0s) * 4;
+            for (int x = x0s; x < x1s; x++, d += 4, lt += 4, sx += ca, sy -= sa) {
+                int ix = (int)(sx >> 16), iy = (int)(sy >> 16);
+                int fx = (int)((sx >> 8) & 255), fy = (int)((sy >> 8) & 255);
+                uint32_t c00[4] = {0, 0, 0, 0}, c10[4] = {0, 0, 0, 0}, c01[4] = {0, 0, 0, 0}, c11[4] = {0, 0, 0, 0};
+                #define TEX_(dst, X, Y) do { if ((X) >= 0 && (Y) >= 0 && (X) < D && (Y) < D) { const uint8_t *t_ = R->ring + ((size_t)(Y) * D + (X)) * 4; dst[0] = t_[0]; dst[1] = t_[1]; dst[2] = t_[2]; dst[3] = t_[3]; } } while (0)
+                TEX_(c00, ix, iy); TEX_(c10, ix + 1, iy); TEX_(c01, ix, iy + 1); TEX_(c11, ix + 1, iy + 1);
+                #undef TEX_
+                uint32_t w00 = (256 - fx) * (256 - fy), w10 = fx * (256 - fy), w01 = (256 - fx) * fy, w11 = fx * fy;   /* sum 65536 */
+                uint32_t a = (c00[3] * w00 + c10[3] * w10 + c01[3] * w01 + c11[3] * w11 + 32768) >> 16;
+                if (a < 128) { d[0] = d[1] = d[2] = d[3] = 0; continue; }
+                uint32_t r_ = (c00[0] * w00 + c10[0] * w10 + c01[0] * w01 + c11[0] * w11 + 32768) >> 16;
+                uint32_t g_ = (c00[1] * w00 + c10[1] * w10 + c01[1] * w01 + c11[1] * w11 + 32768) >> 16;
+                uint32_t b_ = (c00[2] * w00 + c10[2] * w10 + c01[2] * w01 + c11[2] * w11 + 32768) >> 16;
+                uint32_t ia = 255 - lt[3];
+                r_ = (r_ * ia + lt[0] * a + 127) / 255; g_ = (g_ * ia + lt[1] * a + 127) / 255; b_ = (b_ * ia + lt[2] * a + 127) / 255;
+                d[0] = (uint8_t)(b_ > 255 ? 255 : b_); d[1] = (uint8_t)(g_ > 255 ? 255 : g_); d[2] = (uint8_t)(r_ > 255 ? 255 : r_); d[3] = (uint8_t)a;
+            }
         }
     }
 }
@@ -630,58 +649,19 @@ static void draw_ring_turned(int cx, int cy, float turn) {
 /* one wheel: the centre label spinning, the position arc, the touch-zone tint, the readouts above and below */
 static void wheel(int slot, int cx, int cy, int r, int rtop, int label_r, const rx_deck_view_t *d, int deck_no, int title_in_stripe) {
     wheel_state_t *ws = &S.wheel[slot];
-    if (slot == 2) draw_ring_turned(cx, cy, d->platter_angle);   /* the WHEEL page: the ring turned to the platter's exact angle (smooth, like XYZ-STACK's wheel) */
+    draw_ring_turned(slot, cx, cy, d->platter_angle);   /* every wheel: the ring turned to the platter's exact angle (smooth, like XYZ-STACK's wheel) */
     /* the touch-zone tint: a faint ring over the top (zone 1) or the rim (zone 2); redrawn only when it changes,
      * the area under it cleared first (the label and arc are painted over it every frame) */
-    if (slot != 2 && d->touch_zone != ws->zone_drawn) {   /* (no zone tint on the WHEEL page: the ring itself shows the finger) */
+    if (0 && d->touch_zone != ws->zone_drawn) {   /* (no zone tint: the ring itself shows the finger) */
         fill_rect(cx - r - 2, cy - r - 2, 2 * r + 4, 2 * r + 4, 0, 1);
         if (d->touch_zone == 1) ring(cx, cy, label_r + 12, rtop, COL_ACCENT, 48);
         else if (d->touch_zone == 2) ring(cx, cy, rtop, r, COL_ACCENT, 48);
         ws->zone_drawn = d->touch_zone;
     }
-    /* the label disc: cleared and redrawn every frame (it turns) */
-    int lr = label_r + 10;
-    clear_disc(cx, cy, lr);   /* inside the zone tint (which starts at label_r + 12) */
-    int fw, fh, fn;
-    const uint8_t *frames = overlay_platter_frames(&fw, &fh, &fn);
-    float ang = d->platter_angle - floorf(d->platter_angle);
-    if (frames) {
-        int i = (int)(ang * fn) % fn;
-        int dw = 2 * label_r, dh = (int)((long)fh * dw / (fw > 0 ? fw : 1));
-        blend_pic(frames + (size_t)i * fw * fh * 4, fw, fh, cx, cy, dw, dh);
-    } else {
-        ring(cx, cy, 0, label_r, RGB(28, 28, 30), 255);
-        ring(cx, cy, label_r - 2, label_r, RGB(90, 90, 95), 255);
-        radial(cx, cy, 8, label_r - 6, ang, d->playing ? COL_ACCENT : COL_DIM);
-        ring(cx, cy, 0, 6, RGB(200, 200, 200), 255);
-    }
-    /* the position arc: the elapsed part of the track around the label */
-    ring(cx, cy, label_r + 3, label_r + 7, RGB(40, 40, 40), 255);
-    if (d->loaded && d->duration > 0) arc(cx, cy, label_r + 3, label_r + 7, 0, (float)(d->pos / d->duration), COL_ACCENT, 255);
-    /* the readouts: above the platter the track's name (or in the stripe), below it BPM and time */
-    int th = font_height(TXT_PX);
-    char s[256], a[32], b[32];
-    rx_box_t top = {cx - r, cy - r - th - 6, 2 * r, th + 4};
-    rx_box_t bot = {cx - r, cy + r + 4, 2 * r, th + 4};
-    if (bot.y + th > RX_SKIN_H) bot.y = RX_SKIN_H - th;    /* the big wheel reaches the page's bottom: the text sits over its rim */
-    if (top.y < RX_STRIPE_H) top.y = RX_STRIPE_H;
-    fill_rect(top.x, top.y, top.w, top.h, 0, 1);
-    fill_rect(bot.x, bot.y, bot.w, bot.h, 0, 1);
-    if (d->artist[0]) snprintf(s, sizeof s, "%d: %s - %s", deck_no + 1, d->artist, d->title);
-    else snprintf(s, sizeof s, "%d: %s", deck_no + 1, d->loaded ? d->title : "NO TRACK");
-    if (title_in_stripe) {
-        rx_box_t st = {16, (RX_STRIPE_H - th) / 2, cx - r - 24, th};
-        fill_rect(st.x, st.y, st.w, st.h, 0, 1);
-        text(st.x, st.y, TXT_PX, COL_WHITE, 255, s, &st);
-    } else text(top.x + 4, top.y, TXT_PX, COL_WHITE, 255, s, &top);
-    if (d->loaded) {
-        fmt_time(a, sizeof a, d->pos);
-        fmt_time(b, sizeof b, -(d->duration - d->pos));
-        if (d->bpm > 0) snprintf(s, sizeof s, "%.1f BPM", d->bpm * fabs(d->rate)); else snprintf(s, sizeof s, "-- BPM");
-        text(bot.x + 4, bot.y, TXT_PX, d->playing ? COL_ACCENT : COL_WHITE, 255, s, &bot);
-        snprintf(s, sizeof s, "%s  %s", a, b);
-        text_right(bot.x + bot.w - 4, bot.y, TXT_PX, COL_WHITE, 255, s, &bot);
-    }
+    /* 0.1.18: nothing is drawn on the wheel's face (no label disc, no arc, no numbers): the skin's own centre and art show, as before */
+    (void)label_r; (void)rtop; (void)ws;
+    /* no text here: the skin's own live labels (deck, BPM, time) and its BPM digits in the middle show, as before */
+    (void)deck_no; (void)title_in_stripe;
 }
 
 static void page_wheels(const rx_view_t *v) {
@@ -707,16 +687,16 @@ void screen_used_rect(int page, rx_box_t *r) {
     }
     case RX_PAGE_WHEELS: {
         int x0 = RX_WHEELS_0_CX - RX_WHEELS_0_R - 2, x1 = RX_WHEELS_1_CX + RX_WHEELS_1_R + 2;
-        int y0 = RX_WHEELS_0_CY - RX_WHEELS_0_R - th - 6, y1 = RX_WHEELS_0_CY + RX_WHEELS_0_R + th + 8;
+        int y0 = RX_WHEELS_0_CY - RX_WHEELS_0_R - 2, y1 = RX_WHEELS_0_CY + RX_WHEELS_0_R + 2;
         if (y0 < 0) y0 = 0;
         if (y1 > RX_SKIN_H) y1 = RX_SKIN_H;
         *r = (rx_box_t){x0, y0, x1 - x0, y1 - y0};
         break;
     }
     case RX_PAGE_WHEEL: {
-        int x1 = RX_WHEEL_0_CX + RX_WHEEL_0_R + 2, y1 = RX_WHEEL_0_CY + RX_WHEEL_0_R + th + 8;
+        int x1 = RX_WHEEL_0_CX + RX_WHEEL_0_R + 2, y1 = RX_WHEEL_0_CY + RX_WHEEL_0_R + 2;
         if (y1 > RX_SKIN_H) y1 = RX_SKIN_H;
-        *r = (rx_box_t){16, 0, x1 - 16, y1};
+        *r = (rx_box_t){RX_WHEEL_0_CX - RX_WHEEL_0_R - 2, 0, x1 - (RX_WHEEL_0_CX - RX_WHEEL_0_R - 2), y1};
         break;
     }
     default: *r = (rx_box_t){0, 0, 0, 0}; break;
@@ -734,7 +714,7 @@ void screen_draw(int page, const rx_view_t *v, uint8_t *argb, int w, int h, int 
         for (int y = 0; y < h; y++) memset(argb + (size_t)y * pitch, 0, (size_t)w * 4);
         S.last_page = page;
         for (int i = 0; i < 3; i++) S.wheel[i].zone_drawn = -1;
-        g_ring_force = 1;
+        for (int i = 0; i < 3; i++) g_ring_force[i] = 1;
     }
     switch (page) {
     case RX_PAGE_DECK: page_deck(v); break;

@@ -486,15 +486,18 @@ static void load_platter_frames(rx_engine_t *e) {
 
 /* the WHEEL page's ring, turned to any angle by the screen (tools/gen_ring.py) */
 static void load_ring(rx_engine_t *e) {
-    char p[RX_PATH], q[RX_PATH];
-    snprintf(p, sizeof p, "%s/Screen/ring_574.png", e->plugin_dir);
-    snprintf(q, sizeof q, "%s/Screen/ring_light_574.png", e->plugin_dir);
-    int w, h, comp, w2, h2;
-    unsigned char *a = stbi_load(p, &w, &h, &comp, 4), *b = stbi_load(q, &w2, &h2, &comp, 4);
-    if (a && b && w == h && w2 == w && h2 == h) { screen_set_ring(a, b, w); rx_log("screen: ring %dx%d (the WHEEL page's ring turns freely)", w, h); }
-    else rx_log("screen: no usable %s / %s: the WHEEL page keeps the skin's ring", p, q);
-    if (a) stbi_image_free(a);
-    if (b) stbi_image_free(b);
+    static const struct { int which, d; const char *what; } rings[2] = {{0, 574, "the WHEEL page's big wheel"}, {1, 420, "the WHEELS page's two small wheels"}};
+    for (int i = 0; i < 2; i++) {
+        char p[RX_PATH], q[RX_PATH];
+        snprintf(p, sizeof p, "%s/Screen/ring_%d.png", e->plugin_dir, rings[i].d);
+        snprintf(q, sizeof q, "%s/Screen/ring_light_%d.png", e->plugin_dir, rings[i].d);
+        int w, h, comp, w2, h2;
+        unsigned char *a = stbi_load(p, &w, &h, &comp, 4), *b = stbi_load(q, &w2, &h2, &comp, 4);
+        if (a && b && w == h && w2 == w && h2 == h) { screen_set_ring(rings[i].which, a, b, w); rx_log("screen: ring %dx%d (%s turn freely)", w, h, rings[i].what); }
+        else rx_log("screen: no usable %s / %s: %s keep the skin's ring", p, q, rings[i].what);
+        if (a) stbi_image_free(a);
+        if (b) stbi_image_free(b);
+    }
 }
 
 /* ------------------------------------------------------------------------------------------------ create / destroy */

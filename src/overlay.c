@@ -665,10 +665,10 @@ static void *ovl_thread(void *p) {
                 memcpy(prev, src, (size_t)o->pw * 4);
             }
             full_copy = 0;
-            /* this test build draws the WHEEL page only (the one big wheel); the other pages stay as the skin draws them */
+            /* this test build draws the WHEEL and WHEELS pages only (the wheels); the other pages stay as the skin draws them */
             rx_box_t rect = {0, 0, 0, 0};
             screen_used_rect(page, &rect);
-            int want = page == RX_PAGE_WHEEL && rect.w > 0 && rect.h > 0;
+            int want = (page == RX_PAGE_WHEEL || page == RX_PAGE_WHEELS) && rect.w > 0 && rect.h > 0;
             if (!want) {
                 if (shown) { set_plane(o, 0); shown = 0; logf_(o, "hidden (page %d has nothing live)", page); }
             } else if (!shown || o->geom != shown_geom || page != shown_page) {
