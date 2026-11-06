@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.17 (test build, not yet tested on a Force)
+Fixes 0.1.16, which showed nothing new on the Force: the live screen (`src/overlay.c`) and the engine's touch reader (`src/touch.c`) both assumed the display is not turned, but the Force's panel is portrait (800 x 1280) and MPC draws its screen turned 90 degrees into it, so neither ever found the page or read a touch in the right place (that is also why the waveforms never showed). They now find the turn, the page and the plane the way XYZ-STACK does (rotation-aware marker search, the page turned into the plane, touch mapped back through the turn). Limited to the WHEEL page in this test: the live screen draws only that page, and the touch layer works only that page's wheel (the buttons stay the skin's own). Everything else as in 0.1.16.
+
 ## 0.1.16 (test build, not yet tested on a Force)
 WHEEL page only (the one-deck page): the wheel picture is the endless encoder, drawn by the live screen turned to any angle like XYZ-STACK's wheel (`tools/gen_ring.py` makes `Screen/ring_574.png` and `ring_light_574.png`; the skin's own ring stays under it as the fallback). It turns exactly with the finger around the wheel's centre and with the platter. A clockwise circle moves the track forward, an anticlockwise circle moves it back (one turn is about 1.8 s of track, scaled by JOG ADJUST), stopped or playing, VINYL or CDJ alike (a playing track scratches; a stopped one moves its playhead). The WHEELS page and the other pages are unchanged.
 

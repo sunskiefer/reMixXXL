@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include <pthread.h>
 
-#define RX_VERSION_STR "0.1.15"
+#define RX_VERSION_STR "0.1.17"
 #define RX_SR 44100
 #define RX_BLOCK 128
 #define RX_DECKS 4
@@ -209,6 +209,7 @@ void overlay_stop(rx_overlay_t *o);
 void overlay_publish(rx_overlay_t *o, const rx_view_t *v);     /* engine, every block */
 void overlay_read_view(rx_overlay_t *o, rx_view_t *v);
 int overlay_page_shown(rx_overlay_t *o);                       /* RX_PAGE_* currently found on the display, -1 none */
+int overlay_geom(rx_overlay_t *o, int *rot, int *lw, int *lh, int *ox, int *oy, unsigned *fbw, unsigned *fbh);   /* the display's turn and size, and the page's place on MPC's screen (for touch); 0 when no page was found */
 int overlay_box_origin(rx_overlay_t *o, int *x, int *y);       /* the page's top-left on the display (for touch) */
 int overlay_live(rx_overlay_t *o);
 int overlay_status(rx_overlay_t *o, int i, char *buf, int n);   /* the last log lines, newest first (on-screen diagnosis) */

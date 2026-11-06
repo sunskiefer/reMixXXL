@@ -227,6 +227,9 @@ static void finger_down(rx_touch_t *t, slot_t *s, int page) {
         if (t->logged < LOG_FULL_EVENTS * 4) rx_log("touch: wheel %d down deck %d zone %s (%d,%d) r=%.0f", w, deck + 1, s->zone == 1 ? "top" : "ring", s->x, s->y, dist);
         return;
     }
+    /* 0.1.17 test: the wheel only; the buttons round it stay the skin's own (this layer's boxes would fire them twice) */
+    pthread_mutex_unlock(&t->geom_lock);
+    return;
     /* 2. engine-supplied extra controls for the page */
     for (int i = 0; i < t->nctls[page]; i++) {
         rx_touch_ctl_t *c = &t->ctls[page][i];
@@ -321,7 +324,30 @@ static void finger_up(rx_touch_t *t, slot_t *s) {
 }
 
 /* ------------------------------------------------------------------------------------------------ the reader */
+/* MPC's landscape screen (lw x lh, u right, v down) turned into the display (x, y): backwards, in continuous coordinates (XYZ-STACK's finding:
+ * the Force's panel is portrait and MPC's screen is turned into it; 3.9.1: rot 3) */
+static inline void fb_to_ui_f(int rot, int lw, int lh, float x, float y, float *u, float *v) {
+    switch (rot) {
+    case 0: *u = x; *v = y; break;
+    case 1: *u = y; *v = (float)lh - x; break;
+    case 2: *u = (float)lw - x; *v = (float)lh - y; break;
+    default: *u = (float)lw - y; *v = x; break;
+    }
+}
+
 static void scale_to_page(rx_touch_t *t, slot_t *s, int ox, int oy) {
+    int rot, lw, lh, pox, poy;
+    unsigned fbw, fbh;
+    if (t->overlay && overlay_geom(t->overlay, &rot, &lw, &lh, &pox, &poy, &fbw, &fbh) && t->ax_max > t->ax_min && t->ay_max > t->ay_min) {
+        /* the touch chip's range -> the display's pixels (the kernel already gives positions in the display's orientation) -> MPC's screen -> the page */
+        float fx = (float)(s->raw_x - t->ax_min) / (float)(t->ax_max - t->ax_min) * (float)fbw;
+        float fy = (float)(s->raw_y - t->ay_min) / (float)(t->ay_max - t->ay_min) * (float)fbh;
+        float u, v;
+        fb_to_ui_f(rot, lw, lh, fx, fy, &u, &v);
+        s->x = (int)floorf(u - (float)pox);
+        s->y = (int)floorf(v - (float)poy);
+        return;
+    }
     int dx = t->ax_max > t->ax_min ? (int)((long)(s->raw_x - t->ax_min) * (DISPLAY_W - 1) / (t->ax_max - t->ax_min)) : s->raw_x;
     int dy = t->ay_max > t->ay_min ? (int)((long)(s->raw_y - t->ay_min) * (DISPLAY_H - 1) / (t->ay_max - t->ay_min)) : s->raw_y;
     s->x = dx - ox;
@@ -333,7 +359,7 @@ static void sync_report(rx_touch_t *t) {
     int page = t->overlay ? overlay_page_shown(t->overlay) : -1;
     int ox = 0, oy = 0;
     if (t->overlay && !overlay_box_origin(t->overlay, &ox, &oy)) { ox = 0; oy = 110; }   /* no page found: MPC's 110 px header (docs/NOTES.md) */
-    int active = page == RX_PAGE_WHEELS || page == RX_PAGE_WHEEL || page == RX_PAGE_BROWSE;
+    int active = page == RX_PAGE_WHEEL;   /* 0.1.17 test: this layer works the WHEEL page's wheel only (it has never been live on a Force before) */
     int fingers = 0;
     for (int i = 0; i < TOUCH_SLOTS; i++) {
         slot_t *s = &t->slot[i];

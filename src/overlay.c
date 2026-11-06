@@ -47,6 +47,7 @@
 #define OVL_W RX_SKIN_W
 #define OVL_H RX_SKIN_H
 #define OVL_PITCH (OVL_W * 4)
+#define BUFD (OVL_W > OVL_H ? OVL_W : OVL_H)   /* the plane's buffer is square, big enough for the page turned either way */
 #define MARK_TOL 5                     /* per channel: the page ids are 12 apart */
 #define PLATTER_KEEP 4                 /* retired platter strips kept (never freed while the thread may read them) */
 
@@ -64,6 +65,12 @@ struct rx_overlay {
     ovl_buf_t buf;
     /* the page on the display */
     int page_found, page_logged, page_x, page_y, page_id, on_screen, fmt_unknown, fb_logged, fb_err_logged, no_vblank;
+    /* 0.1.17: the Force's panel is portrait (800 x 1280) and MPC draws its landscape screen turned into it (XYZ-STACK's finding, 3.9.1: rot 3).
+     * rot: how MPC's landscape screen (lw x lh, u right, v down) lies in the display (fb_w x fb_h): 0 as is, 1 turned 90 clockwise, 2 turned 180,
+     * 3 turned 90 anticlockwise. page_x, page_y: the page's top-left on the landscape screen (u, v). The plane is the page turned the same way:
+     * pl_x, pl_y, pw x ph on the display; its buffer is BUFD x BUFD. geom counts changes of any of it. */
+    int rot, lw, lh, pl_x, pl_y, pw, ph;
+    unsigned fb_w, fb_h, geom;
     double ms_avg;
     /* the last log lines, for the on-screen diagnosis (overlay_status) */
     char ring[8][96]; int ring_n;
@@ -190,8 +197,8 @@ static void log_props(rx_overlay_t *o, int fd, uint32_t obj, uint32_t type, cons
 static int create_buffer(rx_overlay_t *o, ovl_buf_t *b) {
     struct drm_mode_create_dumb cd;
     memset(&cd, 0, sizeof cd);
-    cd.width = OVL_W;
-    cd.height = OVL_H;
+    cd.width = BUFD;
+    cd.height = BUFD;
     cd.bpp = 32;
     if (xioctl(o->fd, DRM_IOCTL_MODE_CREATE_DUMB, &cd)) { logf_(o, "CREATE_DUMB: %s", strerror(errno)); return -1; }
     b->handle = cd.handle;
@@ -199,8 +206,8 @@ static int create_buffer(rx_overlay_t *o, ovl_buf_t *b) {
     b->size = cd.size;
     struct drm_mode_fb_cmd2 fb;
     memset(&fb, 0, sizeof fb);
-    fb.width = OVL_W;
-    fb.height = OVL_H;
+    fb.width = BUFD;
+    fb.height = BUFD;
     fb.pixel_format = o->format;
     fb.handles[0] = cd.handle;
     fb.pitches[0] = cd.pitch;
@@ -213,7 +220,7 @@ static int create_buffer(rx_overlay_t *o, ovl_buf_t *b) {
     b->map = mmap(NULL, cd.size, PROT_READ | PROT_WRITE, MAP_SHARED, o->fd, (off_t)md.offset);
     if (b->map == MAP_FAILED) { b->map = NULL; logf_(o, "mmap dumb: %s", strerror(errno)); return -1; }
     memset(b->map, 0, cd.size);
-    logf_(o, "buffer: handle %u fb %u pitch %u size %llu (%dx%d)", b->handle, b->fb_id, b->pitch, (unsigned long long)b->size, OVL_W, OVL_H);
+    logf_(o, "buffer: handle %u fb %u pitch %u size %llu (%dx%d)", b->handle, b->fb_id, b->pitch, (unsigned long long)b->size, BUFD, BUFD);
     return 0;
 }
 
@@ -224,32 +231,22 @@ static void destroy_buffer(rx_overlay_t *o, ovl_buf_t *b) {
     memset(b, 0, sizeof *b);
 }
 
-/* show the plane: the buffer's rectangle r (skin pixels) at the page origin (x, y) + r; fb_id 0 hides it. With an
- * ARGB plane r is the whole page (the undrawn part is transparent); with XRGB only the drawn rectangle of the page
- * is shown, so the skin stays visible around it. */
-static int set_plane(rx_overlay_t *o, uint32_t fb_id, int x, int y, const rx_box_t *r) {
+/* show the plane: the page turned to the display's orientation, its rectangle pl_x, pl_y, pw x ph on the display; fb_id 0 hides it */
+static int set_plane(rx_overlay_t *o, uint32_t fb_id) {
     struct drm_mode_set_plane sp;
     memset(&sp, 0, sizeof sp);
     sp.plane_id = o->plane_id;
     sp.crtc_id = o->crtc_id;
     sp.fb_id = fb_id;
     if (fb_id) {
-        /* clipped to the display: on the Force the page's bottom can lie below the display's last row (1280 x 720 with MPC's
-         * header above the 628 px page), and a plane reaching past the CRTC is refused by the driver */
-        int cx = x + r->x, cy = y + r->y, w = r->w, h = r->h, sx = r->x, sy = r->y;
-        if (cx < 0) { w += cx; sx -= cx; cx = 0; }
-        if (cy < 0) { h += cy; sy -= cy; cy = 0; }
-        if (o->disp_w && cx + w > (int)o->disp_w) w = (int)o->disp_w - cx;
-        if (o->disp_h && cy + h > (int)o->disp_h) h = (int)o->disp_h - cy;
-        if (w <= 0 || h <= 0) { errno = ERANGE; return -1; }
-        sp.crtc_x = cx;
-        sp.crtc_y = cy;
-        sp.crtc_w = (uint32_t)w;
-        sp.crtc_h = (uint32_t)h;
-        sp.src_x = (uint32_t)sx << 16;
-        sp.src_y = (uint32_t)sy << 16;
-        sp.src_w = (uint32_t)w << 16;
-        sp.src_h = (uint32_t)h << 16;
+        sp.crtc_x = o->pl_x;
+        sp.crtc_y = o->pl_y;
+        sp.crtc_w = (uint32_t)o->pw;
+        sp.crtc_h = (uint32_t)o->ph;
+        sp.src_x = 0;
+        sp.src_y = 0;
+        sp.src_w = (uint32_t)o->pw << 16;
+        sp.src_h = (uint32_t)o->ph << 16;
     }
     return xioctl(o->fd, DRM_IOCTL_MODE_SETPLANE, &sp);
 }
@@ -264,7 +261,7 @@ static int drm_setup(rx_overlay_t *o) {
         logf_(o, "trying fd %d", o->fd);
         if (drm_setup_fd(o) == 0) {
             /* can we set a plane on it? (only the display's master can: a disable of our unused plane is harmless) */
-            if (set_plane(o, 0, 0, 0, NULL) == 0) return 0;
+            if (set_plane(o, 0) == 0) return 0;
             logf_(o, "fd %d: SETPLANE: %s (not the master handle?)", o->fd, strerror(errno));
         }
         destroy_buffer(o, &o->buf);
@@ -424,71 +421,124 @@ static inline int px_rgb(const fbmap_t *m, int x, int y, uint8_t *rgb) {
 static inline int near_(const uint8_t *a, const uint8_t *b) {
     return abs(a[0] - b[0]) <= MARK_TOL && abs(a[1] - b[1]) <= MARK_TOL && abs(a[2] - b[2]) <= MARK_TOL;
 }
-static int marker_at(const fbmap_t *m, int x, int y, const unsigned char mk[4][3]) {
-    uint8_t c[3];
-    return px_rgb(m, x, y, c) && near_(c, mk[0]) && px_rgb(m, x + 1, y, c) && near_(c, mk[1]) &&
-           px_rgb(m, x, y + 1, c) && near_(c, mk[2]) && px_rgb(m, x + 1, y + 1, c) && near_(c, mk[3]);
+/* where MPC's landscape screen lies in the display: found from the page's marker pixels, nothing assumed (XYZ-STACK's finding on the Force 3.9.1:
+ * the panel is portrait and the landscape screen is turned 90 degrees anticlockwise into it). (u, v) on the landscape screen -> display (x, y) */
+static inline void ui_to_fb(int rot, int lw, int lh, int u, int v, int *x, int *y) {
+    switch (rot) {
+    case 0: *x = u; *y = v; break;
+    case 1: *x = lh - 1 - v; *y = u; break;
+    case 2: *x = lw - 1 - u; *y = lh - 1 - v; break;
+    default: *x = v; *y = lw - 1 - u; break;
+    }
+}
+/* the same turn, backwards, in continuous coordinates (touch) */
+static inline void fb_to_ui_f(int rot, int lw, int lh, float x, float y, float *u, float *v) {
+    switch (rot) {
+    case 0: *u = x; *v = y; break;
+    case 1: *u = y; *v = (float)lh - x; break;
+    case 2: *u = (float)lw - x; *v = (float)lh - y; break;
+    default: *u = (float)lw - y; *v = x; break;
+    }
 }
 
-/* both markers of page p with the page's origin at (ox, oy)? */
-static int page_at(const fbmap_t *m, int ox, int oy, int p) {
-    return marker_at(m, ox + RX_PAGE_MARK_TL_X, oy + RX_PAGE_MARK_TL_Y, RX_MARK_TL[p]) &&
-           marker_at(m, ox + RX_PAGE_MARK_BR_X, oy + RX_PAGE_MARK_BR_Y, RX_MARK_BR[p]);
+/* a 2 x 2 marker block whose top-left is at (u, v) on the landscape screen, looked for in the display's picture */
+static int marker_rot(const fbmap_t *m, int rot, int lw, int lh, int u, int v, const unsigned char mk[4][3]) {
+    for (int k = 0; k < 4; k++) {
+        int x, y;
+        uint8_t c[3];
+        ui_to_fb(rot, lw, lh, u + (k & 1), v + (k >> 1), &x, &y);
+        if (!px_rgb(m, x, y, c) || !near_(c, mk[k])) return 0;
+    }
+    return 1;
 }
 
-/* the whole-picture search: a pixel near any page's TL[0] colour (23, 7, 91 + 12 p) names the page candidate, then
- * both markers are checked. 1 found: the page origin and id. */
-static int find_page(const fbmap_t *m, int *px, int *py, int *pid) {
-    const int b0 = RX_MARK_TL[0][0][2];                     /* 91 */
-    /* only the two markers must be inside the picture, NOT the whole page: on the Force (1280 x 720, MPC's header above the
-     * 628 px page) the page's bottom can be off the display, and 0.1.0/0.1.1 required the whole page to fit, so this loop
-     * never ran there (no waves, no touch) */
-    const int span_x = RX_PAGE_MARK_BR_X - RX_PAGE_MARK_TL_X + 2, span_y = RX_PAGE_MARK_BR_Y - RX_PAGE_MARK_TL_Y + 2;
-    for (int y = RX_PAGE_MARK_TL_Y; y + (span_y > 2 ? span_y : 2) <= (int)m->h; y++) {
-        const uint8_t *row = m->map + (size_t)y * m->pitch;
-        for (int x = RX_PAGE_MARK_TL_X; x + span_x <= (int)m->w; x++) {
-            uint8_t c[3];
-            if (m->fmt == DRM_FORMAT_XRGB8888 || m->fmt == DRM_FORMAT_ARGB8888) {   /* the fast path */
-                const uint8_t *p = row + x * 4;
-                if (abs(p[2] - RX_MARK_TL[0][0][0]) > MARK_TOL || abs(p[1] - RX_MARK_TL[0][0][1]) > MARK_TOL) continue;
-                c[0] = p[2]; c[1] = p[1]; c[2] = p[0];
-            } else if (!px_rgb(m, x, y, c) || abs(c[0] - RX_MARK_TL[0][0][0]) > MARK_TOL || abs(c[1] - RX_MARK_TL[0][0][1]) > MARK_TOL) continue;
-            int p = (c[2] - b0 + 6) / 12;
-            if (c[2] < b0 - MARK_TOL || p < 0 || p >= RX_PAGES || abs(c[2] - (b0 + 12 * p)) > MARK_TOL) continue;
-            if (page_at(m, x - RX_PAGE_MARK_TL_X, y - RX_PAGE_MARK_TL_Y, p)) {
-                *px = x - RX_PAGE_MARK_TL_X;
-                *py = y - RX_PAGE_MARK_TL_Y;
-                *pid = p;
-                return 1;
-            }
-        }
+/* both markers of page p with the page's origin at (ox, oy) on the landscape screen? */
+static int page_at(const fbmap_t *m, int rot, int lw, int lh, int ox, int oy, int p) {
+    return marker_rot(m, rot, lw, lh, ox + RX_PAGE_MARK_TL_X, oy + RX_PAGE_MARK_TL_Y, RX_MARK_TL[p]) &&
+           marker_rot(m, rot, lw, lh, ox + RX_PAGE_MARK_BR_X, oy + RX_PAGE_MARK_BR_Y, RX_MARK_BR[p]);
+}
+
+/* all four turns, the page anywhere (2 pixels of slack each way): a few thousand pixel reads. 1 found: the turn, the landscape screen's size,
+ * the page origin and id. */
+static int find_page(const fbmap_t *m, int *rot, int *lw, int *lh, int *ox, int *oy, int *pid) {
+    for (int r = 0; r < 4; r++) {
+        int LW = (r & 1) ? (int)m->h : (int)m->w, LH = (r & 1) ? (int)m->w : (int)m->h;
+        if (LW < OVL_W - 4 || LH < OVL_H - 4) continue;
+        for (int y0 = -2; y0 <= LH - OVL_H + 2; y0++)
+            for (int x0 = -2; x0 <= LW - OVL_W + 2; x0++)
+                for (int p = 0; p < RX_PAGES; p++)
+                    if (page_at(m, r, LW, LH, x0, y0, p)) { *rot = r; *lw = LW; *lh = LH; *ox = x0; *oy = y0; *pid = p; return 1; }
     }
     return 0;
 }
 
-/* 1: a page is on screen at (o->page_x, o->page_y) (display pixels), o->page_id says which; 0: none (another tab,
- * a list over it). full: look over the whole picture when it isn't where it was (a few times a second: it reads a
- * lot of display memory); else only the last place is checked, for every page id (a tab change keeps the origin). */
+/* the page's rectangle on the display, from its place and the turn */
+static int compute_plane(rx_overlay_t *o) {
+    int xa, ya, xb, yb;
+    ui_to_fb(o->rot, o->lw, o->lh, o->page_x, o->page_y, &xa, &ya);
+    ui_to_fb(o->rot, o->lw, o->lh, o->page_x + OVL_W - 1, o->page_y + OVL_H - 1, &xb, &yb);
+    o->pl_x = xa < xb ? xa : xb;
+    o->pl_y = ya < yb ? ya : yb;
+    o->pw = abs(xa - xb) + 1;
+    o->ph = abs(ya - yb) + 1;
+    if ((long)o->pw * o->ph != (long)OVL_W * OVL_H || o->pw > BUFD || o->ph > BUFD || o->pl_x < 0 || o->pl_y < 0 ||
+        o->pl_x + o->pw > (int)o->fb_w || o->pl_y + o->ph > (int)o->fb_h) {
+        logf_(o, "the page does not fit on the display: plane %d,%d %dx%d on %ux%u", o->pl_x, o->pl_y, o->pw, o->ph, o->fb_w, o->fb_h);
+        return -1;
+    }
+    o->geom++;
+    return 0;
+}
+
+/* 1: a page is on screen at (o->page_x, o->page_y) on the landscape screen, o->page_id says which; 0: none (another tab, a list over it).
+ * full: look over the whole picture when it isn't where it was (a few times a second: it reads a lot of display memory); else only the
+ * last place is checked, for every page id (a tab change keeps the origin). */
 static int locate(rx_overlay_t *o, int full) {
     fbmap_t m;
     if (scanout_open(o, &m)) { o->fmt_unknown = o->fb_err_logged > 0; return 0; }
+    o->fmt_unknown = 0;
+    o->fb_w = m.w; o->fb_h = m.h;
     if (!o->disp_w) { o->disp_w = m.w; o->disp_h = m.h; }
     int on = 0;
-    if (o->page_found || o->page_x >= 0) {   /* still there? (same page first, then the others at the same origin) */
-        if (page_at(&m, o->page_x, o->page_y, o->page_id)) on = 1;
-        else for (int p = 0; p < RX_PAGES && !on; p++) if (p != o->page_id && page_at(&m, o->page_x, o->page_y, p)) { o->page_id = p; on = 1; }
+    if (o->page_found) {   /* still there? (same page first, then the others at the same origin) */
+        if (page_at(&m, o->rot, o->lw, o->lh, o->page_x, o->page_y, o->page_id)) on = 1;
+        else for (int p = 0; p < RX_PAGES && !on; p++) if (p != o->page_id && page_at(&m, o->rot, o->lw, o->lh, o->page_x, o->page_y, p)) { o->page_id = p; on = 1; }
         o->page_found = on;
     }
     if (!on && full) {
-        int px, py, pid;
-        if (find_page(&m, &px, &py, &pid)) {
-            o->page_x = px; o->page_y = py; o->page_id = pid;
-            o->page_found = on = 1;
-            if (!o->page_logged) { o->page_logged = 1; logf_(o, "the page is at %d,%d on the display (%ux%u %.4s), page %d", px, py, m.w, m.h, (char *)&m.fmt, pid); }
+        int r, lw, lh, ox, oy, pid;
+        if (find_page(&m, &r, &lw, &lh, &ox, &oy, &pid)) {
+            int moved = !o->page_logged || r != o->rot || lw != o->lw || ox != o->page_x || oy != o->page_y;
+            o->rot = r; o->lw = lw; o->lh = lh; o->page_x = ox; o->page_y = oy; o->page_id = pid;
+            if (compute_plane(o) == 0) {
+                o->page_found = on = 1;
+                if (moved) {
+                    o->page_logged = 1;
+                    logf_(o, "the page is found: display %ux%u %.4s, MPC's %dx%d screen turned %s, page %d at %d,%d on it; the plane is %d,%d %dx%d on the display",
+                          m.w, m.h, (char *)&m.fmt, lw, lh, r == 0 ? "not at all" : r == 1 ? "90 degrees clockwise" : r == 2 ? "180 degrees" : "90 degrees anticlockwise",
+                          pid, ox, oy, o->pl_x, o->pl_y, o->pw, o->ph);
+                }
+            }
         }
     }
     scanout_close(&m);
     return on;
+}
+
+/* the page (premultiplied ARGB, OVL_W x OVL_H) turned into the plane's orientation: dst is pw x ph */
+static void rotate_page(const rx_overlay_t *o, const uint8_t *src, uint8_t *dst) {
+    int x0, y0, x1, y1, x2, y2;
+    ui_to_fb(o->rot, o->lw, o->lh, o->page_x, o->page_y, &x0, &y0);
+    ui_to_fb(o->rot, o->lw, o->lh, o->page_x + 1, o->page_y, &x1, &y1);
+    ui_to_fb(o->rot, o->lw, o->lh, o->page_x, o->page_y + 1, &x2, &y2);
+    long sa = (long)(y1 - y0) * o->pw + (x1 - x0), sb = (long)(y2 - y0) * o->pw + (x2 - x0);
+    long base = (long)(y0 - o->pl_y) * o->pw + (x0 - o->pl_x);
+    const uint32_t *sp = (const uint32_t *)src;
+    uint32_t *d = (uint32_t *)dst;
+    for (int b = 0; b < OVL_H; b++) {
+        long row = base + (long)b * sb;
+        for (int a = 0; a < OVL_W; a++) d[row + (long)a * sa] = sp[(size_t)b * OVL_W + a];
+    }
 }
 
 /* ------------------------------------------------------------------------------------------------ the platter frames */
@@ -566,16 +616,17 @@ static void *ovl_thread(void *p) {
         for (int i = 0; i < 30 && !o->stop; i++) usleep(100000);
     }
     if (o->stop) goto give_up;
-    uint8_t *frame_mem = calloc((size_t)OVL_H, OVL_PITCH), *prev_mem = calloc((size_t)OVL_H, OVL_PITCH);
-    if (!frame_mem || !prev_mem) { logf_(o, "out of memory"); free(frame_mem); free(prev_mem); goto give_up; }
+    if (o->format != DRM_FORMAT_ARGB8888) { logf_(o, "XRGB only: no transparent plane, so no live screen (this build draws the turned wheel only on an ARGB plane)"); set_plane(o, 0); destroy_buffer(o, &o->buf); goto give_up; }
+    uint8_t *frame_mem = calloc((size_t)OVL_H, OVL_PITCH), *rotf = calloc((size_t)BUFD * BUFD, 4), *prev_mem = calloc((size_t)BUFD * BUFD, 4);
+    if (!frame_mem || !rotf || !prev_mem) { logf_(o, "out of memory"); free(frame_mem); free(rotf); free(prev_mem); goto give_up; }
     __atomic_store_n(&o->live, 1, __ATOMIC_RELEASE);
     logf_(o, "live: drawing up to %d frames a second", OVL_FPS);
     struct timespec next, t_start;
     clock_gettime(CLOCK_MONOTONIC, &next);
     t_start = next;
-    int frame = 0, shown = 0, fails = 0, shown_x = -1, shown_y = -1, shown_page = -1, stat_frames = 0, last_stat_s = 0;
+    int frame = 0, shown = 0, fails = 0, shown_page = -1, stat_frames = 0, last_stat_s = 0, full_copy = 1;
+    unsigned shown_geom = ~0u;
     double busy = 0, stat_busy = 0;
-    rx_box_t shown_rect = {0, 0, 0, 0};
     static rx_view_t v;
     while (!o->stop) {
         struct timespec t0, t1;
@@ -604,30 +655,33 @@ static void *ovl_thread(void *p) {
                 if (xioctl(o->fd, DRM_IOCTL_WAIT_VBLANK, &wv)) { o->no_vblank = 1; logf_(o, "WAIT_VBLANK: %s (copying without it)", strerror(errno)); }
             }
             ovl_buf_t *b = &o->buf;
-            for (int y = 0; y < OVL_H; y++) {
-                const uint8_t *src = frame_mem + (size_t)y * OVL_PITCH;
-                uint8_t *prev = prev_mem + (size_t)y * OVL_PITCH;
-                if (!memcmp(src, prev, OVL_PITCH)) continue;
-                memcpy(b->map + (size_t)y * b->pitch, src, OVL_PITCH);
-                memcpy(prev, src, OVL_PITCH);
+            rotate_page(o, frame_mem, rotf);   /* the page turned the way MPC's screen is turned into the display */
+            if (o->geom != shown_geom) full_copy = 1;
+            for (int y = 0; y < o->ph; y++) {
+                const uint8_t *src = rotf + (size_t)y * o->pw * 4;
+                uint8_t *prev = prev_mem + (size_t)y * o->pw * 4;
+                if (!full_copy && !memcmp(src, prev, (size_t)o->pw * 4)) continue;
+                memcpy(b->map + (size_t)y * b->pitch, src, (size_t)o->pw * 4);
+                memcpy(prev, src, (size_t)o->pw * 4);
             }
-            /* the plane's rectangle: the whole page on ARGB; on XRGB the page's drawn rectangle only */
-            rx_box_t rect = {0, 0, OVL_W, OVL_H};
-            if (o->format == DRM_FORMAT_XRGB8888) screen_used_rect(page, &rect);
-            int want = rect.w > 0 && rect.h > 0;
+            full_copy = 0;
+            /* this test build draws the WHEEL page only (the one big wheel); the other pages stay as the skin draws them */
+            rx_box_t rect = {0, 0, 0, 0};
+            screen_used_rect(page, &rect);
+            int want = page == RX_PAGE_WHEEL && rect.w > 0 && rect.h > 0;
             if (!want) {
-                if (shown) { set_plane(o, 0, 0, 0, NULL); shown = 0; logf_(o, "hidden (page %d has nothing live)", page); }
-            } else if (!shown || o->page_x != shown_x || o->page_y != shown_y || page != shown_page || memcmp(&rect, &shown_rect, sizeof rect)) {
-                if (set_plane(o, b->fb_id, o->page_x, o->page_y, &rect)) {
+                if (shown) { set_plane(o, 0); shown = 0; logf_(o, "hidden (page %d has nothing live)", page); }
+            } else if (!shown || o->geom != shown_geom || page != shown_page) {
+                if (set_plane(o, b->fb_id)) {
                     if (++fails == 1 || fails % 300 == 0) logf_(o, "SETPLANE: %s (%d so far)", strerror(errno), fails);
                     if (errno == EACCES || errno == EPERM) { logf_(o, "not the display's master: no live screen"); __atomic_store_n(&o->live, 0, __ATOMIC_RELEASE); break; }
                 } else {
-                    shown = 1; shown_x = o->page_x; shown_y = o->page_y; shown_page = page; shown_rect = rect;
-                    logf_(o, "shown at %d,%d page %d rect %d,%d %dx%d", o->page_x, o->page_y, page, rect.x, rect.y, rect.w, rect.h);
+                    shown = 1; shown_geom = o->geom; shown_page = page;
+                    logf_(o, "shown: plane at %d,%d, %dx%d on the display, page %d", o->pl_x, o->pl_y, o->pw, o->ph, page);
                 }
             }
         } else if (shown) {
-            set_plane(o, 0, 0, 0, NULL);
+            set_plane(o, 0);
             shown = 0;
             logf_(o, "hidden (%s)", o->fmt_unknown ? "the display's picture can't be read" : "no page of ours is on the display");
         }
@@ -659,9 +713,10 @@ static void *ovl_thread(void *p) {
         clock_gettime(CLOCK_MONOTONIC, &now);
         if ((now.tv_sec - next.tv_sec) * 1e9 + (now.tv_nsec - next.tv_nsec) > 2e8) next = now;   /* far behind: don't catch up */
     }
-    set_plane(o, 0, 0, 0, NULL);
+    set_plane(o, 0);
     destroy_buffer(o, &o->buf);
     free(frame_mem);
+    free(rotf);
     free(prev_mem);
     __atomic_store_n(&o->live, 0, __ATOMIC_RELEASE);
     logf_(o, "stopped after %d frames (%.2f ms a frame)", frame, frame ? busy / frame : 0.0);
@@ -697,6 +752,13 @@ int overlay_page_shown(rx_overlay_t *o) {
     return __atomic_load_n(&o->page_id, __ATOMIC_ACQUIRE);
 }
 
+/* where the page is, for touch: the display's size, how the landscape screen lies in it, and the page's top-left on that screen */
+int overlay_geom(rx_overlay_t *o, int *rot, int *lw, int *lh, int *ox, int *oy, unsigned *fbw, unsigned *fbh) {
+    if (!o || !__atomic_load_n(&o->page_found, __ATOMIC_ACQUIRE) || !o->fb_w || !o->fb_h) return 0;
+    *rot = o->rot; *lw = o->lw; *lh = o->lh; *ox = o->page_x; *oy = o->page_y; *fbw = o->fb_w; *fbh = o->fb_h;
+    return 1;
+}
+
 int overlay_box_origin(rx_overlay_t *o, int *x, int *y) {
     if (!o || !__atomic_load_n(&o->page_found, __ATOMIC_ACQUIRE)) return 0;
     if (x) *x = __atomic_load_n(&o->page_x, __ATOMIC_ACQUIRE);
@@ -709,8 +771,6 @@ rx_overlay_t *overlay_start(const char *plugin_dir, int *ok) {
     rx_overlay_t *o = calloc(1, sizeof *o);
     if (!o) return NULL;
     o->fd = -1;
-    o->page_x = -1;
-    o->page_y = -1;
     if (!plugin_dir || !plugin_dir[0]) return o;
     char path[RX_PATH];
     snprintf(path, sizeof path, "%s/overlay.off", plugin_dir);
