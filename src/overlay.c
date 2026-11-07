@@ -624,7 +624,7 @@ static void *ovl_thread(void *p) {
     struct timespec next, t_start;
     clock_gettime(CLOCK_MONOTONIC, &next);
     t_start = next;
-    int frame = 0, shown = 0, fails = 0, shown_page = -1, stat_frames = 0, last_stat_s = 0, full_copy = 1;
+    int lost_frames = 0, frame = 0, shown = 0, fails = 0, shown_page = -1, stat_frames = 0, last_stat_s = 0, full_copy = 1;
     unsigned shown_geom = ~0u;
     double busy = 0, stat_busy = 0;
     static rx_view_t v;
@@ -634,8 +634,15 @@ static void *ovl_thread(void *p) {
         int on = 0;
         /* is a page on the display? 10 looks a second while it is (16 pixels to read); 2 of them whole-picture
          * searches while it isn't (a lot of display memory, so not every frame) */
-        if (frame % 3 == 0) on = locate(o, frame % 15 == 0), o->on_screen = on;
-        else on = o->on_screen;
+        /* 0.1.19: while a page of ours is shown, or was lost a moment ago (a page change: the markers of the new page appear), look every other frame
+         * and search the whole picture at once, so the old page's drawing never lingers */
+        if (frame % (shown ? 2 : 3) == 0 || lost_frames > 0) {
+            on = locate(o, frame % 15 == 0 || lost_frames > 0);
+            if (!on && o->on_screen) lost_frames = 12;
+            else if (lost_frames > 0) lost_frames--;
+            if (on) lost_frames = 0;
+            o->on_screen = on;
+        } else on = o->on_screen;
         int page = o->page_id;
         if (on && !o->fmt_unknown) {
             read_locked(&o->seq, &o->view, &v, sizeof v);

@@ -2,7 +2,7 @@
   "name": "reMixXXL",
   "vendor": "L'Cronx",
   "uid": "LCrM",
-  "version": 118,
+  "version": 119,
   "so": "remixxxl.so",
   "params": "params.json",
   "layout": "layout.conf",

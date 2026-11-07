@@ -205,7 +205,7 @@ struct rx_deck {
     double gain_prev;                  /* replay gain * vinyl speed gain, last block */
     int wrap_count; double wrap_trigger, wrap_target;    /* loop wraps in the last block (for the scratch controller) */
     double platter;                    /* turns */
-    double jog_prev, jog_idle, jp[4]; int jog_scr, ext_jog, jp_init; int64_t ext_seek_fp;   /* the jog ring as a knob: last value seen, seconds since the finger last moved it, scratch on */
+    double jog_prev, jog_idle, jp[4]; int jog_scr, ext_jog, jp_init; int64_t ext_seek_fp, ext_platter_fp;   /* the jog ring as a knob: last value seen, seconds since the finger last moved it, scratch on */
     int blocks;
 
     /* rate control */
@@ -664,7 +664,10 @@ int deck_is_playing(rx_deck_t *d) { return ctlb(d->c.play); }
 /* a finger turning the wheel on a stopped deck (touch.c): turns of the wheel, queued for the engine thread, which moves the playhead */
 void deck_seek_by_turns(rx_deck_t *d, double turns) { __atomic_fetch_add(&d->ext_seek_fp, (int64_t)llround(turns * 1.8 * RX_SR * 16.0), __ATOMIC_ACQ_REL); }
 void deck_ext_jog(rx_deck_t *d, int on) { __atomic_store_n(&d->ext_jog, on, __ATOMIC_RELEASE); }
-void deck_jog(rx_deck_t *d, double amount) { ctl_post_delta(d->c.jog, amount); }
+void deck_jog(rx_deck_t *d, double amount) {
+    ctl_post_delta(d->c.jog, amount);
+    __atomic_fetch_add(&d->ext_platter_fp, (int64_t)llround(amount / 12.566 * 1e6), __ATOMIC_ACQ_REL);   /* CDJ mode: the wheel turns by what the finger adjusted (a turn = 12.6 jog units) */
+}
 
 /* the per-block part of ControllerEngine::scratchEnable/scratchProcess/scratchDisable, on the audio thread.
  * intervalsPerRev: Mixxx's resolution argument; here fixed to touch.c/midi.c's convention through deck_scratch_tick's
@@ -1397,8 +1400,10 @@ void deck_render(rx_deck_t *d, float *out, int frames) {
     d->gain_prev = gain;
     d->rate_old = rate;
 
-    /* platter: 33 1/3 rpm at 1x, following the actual rate (scratch included) */
-    d->platter += rate * (33.0 + 1.0 / 3.0) / 60.0 * frames / RX_SR;
+    /* platter (0.1.19): it does not turn with the playing track, as on a CDJ; it turns only when it is scratched (33 1/3 rpm at 1x, following the
+     * actual rate) or adjusted by touch/phone in CDJ mode (ext_platter_fp, from deck_jog), and by the stopped-track seeks in jog_block */
+    if (d->scratching) d->platter += rate * (33.0 + 1.0 / 3.0) / 60.0 * frames / RX_SR;
+    { int64_t q = __atomic_exchange_n(&d->ext_platter_fp, 0, __ATOMIC_ACQ_REL); if (q) d->platter += (double)q / 1e6; }
     d->platter -= floor(d->platter);
     jog_block(d, frames);
 

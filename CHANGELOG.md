@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.19 (test build, not yet tested on a Force)
+Two fixes to 0.1.18 (touch tested: works). (1) Changing between the WHEELS and WHEEL pages left the old page's wheel drawing on screen for a few seconds: the live screen now looks for the page every other frame while one is shown, and when the page has just gone it searches the whole picture straight away instead of waiting for its slow turn. (2) The wheel (and the skin's jog ring) no longer turns with the playing track, as on a CDJ: it turns only when it is scratched (VINYL, finger or phone), when it is adjusted in CDJ mode (by the amount the finger or phone adjusted it), and when it moves a stopped track.
+
 ## 0.1.18 (test build, not yet tested on a Force)
 The WHEEL page's wheel behaviour (tested: perfect) now also drives the two small wheels of the WHEELS page: each ring turns freely with the finger and with its deck's platter (`tools/gen_ring.py` now also makes `Screen/ring_420.png` and `ring_light_420.png`), and a clockwise circle moves that deck's track forward, anticlockwise back, stopped or playing. The live screen and the touch layer now work both pages. The wheels' faces are the skin's own again: the live screen no longer draws a photo label disc, a position arc or any text (deck, BPM, time) over or round the wheels, so the skin's centre and its BPM digits show as before. The ring turn is now integer maths (about 5 to 10 times cheaper): 0.1.17 took about 105 ms a frame on the Force (6 frames a second).
 
