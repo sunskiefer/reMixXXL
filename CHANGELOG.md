@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.21 (test build, not yet tested on a Force)
+VINYL and CDJ do two different things again, and the VINYL / CDJ + JOG MODE button switches between them. (1) WHEEL page: the button's touch area was only 38 px wide (half of half the pair); the whole pair (VINYL / CDJ and JOG MODE) is now one button for the vinyl mode, and it shows the mode: VINYL lit and CDJ dimmed when it is on, the other way round when off. (2) WHEEL and WHEELS pages: since 0.1.16 the wheel scratched the track in both modes; now VINYL scratches the playing track (clockwise forward, anticlockwise back) and CDJ adjusts it (a pitch nudge, scaled by JOG ADJUST). A stopped track is moved by the wheel in both modes, as before.
+
 ## 0.1.20 (test build, not yet tested on a Force)
 WHEEL page, right-hand side only (everything else as 0.1.19): the right-hand column is cut from your own picture (`art/ui/controls/wheel_page_user_0.1.11.png`) at full size instead of the controls sheet squeezed into smaller boxes, so VINYL / CDJ + JOG MODE, BEAT SYNC / MASTER, KEY SYNC, TEMPO, MASTER TEMPO and TEMPO RESET are their real size, and the CUE/LOOP CALL / DELETE / MEMORY art and the tempo scale are back. The column is moved 43 px to the right so no space is left at the right edge. The JOG ADJUST knob (dial turning in place) is now left of the pitch slider, under TEMPO RESET, and about 1.6 times its old size on the page.
 

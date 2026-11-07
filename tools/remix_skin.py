@@ -1117,6 +1117,24 @@ def master_tempo_lamp(p, q, crop=None):
     p.kids.append(placed(dk, "master tempo lamp", sk.idx("mt_led"), (q["x"] + cx - n // 2, q["y"] + cy - n // 2, n, n), False))
 
 
+def vinyl_pair_faces(w, h, px, py):
+    """0.1.20: the VINYL / CDJ + JOG MODE pair (picture box (px, py, w, h) + RIGHT_SHIFT on the page) as ONE button for the vinyl mode: ON = VINYL
+    (the CDJ word dimmed), OFF = CDJ (the VINYL word dimmed). Only the two words' own coloured pixels are dimmed; everything else is the picture."""
+    import numpy as np
+    Image, _, _, _ = _pil()
+    crop = wheel_pic().crop((px, py, px + w, py + h))
+    a = np.asarray(crop).astype(np.float32)
+    r, g, b, al = a[..., 0], a[..., 1], a[..., 2], a[..., 3]
+    left = np.zeros(r.shape, bool); left[:, : w // 2 + 4] = True
+    vinyl = (b > 150) & (g > 120) & (r < 150) & (al > 120) & left & (np.arange(h)[:, None] < 31)
+    cdj = (g > 150) & (r > 90) & (b < 130) & (al > 120) & left & (np.arange(h)[:, None] >= 31)
+    def face(dim):
+        o = a.copy()
+        o[dim, :3] *= 0.30
+        return Image.fromarray(np.clip(o, 0, 255).astype("uint8"), "RGBA")
+    return face(cdj), face(vinyl)           # (on, off)
+
+
 def wheel_side(p, side, selector, parts, deck_buttons, other=None):
     """one CDJ panel: the parts pasted at their boxes, and the controls over them (four stacked, by the side's deck)"""
     Image, ImageDraw, _, _ = _pil()
@@ -1155,6 +1173,17 @@ def wheel_side(p, side, selector, parts, deck_buttons, other=None):
         if i not in PART_CTL:
             continue
         x, y, w, h = q["x"], q["y"], q["w"], q["h"]
+        if side == "C" and i == 17:             # VINYL / CDJ + JOG MODE: the whole pair is the vinyl-mode button (the old box was only the left half, then halved again)
+            import wheel_geom as G
+            px, py = G.PARTS[17][0][3][0], G.PARTS[17][0][3][1]
+            pw_, ph_ = 150, G.PARTS[17][0][3][3]
+            on_i, off_i = vinyl_pair_faces(pw_, ph_, px, py)
+            tag = "C_17_%dx%d" % (pw_, ph_)
+            on, off = sk.save(on_i, "rx_part_%s_on.png" % tag), sk.save(off_i, "rx_part_%s_off.png" % tag)
+            rect = (x, y, pw_, ph_)
+            for n in range(1, 5):
+                p.momentary("d%d_vinyl" % n, rect, "", cond=deck_cond(sk, selector, n), name="d%d_vinyl %s" % (n, side), face=(on, off))
+            continue
         crop = wheel_pic_crop(x, y, w, h) if (side == "C" and i in RIGHT_IDS) else part_crop(i, w, h, pg)
         for half, k, kind in PART_CTL[i]:
             if half == "L":

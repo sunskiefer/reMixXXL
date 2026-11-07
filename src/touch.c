@@ -220,7 +220,7 @@ static void finger_down(rx_touch_t *t, slot_t *s, int page) {
         s->zone = dist < wh->r_top ? 1 : 2;
         s->last_angle = atan2(dy, dx);
         deck_ext_jog(rx_deck(t->engine, deck), 1);
-        s->scratching = (vinyl || page == RX_PAGE_WHEEL || page == RX_PAGE_WHEELS) && deck_is_playing(rx_deck(t->engine, deck));   /* WHEEL page: on the WHEEL and WHEELS pages a circle always moves the position (clockwise = forward), VINYL or CDJ */       /* stopped: the wheel moves the playhead itself (finger_move) */               /* VINYL: the whole wheel (disc and ring) spins the track; CDJ: it nudges the pitch (deck_jog, scaled by JOG ADJUST) */
+        s->scratching = vinyl && deck_is_playing(rx_deck(t->engine, deck));   /* 0.1.20: VINYL scratches the track (clockwise = forward); CDJ adjusts (nudges the pitch) */       /* stopped: the wheel moves the playhead itself (finger_move) */               /* VINYL: the whole wheel (disc and ring) spins the track; CDJ: it nudges the pitch (deck_jog, scaled by JOG ADJUST) */
         if (s->scratching) deck_scratch_enable(rx_deck(t->engine, deck), 1, SCRATCH_RPM, SCRATCH_ALPHA, SCRATCH_BETA);
         post_zone(t, deck, s->zone);
         pthread_mutex_unlock(&t->geom_lock);
