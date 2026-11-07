@@ -1181,8 +1181,13 @@ def wheel_side(p, side, selector, parts, deck_buttons, other=None):
             tag = "C_17_%dx%d" % (pw_, ph_)
             on, off = sk.save(on_i, "rx_part_%s_on.png" % tag), sk.save(off_i, "rx_part_%s_off.png" % tag)
             rect = (x, y, pw_, ph_)
+            if rect != (1113, 50, 150, 63):
+                sys.exit("remix_skin: the VINYL/CDJ button moved to %r: update RX_VINYL_BTN_* in src/remix.h" % (rect,))
+            # 0.1.22: a picture only (no actions): the tap is taken by the plugin's own touch layer (src/touch.c), which flips the
+            # deck's vinyl mode itself; the picture follows the parameter's value (lit = VINYL, the CDJ word lit = CDJ)
             for n in range(1, 5):
-                p.momentary("d%d_vinyl" % n, rect, "", cond=deck_cond(sk, selector, n), name="d%d_vinyl %s" % (n, side), face=(on, off))
+                dk = sk.define("rxVinylFace_%s_%s" % (on, off), [], [button(on, off, 1, 1, pw_, ph_)])
+                p.kids.append(placed(dk, "d%d_vinyl %s" % (n, side), sk.idx("d%d_vinyl" % n), rect, False, cond=deck_cond(sk, selector, n)))
             continue
         crop = wheel_pic_crop(x, y, w, h) if (side == "C" and i in RIGHT_IDS) else part_crop(i, w, h, pg)
         for half, k, kind in PART_CTL[i]:

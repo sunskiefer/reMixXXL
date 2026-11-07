@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.22
+- VINYL / CDJ (WHEEL page): the button's tap is now taken by the plugin's own touch layer, which flips the deck's vinyl mode itself (logged as "touch: VINYL/CDJ deck N -> CDJ|VINYL"); the skin only draws the button (lit word = current mode) and no longer relies on MPC's toggle. Test build, not yet tested on a Force.
+
 ## 0.1.21 (test build, not yet tested on a Force)
 VINYL and CDJ do two different things again, and the VINYL / CDJ + JOG MODE button switches between them. (1) WHEEL page: the button's touch area was only 38 px wide (half of half the pair); the whole pair (VINYL / CDJ and JOG MODE) is now one button for the vinyl mode, and it shows the mode: VINYL lit and CDJ dimmed when it is on, the other way round when off. (2) WHEEL and WHEELS pages: since 0.1.16 the wheel scratched the track in both modes; now VINYL scratches the playing track (clockwise forward, anticlockwise back) and CDJ adjusts it (a pitch nudge, scaled by JOG ADJUST). A stopped track is moved by the wheel in both modes, as before.
 

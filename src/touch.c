@@ -207,6 +207,16 @@ static void finger_down(rx_touch_t *t, slot_t *s, int page) {
         if (t->brow_ctl != CTL_NONE && s->y >= RX_STRIPE_H && s->y < RX_SKIN_H - 100) { s->kind = 3; s->list_y0 = s->y; }
         return;
     }
+    if (page == RX_PAGE_WHEEL && s->x >= RX_VINYL_BTN_X && s->x < RX_VINYL_BTN_X + RX_VINYL_BTN_W &&
+        s->y >= RX_VINYL_BTN_Y && s->y < RX_VINYL_BTN_Y + RX_VINYL_BTN_H) {     /* 0.1.22: VINYL / CDJ: flipped here (the skin only draws it) */
+        int deck = wheel_deck_of(t, page, 0);
+        if (t->vinyl_ctl[deck] != CTL_NONE) {
+            int now = ctl_get(t->vinyl_ctl[deck]) > 0.5;
+            ctl_post(t->vinyl_ctl[deck], now ? 0 : 1);
+            rx_log("touch: VINYL/CDJ deck %d -> %s", deck + 1, now ? "CDJ" : "VINYL");
+        }
+        return;
+    }
     pthread_mutex_lock(&t->geom_lock);
     /* 1. the wheels */
     for (int w = 0; w < t->nwheels[page]; w++) {
