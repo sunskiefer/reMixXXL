@@ -21,3 +21,8 @@ PARTS = {  # id: [(half, key, kind, (x,y,w,h))]
 FADER = (966, 298, 66, 306)       # unchanged
 LAMP_C = (1101.5, 392)            # the red lamp centre on the picture
 KNOB = (55.5, 60, 23)             # jog adjust knob body in its box (cx, cy, r)
+
+# 0.1.20: the right-hand column (these parts, the tempo fader 5, the static art right of RIGHT_X0 and the JOG ADJUST knob) is moved this many
+# pixels to the right on the page, so no space is left at the right edge (the picture + OFF ends 50 px short of it)
+RIGHT_SHIFT = 43
+RIGHT_PARTS = (5, 6, 7, 8, 16, 17, 18, 19)

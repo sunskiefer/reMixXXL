@@ -379,6 +379,69 @@ def cdj_knob_strip(w, h, frames=FRAMES):
     return strip
 
 
+# ------------------------------------------------------------------------------------------------ the WHEEL page's right-hand side (0.1.20)
+# The WHEEL page's right-hand column is cut from the user's own picture (art/ui/controls/wheel_page_user_0.1.11.png, 1:1; skin = picture + OFF)
+# instead of the controls sheet squeezed into the picture's boxes (that made VINYL / CDJ, BEAT SYNC, the knob ... half size and dropped the
+# CUE/LOOP CALL / DELETE / MEMORY art and the tempo scale). Only these parts and the static art right of RIGHT_X0 change; the left side is as before.
+WHEEL_PIC = os.path.join(ART, "ui", "controls", "wheel_page_user_0.1.11.png")
+RIGHT_IDS = (6, 7, 8, 17, 18, 19)                 # the picture's own crops (the knob, 16, is made below; the fader, 5, is as before)
+RIGHT_X0 = 880                                    # on the picture: the static art from here to its right edge
+KNOB_BOX = (1072, 441, 114, 108)                  # the JOG ADJUST block on the picture (title, dial, LIGHT / HEAVY)
+KNOB_BODY = (55.5, 60, 23)                        # the dial in that box (cx, cy, r)
+KNOB_SCALE = 1.1                                  # the knob block's size on the page, against the picture's
+KNOB_RIGHT, KNOB_BOTTOM = 988 + 43, 626                # its right edge / bottom on the page: left of the pitch slider, under TEMPO RESET
+_wheel_pic = {}
+
+
+def wheel_pic():
+    Image, _, _, _ = _pil()
+    if "p" not in _wheel_pic:
+        _wheel_pic["p"] = Image.open(WHEEL_PIC).convert("RGBA")
+    return _wheel_pic["p"]
+
+
+def wheel_pic_crop(x, y, w, h):
+    """a crop of the picture at page coordinates (x, y, w, h) of a right-hand part (skin = picture + OFF + RIGHT_SHIFT)"""
+    import wheel_geom as G
+    ox, oy = G.OFF
+    ox += G.RIGHT_SHIFT
+    return wheel_pic().crop((x - ox, y - oy, x - ox + w, y - oy + h))
+
+
+def right_static():
+    """the picture's right side as ONE picture over the ring (the labels, the CUE/LOOP CALL / DELETE / MEMORY art, the tempo scale ...); the knob
+    block and the fader are cleared (they are drawn live, in their own places)"""
+    import wheel_geom as G
+    Image, _, _, _ = _pil()
+    B_ = wheel_pic().copy()
+    clear = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+    for (x, y, w, h) in (KNOB_BOX, G.FADER):
+        B_.paste(Image.new("RGBA", (w, h), (0, 0, 0, 0)), (x, y))
+    return B_.crop((RIGHT_X0, 0, B_.width, B_.height)), G.OFF[0] + G.RIGHT_SHIFT + RIGHT_X0, G.OFF[1]
+
+
+def knob_strip_pic(w, h, frames=FRAMES):
+    """the JOG ADJUST block from the picture, scaled to w x h, the dial turning in place -135..+135 degrees (the title and the labels stay still)"""
+    Image, ImageDraw, _, _ = _pil()
+    x, y, bw, bh = KNOB_BOX
+    cx, cy, r = KNOB_BODY
+    src = wheel_pic().crop((x, y, x + bw, y + bh))
+    SS = 4
+    big = src.resize((bw * SS, bh * SS), Image.LANCZOS)
+    m = Image.new("L", big.size, 0)
+    ImageDraw.Draw(m).ellipse([(cx - r) * SS, (cy - r) * SS, (cx + r) * SS, (cy + r) * SS], fill=255)
+    disc = big.copy(); disc.putalpha(m)
+    base = big.copy()
+    ImageDraw.Draw(base).ellipse([(cx - r) * SS, (cy - r) * SS, (cx + r) * SS, (cy + r) * SS], fill=(0, 0, 0, 0))
+    strip = Image.new("RGBA", (w, h * frames), (0, 0, 0, 0))
+    for k in range(frames):
+        ang = -135 + 270 * k / (frames - 1)
+        rot = disc.rotate(-ang, resample=Image.BICUBIC, center=(cx * SS, cy * SS))
+        fr = base.copy(); fr.alpha_composite(rot)
+        strip.alpha_composite(fr.resize((w, h), Image.LANCZOS), (0, k * h))
+    return strip
+
+
 # ------------------------------------------------------------------------------------------------ TUI.json pieces
 def B(x, y, w, h):
     return "%d %d %d %d" % (round(x), round(y), round(w), round(h))
@@ -1024,13 +1087,13 @@ def grey_face(w, h, label, px=HEAD_PX):
     return im
 
 
-def master_tempo_lamp(p, q):
+def master_tempo_lamp(p, q, crop=None):
     """the MASTER TEMPO button's red lamp (part 7) flashing at the master deck's beat: a picture on the parameter mt_led (the engine lights it
     about 80 ms a beat), over the button; dark when off"""
     import numpy as np
     Image, ImageDraw, ImageFilter, _ = _pil()
     sk = p.sk
-    crop = part_crop(7, q["w"], q["h"])
+    crop = crop if crop is not None else part_crop(7, q["w"], q["h"])
     a = np.asarray(crop).astype(int)
     red = (a[..., 0] > 170) & (a[..., 1] < 110) & (a[..., 2] < 110) & (a[..., 3] > 200)
     ys, xs = np.where(red)
@@ -1065,8 +1128,15 @@ def wheel_side(p, side, selector, parts, deck_buttons, other=None):
             continue
         if q["id"] >= 31:
             continue                            # art-only pieces: pictures above the ring, below
-        im = part_crop(q["id"], q["w"], q["h"], pg)
+        if side == "C" and q["id"] == 16:
+            continue                            # the knob: drawn live in its new place (below)
+        im = wheel_pic_crop(q["x"], q["y"], q["w"], q["h"]) if (side == "C" and q["id"] in RIGHT_IDS) else part_crop(q["id"], q["w"], q["h"], pg)
         p.paste(im, q["x"], q["y"])
+    if side == "C":                             # the right-hand side's static art: one picture over the ring
+        rs, rx, ry = right_static()
+        rimg = sk.save(rs, "rx_right_static_%dx%d.png" % rs.size)
+        rk = sk.define("rxRightStatic_%dx%d" % rs.size, [], [image(rimg, 0, 0, rs.width, rs.height)], ignore=True)
+        p.kids.append(placed(rk, "right-hand art C", sk.idx("deck_sel"), (rx, ry, rs.width, rs.height), False))
     for q in parts:                             # the art-only pieces (labels, lines, the scale) are pictures over the ring, which they overlap
         if q["id"] >= 31:
             img = sk.save(part_crop(q["id"], q["w"], q["h"], pg), "rx_art_%d_%dx%d.png" % (q["id"], q["w"], q["h"]))
@@ -1085,7 +1155,7 @@ def wheel_side(p, side, selector, parts, deck_buttons, other=None):
         if i not in PART_CTL:
             continue
         x, y, w, h = q["x"], q["y"], q["w"], q["h"]
-        crop = part_crop(i, w, h, pg)
+        crop = wheel_pic_crop(x, y, w, h) if (side == "C" and i in RIGHT_IDS) else part_crop(i, w, h, pg)
         for half, k, kind in PART_CTL[i]:
             if half == "L":
                 rect, cimg = (x, y, w // 2, h), crop.crop((0, 0, w // 2, h))
@@ -1108,7 +1178,13 @@ def wheel_side(p, side, selector, parts, deck_buttons, other=None):
                 for n in range(1, 5):
                     p.kids.append(placed(dk, "d%d_rate %s" % (n, side), sk.idx("d%d_rate" % n), rect, True, cond=deck_cond(sk, selector, n)))
             elif kind == "rknob":
-                strip = sk.save(cdj_knob_strip(w, h), "rx_jogfeel_%dx%d.png" % (w, h))
+                if side == "C":                 # 0.1.20: from the picture, bigger, left of the pitch slider
+                    w, h = int(round(KNOB_BOX[2] * KNOB_SCALE)), int(round(KNOB_BOX[3] * KNOB_SCALE))
+                    x, y = KNOB_RIGHT - w, KNOB_BOTTOM - h
+                    rect = (x, y, w, h)
+                    strip = sk.save(knob_strip_pic(w, h), "rx_jogfeel_%dx%d.png" % (w, h))
+                else:
+                    strip = sk.save(cdj_knob_strip(w, h), "rx_jogfeel_%dx%d.png" % (w, h))
                 dk = sk.define("rxJogFeel_%dx%d" % (w, h), KNOB_ACTIONS, [focus(w, h), filmstrip(strip, FRAMES, w, h, "Vertical")])
                 for n in range(1, 5):
                     p.kids.append(placed(dk, "d%d_jogfeel %s" % (n, side), sk.idx("d%d_jogfeel" % n), rect, True, cond=deck_cond(sk, selector, n)))
@@ -1119,7 +1195,7 @@ def wheel_side(p, side, selector, parts, deck_buttons, other=None):
                     p.popup("d%d_%s" % (n, k), rect, cond=deck_cond(sk, selector, n), list_at=(x - 220, y), field_img=(on, off))
     for q in parts:
         if q["id"] == 7:
-            master_tempo_lamp(p, q)       # last, so the lamp sits on top of its button
+            master_tempo_lamp(p, q, wheel_pic_crop(q["x"], q["y"], q["w"], q["h"]) if side == "C" else None)       # last, so the lamp sits on top of its button
 
 
 def page_wheels(p):

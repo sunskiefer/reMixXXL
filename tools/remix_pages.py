@@ -157,13 +157,13 @@ def wheel_new_parts(C):
     two-button parts are one box, split at its middle (touch.c). The platter (id 1) and the fader (5) stay as they were."""
     import wheel_geom as G
     ox, oy = G.OFF
-    keep = [q for q in C if q["id"] == 5]
+    keep = [dict(q, x=q["x"] + G.RIGHT_SHIFT) for q in C if q["id"] == 5]     # the fader moves with the right-hand column
     plat = [q for q in C if q["id"] == 1]
     new = []
     for pid, lst in G.PARTS.items():
         x0 = min(b[0] for _, _, _, b in lst); y0 = min(b[1] for _, _, _, b in lst)
         x1 = max(b[0] + b[2] for _, _, _, b in lst); y1 = max(b[1] + b[3] for _, _, _, b in lst)
-        new.append({"id": pid, "part": PART_NAMES.get(pid, "part %d" % pid), "x": x0 + ox, "y": y0 + oy, "w": x1 - x0, "h": y1 - y0})
+        new.append({"id": pid, "part": PART_NAMES.get(pid, "part %d" % pid), "x": x0 + ox + (G.RIGHT_SHIFT if pid in G.RIGHT_PARTS else 0), "y": y0 + oy, "w": x1 - x0, "h": y1 - y0})
     return keep + new + plat                          # the platter last: the part boxes round it are tested first
 
 

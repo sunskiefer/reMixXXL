@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.20 (test build, not yet tested on a Force)
+WHEEL page, right-hand side only (everything else as 0.1.19): the right-hand column is cut from your own picture (`art/ui/controls/wheel_page_user_0.1.11.png`) at full size instead of the controls sheet squeezed into smaller boxes, so VINYL / CDJ + JOG MODE, BEAT SYNC / MASTER, KEY SYNC, TEMPO, MASTER TEMPO and TEMPO RESET are their real size, and the CUE/LOOP CALL / DELETE / MEMORY art and the tempo scale are back. The column is moved 43 px to the right so no space is left at the right edge. The JOG ADJUST knob (dial turning in place) is now left of the pitch slider, under TEMPO RESET, and about 1.6 times its old size on the page.
+
 ## 0.1.19 (test build, not yet tested on a Force)
 Two fixes to 0.1.18 (touch tested: works). (1) Changing between the WHEELS and WHEEL pages left the old page's wheel drawing on screen for a few seconds: the live screen now looks for the page every other frame while one is shown, and when the page has just gone it searches the whole picture straight away instead of waiting for its slow turn. (2) The wheel (and the skin's jog ring) no longer turns with the playing track, as on a CDJ: it turns only when it is scratched (VINYL, finger or phone), when it is adjusted in CDJ mode (by the amount the finger or phone adjusted it), and when it moves a stopped track.
 
