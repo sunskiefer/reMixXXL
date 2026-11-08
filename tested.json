@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.1.25",
+    "device": "Akai Force",
+    "mpc_os": "3.9.1",
+    "date": "2026-11-08",
+    "result": "working",
+    "tested_by": "L'Cronx",
+    "notes": "tested by the author on the Force: the cue (PFL) on outputs 3/4 through the reMixXXL CUE effect on its own audio track (decks 1/3 left, 2/4 right), the 1/2 mix without PFL decks, PFL 1-4 levels (0.1.23-0.1.25 included; reMixXXL CUE 0.1.3)"
+  },
+  {
     "version": "0.1.22",
     "device": "Akai Force",
     "mpc_os": "3.9.1",
