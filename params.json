@@ -5468,6 +5468,46 @@
    "display": "string",
    "poll": true,
    "ctl": "[reMixXXL],maps_status"
+  },
+  {
+   "key": "d1_cuelvl",
+   "name": "PFL 1",
+   "default": 0.5,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "knob",
+   "ctl": "[Channel1],cue_level",
+   "deck": 1
+  },
+  {
+   "key": "d2_cuelvl",
+   "name": "PFL 2",
+   "default": 0.5,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "knob",
+   "ctl": "[Channel2],cue_level",
+   "deck": 2
+  },
+  {
+   "key": "d3_cuelvl",
+   "name": "PFL 3",
+   "default": 0.5,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "knob",
+   "ctl": "[Channel3],cue_level",
+   "deck": 3
+  },
+  {
+   "key": "d4_cuelvl",
+   "name": "PFL 4",
+   "default": 0.5,
+   "min": 0.0,
+   "max": 1.0,
+   "kind": "knob",
+   "ctl": "[Channel4],cue_level",
+   "deck": 4
   }
  ]
 }

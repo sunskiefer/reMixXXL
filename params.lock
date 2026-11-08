@@ -517,3 +517,7 @@ mp_next
 mp_load
 mp_none
 mp_status
+d1_cuelvl
+d2_cuelvl
+d3_cuelvl
+d4_cuelvl

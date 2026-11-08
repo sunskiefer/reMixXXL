@@ -857,6 +857,8 @@ def page_mixer(p):
     p.text(mx["x"] + 100, 24, "MASTER", READ_PX, True, INK_DIM, anchor="mm")
     p.knob("master_gain", mx["x"] + 20, mx["y"] + 4, 56, "MASTER", cell_w=120, value=True)
     p.knob("head_mix", mx["x"] + 20, mx["y"] + 130, 56, "CUE MIX", cell_w=120, value=True)
+    for n in range(1, 5):   # each deck's monitor (PFL) level: parked in two rows under CUE MIX (move them in the layout editor)
+        p.knob("d%d_cuelvl" % n, mx["x"] + 14 + ((n - 1) % 2) * 94, mx["y"] + 292 + ((n - 1) // 2) * 106, 70, "PFL %d" % n, cell_w=92)
     xf = m["xfader"]
     p.fader("xfader", (xf["x"], xf["y"], xf["w"], xf["h"]), vertical=False)
     p.text(xf["x"] + xf["w"] + 16, xf["y"] + xf["h"] / 2, "XFADER", READ_PX, True, INK_DIM)

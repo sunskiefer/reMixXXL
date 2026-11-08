@@ -124,7 +124,7 @@ static void vu_process(vu_t *v, const float *lr, int frames) {
 
 /* ---------------------------------------------------------------------------------------------------- the mixer */
 typedef struct {
-    ctl_id volume, pregain, orientation, pfl, mute;
+    ctl_id volume, pregain, orientation, pfl, cue_level, mute;
     ctl_id eq[3], eq_kill[3], eq_enabled, qe_super1, qe_enabled;
     ctl_id fx_enable[RX_FX_UNITS];
     ctl_id vu_meter, vu_l, vu_r, peak, peak_l, peak_r;
@@ -166,6 +166,7 @@ void mixer_register_controls(rx_mixer_t *m) {
         c->pregain = ctl_register(g, "pregain", CK_FLOAT, 0, 4, 1);
         c->orientation = ctl_register(g, "orientation", CK_INT, 0, 2, (i & 1) ? 2 : 0);
         c->pfl = ctl_register(g, "pfl", CK_TOGGLE, 0, 1, 0);
+        c->cue_level = ctl_register(g, "cue_level", CK_FLOAT, 0, 2, 1);   /* this deck's monitor level on the cue bus (1 = unity) */
         c->mute = ctl_register(g, "mute", CK_TOGGLE, 0, 1, 0);
         c->vu_meter = ctl_register(g, "vu_meter", CK_FLOAT, 0, 1, 0);
         c->vu_l = ctl_register(g, "vu_meter_left", CK_FLOAT, 0, 1, 0);
@@ -266,7 +267,8 @@ void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, float 
         if (fx) fx_process_channel(fx, i, lr, frames);
         if (ctl_get(c->pfl) >= 0.5) {                      /* PFL: after pregain, EQ and effects, before the fader and crossfader */
             int side = i & 1;                              /* decks 1 and 3 (index 0, 2) -> left, 2 and 4 -> right */
-            for (int k = 0; k < frames; k++) cue_lr[2 * k + side] += (lr[2 * k] + lr[2 * k + 1]) * 0.5f;
+            float cg = 0.5f * (float)rx_clamp(ctl_get(c->cue_level), 0, 2);   /* the mono fold (x0.5) times this deck's monitor level */
+            for (int k = 0; k < frames; k++) cue_lr[2 * k + side] += (lr[2 * k] + lr[2 * k + 1]) * cg;
         }
         /* fader x crossfader (orientation: 0 left, 1 centre, 2 right) x mute */
         int o = (int)ctl_get(c->orientation);
@@ -276,7 +278,8 @@ void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, float 
         c->fader_prev = fader;
         m->ch_vol_view[i] = fader;
         vu_process(&c->vu, lr, frames);
-        for (int k = 0; k < frames * 2; k++) out_lr[k] += lr[k];
+        if (ctl_get(c->pfl) < 0.5)                         /* a deck with PFL on goes only to the cue bus, never into the 1/2 mix */
+            for (int k = 0; k < frames * 2; k++) out_lr[k] += lr[k];
     }
     /* master effects, master gain, balance, limiter */
     if (fx) fx_process_master(fx, out_lr, frames);

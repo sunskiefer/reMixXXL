@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.25 (test build, not yet tested on a Force)
+(1) A deck with PFL on goes ONLY to the cue bus: it is taken out of the main 1/2 mix (its fader, VU and effects still run). (2) New monitor levels PFL 1 - PFL 4 (MIXER page, under CUE MIX; Q-Link / automation too): each deck's own level on the cue bus, 50% = unity. The cue is still taken before the channel fader, so a deck with its fader down is heard in the cue at the PFL level. Parameters were only appended. reMixXXL CUE 0.1.3 (STATUS line on its screen) is unchanged and works with this build.
+
 ## 0.1.24 (test build, not yet tested on a Force)
 The cue bus no longer needs the CUE effect to find reMixXXL's library (a /proc/self/maps + dlopen lookup that could fail): reMixXXL now writes the cue ring into a memory-mapped file (/dev/shm, else /tmp) and reMixXXL CUE 0.1.2 reads that file. Same sound: decks 1/3 left, 2/4 right, PFL decks only, never in the 1/2 mix. Put reMixXXL CUE on a DIFFERENT audio track from reMixXXL's own track (it replaces its track's audio with the cue), and route that audio track to outputs 3/4.
 

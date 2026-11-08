@@ -195,6 +195,9 @@ add("mp_next", "CTRL PAGE >", "trigger", ctl="[reMixXXL],maps_page_next")
 add("mp_load", "CTRL LOAD", "trigger", ctl="[reMixXXL],maps_load")
 add("mp_none", "CTRL NONE", "trigger", ctl="[reMixXXL],maps_none")
 add("mp_status", "CTRL STATUS", "text", ctl="[reMixXXL],maps_status")
+# 0.1.24: each deck's own monitor (PFL) level, sent to the cue bus only (appended last: parameter indices never move)
+for _n in range(1, 5):
+    add("d%d_cuelvl" % _n, "PFL %d" % _n, "knob", 0.5, ctl="[Channel%d],cue_level" % _n, deck=_n)
 
 
 def ff(v):
