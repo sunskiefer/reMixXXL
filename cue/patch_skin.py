@@ -26,7 +26,8 @@ k = parts[1]["componentData"]["data"]; k["filmStrip"] = "rx_knob_92.png"; k["num
 bounds(parts[1], "%d 0 %d %d" % ((CELL_W - DIA) // 2, DIA, DIA))
 parts[2]["componentData"]["data"]["textStyle"]["font"]["height"] = 35.7; bounds(parts[2], "0 94 %d 48" % CELL_W)
 parts[3]["componentData"]["data"]["textStyle"]["font"]["height"] = 37.4; bounds(parts[3], "0 144 %d 44" % CELL_W)
-for c in cd[1]["value"]["componentsData"]:
-    if c["componentData"]["name"] == "CUE LEVEL": bounds(c, "%d 230 %d 188" % (640 - CELL_W // 2, CELL_W))
+for k in cd:
+    for c in k["value"]["componentsData"]:
+        if c["componentData"]["name"] == "CUE LEVEL": bounds(c, "%d 200 %d 188" % (640 - CELL_W // 2, CELL_W))
 json.dump(d, open(p, "w"), indent=2)
 print("patched knob:", strip.size)
