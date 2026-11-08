@@ -8,5 +8,8 @@
   "layout": "layout.conf",
   "effect": true,
   "cc": false,
-  "nrpn": false
+  "nrpn": false,
+  "defines": {
+    "PARAM_TEXT_MAX": 48
+  }
 }

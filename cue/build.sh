@@ -25,6 +25,6 @@ PKG="build/package/$NAME"
 rm -rf build/package && mkdir -p "$PKG"
 cp -r "build/skin/$NAME/." "$PKG/"
 cp build/arm/remixxxl_cue.so "$PKG/"
-python3 "$MPC_VST/tools/release.py" --so "$PKG/remixxxl_cue.so" --skin "$PKG" --entry build/pluginlist-entry.xml --version 0.1.2 \
+python3 "$MPC_VST/tools/release.py" --so "$PKG/remixxxl_cue.so" --skin "$PKG" --entry build/pluginlist-entry.xml --version 0.1.3 \
   --id remixxxl-cue --repo sunskiefer/reMixXXL --license GPL-3.0-or-later \
   --about "reMixXXL CUE by L'Cronx: plays reMixXXL's PFL cue (decks 1/3 left, 2/4 right) on an audio track routed to the Force's headphone or cue outputs" -o ../dist
