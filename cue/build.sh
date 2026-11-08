@@ -10,6 +10,7 @@ mkdir -p build/arm build/tools
 rm -rf build/skin
 SHADOW_ART="$PWD/build/tools/shadow_art" python3 "$MPC_VST/tools/gen_vst.py" vst.json 2>&1 | grep -v -e "TOUCH" -e "EDGE" -e "MODULE_DIR" -e "QLINK" || true
 [ -f build/params.h ] && [ -d "build/skin/$NAME/Plugin Skins" ]
+python3 patch_skin.py "build/skin/$NAME/Plugin Skins" ../art/ui/knob.png
 TGT="-target arm-linux-gnueabihf.2.31 -mcpu=generic+v7a+vfp3d16-d32-neon+thumb2 -ffp-contract=off"
 COMMON="-O2 -fPIC -fvisibility=hidden -ffunction-sections -fdata-sections -DNDEBUG -w -std=gnu11"
 OBJS=""
@@ -24,6 +25,6 @@ PKG="build/package/$NAME"
 rm -rf build/package && mkdir -p "$PKG"
 cp -r "build/skin/$NAME/." "$PKG/"
 cp build/arm/remixxxl_cue.so "$PKG/"
-python3 "$MPC_VST/tools/release.py" --so "$PKG/remixxxl_cue.so" --skin "$PKG" --entry build/pluginlist-entry.xml --version 0.1.0 \
+python3 "$MPC_VST/tools/release.py" --so "$PKG/remixxxl_cue.so" --skin "$PKG" --entry build/pluginlist-entry.xml --version 0.1.1 \
   --id remixxxl-cue --repo sunskiefer/reMixXXL --license GPL-3.0-or-later \
   --about "reMixXXL CUE by L'Cronx: plays reMixXXL's PFL cue (decks 1/3 left, 2/4 right) on an audio track routed to the Force's headphone or cue outputs" -o ../dist
