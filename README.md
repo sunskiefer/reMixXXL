@@ -1,6 +1,6 @@
 # reMixXXL
 
-**Status: 0.1.15 (release). The last version tested on an Akai Force (MPC OS 3.9.1) by the author and recorded in `tested.json` is 0.1.12: new WHEEL page layout from the author's own art; wheel touch (also on a stopped track), ring spin, BPM digits, QR and the companion page work.** Four DJ decks for the Akai Force / MPC OS, as a native
+**Status: 0.1.22 (release, tested on an Akai Force, MPC OS 3.9.1, by the author; recorded in `tested.json`). The WHEEL pages' jog wheels are endless encoders that turn with the finger (clockwise = track forward) and only move when scratched or adjusted, never while the track plays; the VINYL / CDJ button switches between scratching (VINYL) and pitch nudging (CDJ).** Four DJ decks for the Akai Force / MPC OS, as a native
 plugin (VST2 for MPC's own plugin host, packed by [mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins)).
 By L'Cronx.
 
@@ -24,9 +24,9 @@ MPC's plugin screen (1280 x 628 under the MPC header) has these tabs (the OVERVI
 | WHEELS | two CDJ-style decks side by side, built from the user's CDJ photo (`art/platter_nobrand.png`, `art/control_map.json`): the platter, cue, play, the tempo fader, tempo reset, master tempo, tempo range, beat loop 4 / 8, loop in / out, beat jump, slip / rev, track search, search, jog feel, vinyl / jog mode, beat sync / master, key sync. DECK 1-4 buttons per side pick which deck each wheel drives. Q-Link banks WHEELS 1..4 |
 | WHEEL | one CDJ deck, full size (the left wheel's deck), laid out from the author's own transparent art (0.1.11): loop in / out / reloop, beat loop 4 / 8, track search, search, cue, play, beat jump, direction (slip / rev), vinyl / jog mode, beat sync / master, key sync, tempo range, master tempo, the tempo fader and its scale, tempo reset, the JOG ADJUST knob. The deck's filter, volume, gain, high, mid and low show as values on the left. Q-Link banks WHEEL 1..4 |
 
-## Screenshots (0.1.12)
+## Screenshots (0.1.22)
 
-The pages as the skin draws them (1280 x 628). WHEEL is the 0.1.12 layout, from the author's own art; the others are rendered by `./build.sh --skin-only`.
+The pages as the skin draws them (1280 x 628). All pages are rendered from the 0.1.22 skin by `./build.sh --skin-only`; the WHEEL page's right-hand column is the author's own art.
 
 | DECK | BROWSE |
 |---|---|
@@ -58,11 +58,7 @@ the QR code on the WHEEL page. See [docs/COMPANION.md](docs/COMPANION.md).
 (`reMixXXL-<version>-mpc-armv7.zip`, packed by the mpc-vst-plugins wrapper in `third_party/`). `./build.sh --skin-only`
 rebuilds only the skin. Never build x86/desktop versions: only the Force binary is supported.
 
-**What this source reproduces.** `src/` builds the exact `remixxxl.so` of the 0.1.12 release (SHA-256 `00a9bafa62dd...b60c0`; it is
-checked against this source's build). The release's skin differs from what `tools/remix_skin.py` generates in two ways that are
-not in this source yet: 48 extra "jog knob" components in `TUI.json` and the ring film strips in reverse frame order
-(`rx_jog_ring_*.png`). The 0.1.11/0.1.12 WHEEL page is the 0.1.10 skin run through `tools/patch_wheel.py` (the author's transparent picture
-`art/ui/controls/wheel_page_user_0.1.11.png`, the boxes in `tools/wheel_geom.py`); the script reproduces the release's skin file for file. Use the release zip for the tested skin.
+**What this source reproduces.** `src/` builds the `remixxxl.so` of the 0.1.22 release (SHA-256 `0d86da3d96ca8e4ca5f425998967c9d77addd6d7ee731d2d0bdc6077160180f4`) and `./build.sh` generates its skin; the WHEEL page is cut from the author's own picture `art/ui/controls/wheel_page_user_0.1.11.png` (boxes in `tools/wheel_geom.py`). The release zip `reMixXXL-0.1.22-mpc-armv7.zip` is in the repo root.
 
 Text sizes follow the L'Cronx XXL rule: Titillium Web, nothing under 26 px on any page (readouts and list rows 26 px
 Bold, button labels 28 px, page names and deck numbers 34 px, knob names 26-28 px SemiBold).

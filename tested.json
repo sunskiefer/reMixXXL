@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.1.22",
+    "device": "Akai Force",
+    "mpc_os": "3.9.1",
+    "date": "2026-11-08",
+    "result": "working",
+    "tested_by": "L'Cronx",
+    "notes": "tested and re-tested by the author on the Force: endless wheels (big and both small) that only turn when scratched or adjusted, WHEEL page right-hand art, VINYL / CDJ button switches the vinyl mode (0.1.16-0.1.22 included)"
+  },
+  {
     "version": "0.1.12",
     "device": "Akai Force",
     "mpc_os": "3.9.1",

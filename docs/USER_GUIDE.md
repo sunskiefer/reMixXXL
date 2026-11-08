@@ -1,4 +1,4 @@
-# reMixXXL user guide (0.1.0, pre-release)
+# reMixXXL user guide (0.1.22)
 
 reMixXXL is a plugin instrument on a Force / MPC track: four DJ decks, a mixer, two effect units and a track browser,
 all on the plugin's own screen pages. Audio comes out of the track like any plugin's; MIDI into the track reaches the
@@ -24,7 +24,7 @@ The selected deck (DECK 1-4 in the stripe), Mixxx style: the scrolling waveform 
 2 / 4 / 8 / 16 / 32 S), the overview strip under it with the playhead, hot cue marks and the loop.
 
 Row 1: PLAY, CUE (press: cue / return to cue, Mixxx's cue_default), SYNC (one-shot beat sync), SLIP, REV, KEYLOCK,
-QUANT (quantize cues and loops to the beat), VINYL (vinyl mode: the platter top scratches; off: nudges).
+QUANT (quantize cues and loops to the beat), VINYL (vinyl mode: the wheel scratches the playing track; off = CDJ: it nudges the pitch). On the WHEEL page the VINYL / CDJ button switches it: the lit word is the current mode. The wheel never spins on its own while a track plays; it turns when you scratch or adjust it.
 Row 2: hot cues 1-8 (empty: set; set: jump; CLR CUE + a hot cue clears it, from a mapping or a Q-Link).
 Row 3: LOOP IN, LOOP OUT, RELOOP (on / off), LOOP /2, LOOP X2, < JUMP, JUMP > (the beat jump size), EJECT.
 Under the rows: the values the DECK Q-Link bank edits (TEMPO, FILTER, GAIN, HIGH, MID, LOW, LOOP size, JUMP size).

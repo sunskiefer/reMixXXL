@@ -1,24 +1,24 @@
 # Changelog
 
-## 0.1.22
-- VINYL / CDJ (WHEEL page): the button's tap is now taken by the plugin's own touch layer, which flips the deck's vinyl mode itself (logged as "touch: VINYL/CDJ deck N -> CDJ|VINYL"); the skin only draws the button (lit word = current mode) and no longer relies on MPC's toggle. Test build, not yet tested on a Force.
+## 0.1.22 (release, tested on a Force)
+- VINYL / CDJ (WHEEL page): the button's tap is now taken by the plugin's own touch layer, which flips the deck's vinyl mode itself (logged as "touch: VINYL/CDJ deck N -> CDJ|VINYL"); the skin only draws the button (lit word = current mode) and no longer relies on MPC's toggle. Tested on a Force (MPC OS 3.9.1).
 
-## 0.1.21 (test build, not yet tested on a Force)
+## 0.1.21 (tested on a Force with 0.1.22)
 VINYL and CDJ do two different things again, and the VINYL / CDJ + JOG MODE button switches between them. (1) WHEEL page: the button's touch area was only 38 px wide (half of half the pair); the whole pair (VINYL / CDJ and JOG MODE) is now one button for the vinyl mode, and it shows the mode: VINYL lit and CDJ dimmed when it is on, the other way round when off. (2) WHEEL and WHEELS pages: since 0.1.16 the wheel scratched the track in both modes; now VINYL scratches the playing track (clockwise forward, anticlockwise back) and CDJ adjusts it (a pitch nudge, scaled by JOG ADJUST). A stopped track is moved by the wheel in both modes, as before.
 
-## 0.1.20 (test build, not yet tested on a Force)
+## 0.1.20 (tested on a Force with 0.1.22)
 WHEEL page, right-hand side only (everything else as 0.1.19): the right-hand column is cut from your own picture (`art/ui/controls/wheel_page_user_0.1.11.png`) at full size instead of the controls sheet squeezed into smaller boxes, so VINYL / CDJ + JOG MODE, BEAT SYNC / MASTER, KEY SYNC, TEMPO, MASTER TEMPO and TEMPO RESET are their real size, and the CUE/LOOP CALL / DELETE / MEMORY art and the tempo scale are back. The column is moved 43 px to the right so no space is left at the right edge. The JOG ADJUST knob (dial turning in place) is now left of the pitch slider, under TEMPO RESET, and about 1.6 times its old size on the page.
 
-## 0.1.19 (test build, not yet tested on a Force)
+## 0.1.19 (tested on a Force with 0.1.22)
 Two fixes to 0.1.18 (touch tested: works). (1) Changing between the WHEELS and WHEEL pages left the old page's wheel drawing on screen for a few seconds: the live screen now looks for the page every other frame while one is shown, and when the page has just gone it searches the whole picture straight away instead of waiting for its slow turn. (2) The wheel (and the skin's jog ring) no longer turns with the playing track, as on a CDJ: it turns only when it is scratched (VINYL, finger or phone), when it is adjusted in CDJ mode (by the amount the finger or phone adjusted it), and when it moves a stopped track.
 
-## 0.1.18 (test build, not yet tested on a Force)
+## 0.1.18 (tested on a Force with 0.1.22)
 The WHEEL page's wheel behaviour (tested: perfect) now also drives the two small wheels of the WHEELS page: each ring turns freely with the finger and with its deck's platter (`tools/gen_ring.py` now also makes `Screen/ring_420.png` and `ring_light_420.png`), and a clockwise circle moves that deck's track forward, anticlockwise back, stopped or playing. The live screen and the touch layer now work both pages. The wheels' faces are the skin's own again: the live screen no longer draws a photo label disc, a position arc or any text (deck, BPM, time) over or round the wheels, so the skin's centre and its BPM digits show as before. The ring turn is now integer maths (about 5 to 10 times cheaper): 0.1.17 took about 105 ms a frame on the Force (6 frames a second).
 
-## 0.1.17 (test build, not yet tested on a Force)
+## 0.1.17 (tested on a Force with 0.1.22)
 Fixes 0.1.16, which showed nothing new on the Force: the live screen (`src/overlay.c`) and the engine's touch reader (`src/touch.c`) both assumed the display is not turned, but the Force's panel is portrait (800 x 1280) and MPC draws its screen turned 90 degrees into it, so neither ever found the page or read a touch in the right place (that is also why the waveforms never showed). They now find the turn, the page and the plane the way XYZ-STACK does (rotation-aware marker search, the page turned into the plane, touch mapped back through the turn). Limited to the WHEEL page in this test: the live screen draws only that page, and the touch layer works only that page's wheel (the buttons stay the skin's own). Everything else as in 0.1.16.
 
-## 0.1.16 (test build, not yet tested on a Force)
+## 0.1.16 (tested on a Force with 0.1.22)
 WHEEL page only (the one-deck page): the wheel picture is the endless encoder, drawn by the live screen turned to any angle like XYZ-STACK's wheel (`tools/gen_ring.py` makes `Screen/ring_574.png` and `ring_light_574.png`; the skin's own ring stays under it as the fallback). It turns exactly with the finger around the wheel's centre and with the platter. A clockwise circle moves the track forward, an anticlockwise circle moves it back (one turn is about 1.8 s of track, scaled by JOG ADJUST), stopped or playing, VINYL or CDJ alike (a playing track scratches; a stopped one moves its playhead). The WHEELS page and the other pages are unchanged.
 
 ## 0.1.15 (release)
