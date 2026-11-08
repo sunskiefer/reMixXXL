@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include <pthread.h>
 
-#define RX_VERSION_STR "0.1.23"
+#define RX_VERSION_STR "0.1.24"
 #define RX_SR 44100
 #define RX_BLOCK 128
 #define RX_DECKS 4

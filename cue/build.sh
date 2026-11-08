@@ -16,7 +16,7 @@ COMMON="-O2 -fPIC -fvisibility=hidden -ffunction-sections -fdata-sections -DNDEB
 OBJS=""
 for f in src/cue_engine.c "$MPC_VST/wrapper/vst2_wrap.c"; do
   o="build/arm/$(basename "$f").o"
-  $ZIG cc $TGT $COMMON -Ibuild -I"$MPC_VST/wrapper" -c "$f" -o "$o"
+  $ZIG cc $TGT $COMMON -Ibuild -I../src -I"$MPC_VST/wrapper" -c "$f" -o "$o"
   OBJS="$OBJS $o"
 done
 printf '{\n  global: VSTPluginMain;\n  local: *;\n};\n' > build/arm/exports.map
@@ -25,6 +25,6 @@ PKG="build/package/$NAME"
 rm -rf build/package && mkdir -p "$PKG"
 cp -r "build/skin/$NAME/." "$PKG/"
 cp build/arm/remixxxl_cue.so "$PKG/"
-python3 "$MPC_VST/tools/release.py" --so "$PKG/remixxxl_cue.so" --skin "$PKG" --entry build/pluginlist-entry.xml --version 0.1.1 \
+python3 "$MPC_VST/tools/release.py" --so "$PKG/remixxxl_cue.so" --skin "$PKG" --entry build/pluginlist-entry.xml --version 0.1.2 \
   --id remixxxl-cue --repo sunskiefer/reMixXXL --license GPL-3.0-or-later \
   --about "reMixXXL CUE by L'Cronx: plays reMixXXL's PFL cue (decks 1/3 left, 2/4 right) on an audio track routed to the Force's headphone or cue outputs" -o ../dist

@@ -62,7 +62,7 @@ for f in $QM_SRCS; do    # qm-dsp (C++17; kissfft is C)
   esac
   OBJS="$OBJS $o"
 done
-printf '{\n  global: VSTPluginMain; rx_cue_read;\n  local: *;\n};\n' > build/arm/exports.map
+printf '{\n  global: VSTPluginMain;\n  local: *;\n};\n' > build/arm/exports.map
 # zig c++ for the final link: it brings libc++ for the qm-dsp objects (statically, so the Force needs no libstdc++)
 $ZIG c++ $TGT -shared -fPIC -Wl,--no-undefined -Wl,--version-script=build/arm/exports.map -Wl,--gc-sections -Wl,-s \
   $OBJS -lm -ldl -lpthread -o build/arm/remixxxl.so
