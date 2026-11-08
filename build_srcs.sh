@@ -1,6 +1,6 @@
 # The source lists, shared by build.sh and the test scripts.
 # The plugin (C, gnu11): engine.c owns the wrapper contract; the rest are the parts of src/remix.h.
-PLUGIN_SRCS="src/engine.c src/control.c src/deck.c src/mixer.c src/fx.c src/decode.c src/analyze.c src/overlay.c src/screen.c src/font.c src/touch.c src/web.c src/qr.c src/midi.c src/midi_xml.c src/midi_js.c src/log.c src/compat.c"
+PLUGIN_SRCS="src/engine.c src/control.c src/deck.c src/mixer.c src/cue.c src/fx.c src/decode.c src/analyze.c src/overlay.c src/screen.c src/font.c src/touch.c src/web.c src/qr.c src/midi.c src/midi_xml.c src/midi_js.c src/log.c src/compat.c"
 INCS="-Isrc -Ithird_party -Ithird_party/stb -Ithird_party/dr_libs -Ithird_party/minimp3 -Ithird_party/quickjs"
 
 # QuickJS (MIT): the controller scripts' JavaScript. src/quickjs_sources.txt, when present, lists the files to compile.

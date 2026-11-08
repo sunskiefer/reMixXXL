@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include <pthread.h>
 
-#define RX_VERSION_STR "0.1.22"
+#define RX_VERSION_STR "0.1.23"
 #define RX_SR 44100
 #define RX_BLOCK 128
 #define RX_DECKS 4
@@ -165,7 +165,8 @@ int deck_index(rx_deck_t *d);
 rx_mixer_t *mixer_create(void);
 void mixer_destroy(rx_mixer_t *m);
 void mixer_register_controls(rx_mixer_t *m);
-void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, int frames, rx_fx_t *fx);
+void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, float *cue_lr, int frames, rx_fx_t *fx);   /* out_lr: the mix (never any PFL sound); cue_lr: the PFL decks only */
+void rx_cue_push(const float *lr, int frames);               /* cue.c: publish one block of the cue bus for the CUE effect */
 void mixer_view(rx_mixer_t *m, rx_view_t *v);
 
 /* fx.c: 2 units x 3 slots, Mixxx-style (echo, filter, reverb, flanger, phaser, bitcrusher, moog filter); a unit is

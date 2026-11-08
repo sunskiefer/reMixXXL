@@ -225,7 +225,7 @@ static void xfade_gains(double pos, double transform, double calibration, int co
     if (reverse) { float t = *g1; *g1 = *g2; *g2 = t; }
 }
 
-void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, int frames, rx_fx_t *fx) {
+void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, float *cue_lr, int frames, rx_fx_t *fx) {
     float xf_left, xf_right;
     double transform = ctl_get(m->xf_curve); if (transform < 0.6) transform = 0.6; if (transform > 1000) transform = 1000;
     int constpwr = ctl_get(m->xf_mode) >= 0.5;
@@ -233,6 +233,7 @@ void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, int fr
     xfade_gains(ctl_get(m->crossfader), transform, calibration, constpwr, ctl_get(m->xf_reverse) >= 0.5, &xf_left, &xf_right);
 
     memset(out_lr, 0, sizeof(float) * 2 * (size_t)frames);
+    memset(cue_lr, 0, sizeof(float) * 2 * (size_t)frames);   /* the cue bus: only the decks with PFL on, pre-fader; decks 1 and 3 fold to mono on the left, 2 and 4 on the right */
     for (int i = 0; i < RX_DECKS; i++) {
         channel_t *c = &m->ch[i];
         float *lr = deck_lr[i];
@@ -263,6 +264,10 @@ void mixer_render(rx_mixer_t *m, float *deck_lr[RX_DECKS], float *out_lr, int fr
         if (ctl_get(c->qe_enabled) >= 0.5) qe_process(&c->qe, lr, frames, ctl_get(c->qe_super1));
         /* effect units enabled on this channel */
         if (fx) fx_process_channel(fx, i, lr, frames);
+        if (ctl_get(c->pfl) >= 0.5) {                      /* PFL: after pregain, EQ and effects, before the fader and crossfader */
+            int side = i & 1;                              /* decks 1 and 3 (index 0, 2) -> left, 2 and 4 -> right */
+            for (int k = 0; k < frames; k++) cue_lr[2 * k + side] += (lr[2 * k] + lr[2 * k + 1]) * 0.5f;
+        }
         /* fader x crossfader (orientation: 0 left, 1 centre, 2 right) x mute */
         int o = (int)ctl_get(c->orientation);
         float xf = o == 0 ? xf_left : o == 2 ? xf_right : 1.0f;

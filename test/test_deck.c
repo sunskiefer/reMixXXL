@@ -3,6 +3,7 @@
  * then the mixer with EQ kills and an effect unit. Checks sanity: no NaN, no clipping explosion, loop stays within
  * bounds, rate changes pitch (zero crossings), keylock keeps it. */
 #include "remix.h"
+static float g_cue_dummy[2048];   /* mixer_render's cue bus (unused by these tests) */
 #include "deck.h"
 #include "fx_priv.h"
 #include <stdio.h>
@@ -208,7 +209,7 @@ int main(void) {
         double acc = 0;
         for (int b = 0; b < 300; b++) {
             for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); dl[i] = db[i]; deck_render(decks[i], dl[i], RX_BLOCK); }
-            mixer_render(mx, dl, out, RX_BLOCK, fx);
+            mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx);
             if (!finite_block(out, RX_BLOCK * 2)) { fails++; printf("FAIL: NaN in mixer output\n"); break; }
             if (b > 150) acc += rms_block(out, RX_BLOCK * 2);
         }
@@ -226,7 +227,7 @@ int main(void) {
     for (int b = 0; b < 400; b++) {
         for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); dl[i] = db[i]; deck_render(decks[i], dl[i], RX_BLOCK); }
         if (b > 200) in_rms += rms_block(db[3], RX_BLOCK * 2);
-        mixer_render(mx, dl, out, RX_BLOCK, fx);
+        mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx);
         if (b > 200) { out_rms += rms_block(out, RX_BLOCK * 2); double p = peak_block(out, RX_BLOCK * 2); if (p > out_pk) out_pk = p; }
     }
     CHECK(fabs(out_rms / in_rms - 1.0) < 0.05, "flat EQ + fader unity: rms ratio %.3f", out_rms / in_rms);
@@ -234,13 +235,13 @@ int main(void) {
     /* crossfader hard left with deck 4 on the right -> silence */
     ctl_set(ctl_lookup("[Channel4]", "orientation"), 2); ctl_set(ctl_lookup("[Master]", "crossfader"), -1);
     double xr = 0;
-    for (int b = 0; b < 50; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, RX_BLOCK, fx); if (b > 20) xr += rms_block(out, RX_BLOCK * 2); }
+    for (int b = 0; b < 50; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx); if (b > 20) xr += rms_block(out, RX_BLOCK * 2); }
     CHECK(xr < 1e-4, "crossfader left kills a right-side channel (rms %.6f)", xr / 29);
     ctl_set(ctl_lookup("[Master]", "crossfader"), 0);
     /* quick effect: super1 = 0.1 (lowpass far down) attenuates the 1 kHz tone */
     ctl_set(ctl_lookup("[QuickEffectRack1_[Channel4]]", "super1"), 0.1);
     double qr = 0;
-    for (int b = 0; b < 100; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, RX_BLOCK, fx); if (b > 50) qr += rms_block(out, RX_BLOCK * 2); }
+    for (int b = 0; b < 100; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx); if (b > 50) qr += rms_block(out, RX_BLOCK * 2); }
     CHECK(qr / 49 < out_rms / 199 * 0.2, "quick effect lowpass at 0.1 attenuates 1 kHz (rms %.4f vs %.4f)", qr / 49, out_rms / 199);
     ctl_set(ctl_lookup("[QuickEffectRack1_[Channel4]]", "super1"), 0.5);
 
@@ -256,7 +257,7 @@ int main(void) {
             for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); }
             if (b == 100) ctl_set(ctl_lookup("[EffectRack1_EffectUnit1_Effect1]", "meta"), 0.8);   /* sweep the meta knob */
             if (b == 200) ctl_set(ctl_lookup("[EffectRack1_EffectUnit1_Effect1]", "meta"), 0.2);
-            mixer_render(mx, dl, out, RX_BLOCK, fx);
+            mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx);
             if (!finite_block(out, RX_BLOCK * 2)) nan = 1;
             fr += rms_block(out, RX_BLOCK * 2); double p = peak_block(out, RX_BLOCK * 2); if (p > fp) fp = p;
         }
@@ -265,10 +266,10 @@ int main(void) {
     }
     /* echo tail: audible after the input stops */
     ctl_set(ctl_lookup("[EffectRack1_EffectUnit1_Effect1]", "effect_idx"), 1);
-    for (int b = 0; b < 200; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, RX_BLOCK, fx); }
+    for (int b = 0; b < 200; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx); }
     ctl_set(ctl_lookup("[Channel4]", "play"), 0);
     double tail = 0;
-    for (int b = 0; b < 100; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, RX_BLOCK, fx); if (b > 60) tail += rms_block(out, RX_BLOCK * 2); }
+    for (int b = 0; b < 100; b++) { for (int i = 0; i < RX_DECKS; i++) { deck_tick_controls(decks[i]); deck_render(decks[i], dl[i], RX_BLOCK); } mixer_render(mx, dl, out, g_cue_dummy, RX_BLOCK, fx); if (b > 60) tail += rms_block(out, RX_BLOCK * 2); }
     CHECK(tail > 1e-3, "echo tail after stop (rms %.4f)", tail / 39);
     ctl_set(ctl_lookup("[EffectRack1_EffectUnit1]", "enabled"), 0);
 

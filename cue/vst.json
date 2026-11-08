@@ -1,0 +1,12 @@
+{
+  "name": "reMixXXL CUE",
+  "vendor": "L'Cronx",
+  "uid": "LCrC",
+  "version": 100,
+  "so": "remixxxl_cue.so",
+  "params": "params.json",
+  "layout": "layout.conf",
+  "effect": true,
+  "cc": false,
+  "nrpn": false
+}

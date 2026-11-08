@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.23 (test build, not yet tested on a Force)
+Cue output for beat matching. MPC plays only the first stereo pair (outputs 1/2) of a plugin, so the cue leaves through a small second plugin. (1) reMixXXL's outputs 1/2 are the mix only: PFL sound is never in it. (2) New cue bus: only the decks with PFL on, taken after pregain, EQ and effects but before the channel fader and crossfader; decks 1 and 3 fold to mono on the LEFT, decks 2 and 4 on the RIGHT. (3) New plugin reMixXXL CUE (reMixXXL-CUE-0.1.0-mpc-armv7.zip): an audio effect you put on an audio track's effect slot; it plays the cue bus (left = decks 1/3, right = decks 2/4) with a CUE LEVEL knob. Route that audio track to the Force outputs you want (for example 3/4). reMixXXL has to be on a track too; without it the CUE effect is silent. About 9 ms of cue delay (a cushion so either plugin may run first in a period).
+
 ## 0.1.22 (release, tested on a Force)
 - VINYL / CDJ (WHEEL page): the button's tap is now taken by the plugin's own touch layer, which flips the deck's vinyl mode itself (logged as "touch: VINYL/CDJ deck N -> CDJ|VINYL"); the skin only draws the button (lit word = current mode) and no longer relies on MPC's toggle. Tested on a Force (MPC OS 3.9.1).
 

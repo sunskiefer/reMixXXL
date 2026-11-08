@@ -85,6 +85,7 @@ struct rx_engine {
     /* audio scratch */
     float dbuf[RX_DECKS][RX_BLOCK * 2];
     float mbuf[RX_BLOCK * 2];
+    float cbuf[RX_BLOCK * 2];               /* the cue bus (PFL decks) of this block */
     double cpu_acc; int cpu_n; double cpu_pct;
     rx_view_t view;
     int blocks;
@@ -853,7 +854,8 @@ static void render(void *p, int16_t *out, int frames) {
     { rx_deck_view_t dv; deck_view(e->deck[(int)ctl_get(e->c_deck_sel) & 3], &dv); fx_set_channel_tempo(e->fx, RX_DECKS, dv.bpm > 0 ? dv.bpm : (e->host_bpm > 0 ? e->host_bpm : 120)); }
     float *dl[RX_DECKS];
     for (int i = 0; i < RX_DECKS; i++) { dl[i] = e->dbuf[i]; deck_render(e->deck[i], dl[i], frames); }
-    mixer_render(e->mixer, dl, e->mbuf, frames, e->fx);
+    mixer_render(e->mixer, dl, e->mbuf, e->cbuf, frames, e->fx);
+    rx_cue_push(e->cbuf, frames);
     for (int i = 0; i < frames * 2; i++) {
         float s = e->mbuf[i] * 32767.0f;
         out[i] = (int16_t)(s > 32767 ? 32767 : s < -32768 ? -32768 : s);
