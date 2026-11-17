@@ -1,4 +1,4 @@
-# reMixXXL user guide (0.1.25)
+# reMixXXL user guide (0.2.0)
 
 reMixXXL is a plugin instrument on a Force / MPC track: four DJ decks, a mixer, two effect units and a track browser,
 all on the plugin's own screen pages. Audio comes out of the track like any plugin's; MIDI into the track reaches the
@@ -6,6 +6,15 @@ engine (controller mappings, MIDI learn). The pages are MPC's tabs at the bottom
 follow each page (and each page's banks).
 
 Every button and knob on every page is also a Mixxx control, so a Mixxx controller mapping drives the same things.
+
+## Which MPC, which zip
+
+reMixXXL and reMixXXL CUE (0.2.0) run on the Akai Force and the 32-bit MPCs (X, Live, Live II, One, Key 61 / 37: `-mpc-armv7.zip`), on
+the 64-bit MPCs (Live III, XL, One G2, Key G2: `-mpc-aarch64.zip`) and, as Akai's one-folder format, on any MPC with MPC OS 3.10.1 or later
+(`-mpc-sdk.zip`, no mod needed). The pages, the wheels, the cue and the controls are the same on all of them. The install steps are in the
+README. 0.2.0 has been built and tested offline only (as ARM code, 2026-11-17); the 0.1.25 code it carries was tested on a Force. On a 64-bit
+MPC the wheel screen, the touch on the wheels, the cue on outputs 3/4 and MIDI have not been tried on a device yet: if one of them does not
+work, `remixxxl_diag.log` and `remixxxl_overlay.log` (see Files) say why; send them with the MPC model and MPC OS version.
 
 ## The stripe
 
@@ -78,7 +87,7 @@ The main mix on 1/2 is not touched by any of these knobs: the main faders, cross
 
 ### Set-up, step by step
 
-1. **Install both zips** on the Force (each has its own `install.sh`): `reMixXXL-0.1.25-mpc-armv7.zip` and `reMixXXL-CUE-0.1.3-mpc-armv7.zip`. Restart MPC so both plugins appear.
+1. **Install both plugins** (reMixXXL and reMixXXL CUE from the catalog; or the two zips for your device from the Releases page, each with its own `install.sh`, or the two `-mpc-sdk.zip` folders on MPC OS 3.10.1): `reMixXXL-<version>-mpc-armv7.zip` and `reMixXXL-CUE-<version>-mpc-armv7.zip`, or the `-mpc-aarch64.zip` pair on a 64-bit MPC. Restart MPC so both plugins appear.
 2. **Track A: reMixXXL.** Load **reMixXXL** on a track as the instrument. Leave that track's output on the main outputs (**1/2**). Do **not** put reMixXXL CUE on this track: the effect replaces the audio of the track it sits on with the cue.
 3. **Track B: the cue track.** Make a separate **audio track**. In its effect slot load **reMixXXL CUE**. This track needs no recording and no input: the effect makes its own sound from reMixXXL's cue.
 4. **Route track B to outputs 3/4**: set that audio track's output to **3/4** (not Main), so none of the cue reaches 1/2.

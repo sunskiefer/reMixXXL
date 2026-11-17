@@ -1,7 +1,7 @@
 # reMixXXL
 
-**Status: 0.1.25 (release, tested on an Akai Force, MPC OS 3.9.1, by the author; recorded in `tested.json`). New: a cue (PFL) for beat matching. Outputs 1/2 are the main mix; a deck with PFL on leaves the mix and is heard only on outputs 3/4 (the headphones), decks 1/3 left and 2/4 right, through the small companion effect reMixXXL CUE; each deck has its own PFL level knob (PFL 1-4). How to route it: [Cue (PFL)](#cue-pfl-beat-matching-on-the-headphones).** Four DJ decks for the Akai Force / MPC OS, as a native
-plugin (VST2 for MPC's own plugin host, packed by [mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins)).
+**Status: 0.2.0 (pre-release: built and tested offline on 2026-11-17, not tried on a device yet). New: reMixXXL and reMixXXL CUE also for the 64-bit MPCs (Gen2: Live III, XL, One G2, Key G2) and for MPC OS 3.10.1, three zips each (armv7, aarch64, sdk); the code is 0.1.25's, which was tested on an Akai Force (MPC OS 3.9.1, by the author; recorded in `tested.json`). Since 0.1.23: a cue (PFL) for beat matching. Outputs 1/2 are the main mix; a deck with PFL on leaves the mix and is heard only on outputs 3/4 (the headphones), decks 1/3 left and 2/4 right, through the small companion effect reMixXXL CUE; each deck has its own PFL level knob (PFL 1-4). How to route it: [Cue (PFL)](#cue-pfl-beat-matching-on-the-headphones).** Four DJ decks for the Akai Force / MPC OS, as a native
+plugin (VST2 for MPC's own plugin host, packed with the [Open MPC](https://github.com/open-mpc/mpc-vst-plugins) release tools).
 By L'Cronx.
 
 reMixXXL follows [Mixxx](https://mixxx.org): its control names (`[Channel1],play`, `hotcue_1_activate`,
@@ -24,9 +24,9 @@ MPC's plugin screen (1280 x 628 under the MPC header) has these tabs (the OVERVI
 | WHEELS | two CDJ-style decks side by side, built from the user's CDJ photo (`art/platter_nobrand.png`, `art/control_map.json`): the platter, cue, play, the tempo fader, tempo reset, master tempo, tempo range, beat loop 4 / 8, loop in / out, beat jump, slip / rev, track search, search, jog feel, vinyl / jog mode, beat sync / master, key sync. DECK 1-4 buttons per side pick which deck each wheel drives. Q-Link banks WHEELS 1..4 |
 | WHEEL | one CDJ deck, full size (the left wheel's deck), laid out from the author's own transparent art (0.1.11): loop in / out / reloop, beat loop 4 / 8, track search, search, cue, play, beat jump, direction (slip / rev), vinyl / jog mode, beat sync / master, key sync, tempo range, master tempo, the tempo fader and its scale, tempo reset, the JOG ADJUST knob. The deck's filter, volume, gain, high, mid and low show as values on the left. Q-Link banks WHEEL 1..4 |
 
-## Screenshots (0.1.25)
+## Screenshots (0.2.0)
 
-The pages as the skin draws them (1280 x 628). All pages are rendered from the 0.1.25 skin by `./build.sh --skin-only`; the WHEEL page's right-hand column is the author's own art.
+The pages as the skin draws them (1280 x 628). All pages are rendered from the 0.2.0 skin by `./build.sh --skin-only` (pixel-identical to the 0.1.25 images: the skin did not change); the WHEEL page's right-hand column is the author's own art.
 
 | DECK | BROWSE |
 |---|---|
@@ -62,7 +62,7 @@ The main mix on 1/2 is not touched by any of these knobs: the main faders, cross
 
 ### Set-up, step by step
 
-1. **Install both zips** on the Force (each has its own `install.sh`): `reMixXXL-0.1.25-mpc-armv7.zip` and `reMixXXL-CUE-0.1.3-mpc-armv7.zip`. Restart MPC so both plugins appear.
+1. **Install both plugins** on the MPC (see [Install](#install): reMixXXL and reMixXXL CUE from the catalog, or the two zips for your device, each with its own `install.sh`): `reMixXXL-<version>-mpc-armv7.zip` (or `-aarch64`, or `-sdk`) and `reMixXXL-CUE-<version>-mpc-armv7.zip` (or `-aarch64`, or `-sdk`). Restart MPC so both plugins appear.
 2. **Track A: reMixXXL.** Load **reMixXXL** on a track as the instrument. Leave that track's output on the main outputs (**1/2**). Do **not** put reMixXXL CUE on this track: the effect replaces the audio of the track it sits on with the cue.
 3. **Track B: the cue track.** Make a separate **audio track**. In its effect slot load **reMixXXL CUE**. This track needs no recording and no input: the effect makes its own sound from reMixXXL's cue.
 4. **Route track B to outputs 3/4**: set that audio track's output to **3/4** (not Main), so none of the cue reaches 1/2.
@@ -108,11 +108,14 @@ the QR code on the WHEEL page. See [docs/COMPANION.md](docs/COMPANION.md).
 
 ## Build
 
-`./build.sh` builds the ARMv7 plugin with Zig (cross-compile) and the skin; `./tools/package.sh` makes the release zip
-(`reMixXXL-<version>-mpc-armv7.zip`, packed by the mpc-vst-plugins wrapper in `third_party/`). `./build.sh --skin-only`
-rebuilds only the skin. Never build x86/desktop versions: only the Force binary is supported.
+`./build.sh` builds reMixXXL for both CPUs with Zig (cross-compile, glibc 2.31): `build/arm/remixxxl.so` (armv7: the Force and the 32-bit
+MPCs) and `build/arm64/remixxxl.so` (aarch64: the 64-bit MPCs), and the skin. `./cue/build.sh` does the same for reMixXXL CUE.
+`./tools/package.sh` makes the six release zips in `dist/` (reMixXXL and reMixXXL CUE, each `-mpc-armv7.zip`, `-mpc-aarch64.zip` and
+`-mpc-sdk.zip`) with the open-mpc release tools in `third_party/open-mpc-release/`. `./build.sh --skin-only` rebuilds only the skin.
+`test/arm_sim.sh` runs the offline tests as ARM code, 32-bit and 64-bit, under qemu-user. Never build x86/desktop versions: only the
+ARM binaries are supported. GitHub Actions (`.github/workflows/build.yml`) does all of this and publishes the release zips.
 
-**What this source reproduces.** `src/` builds the `remixxxl.so` of the 0.1.25 release (SHA-256 `c54ac2d86c47b042b61bc049fe455145d74e424da131df1b3c70b1abad86cc39`) and `./build.sh` generates its skin; the WHEEL page is cut from the author's own picture `art/ui/controls/wheel_page_user_0.1.11.png` (boxes in `tools/wheel_geom.py`). The release zips `reMixXXL-0.1.25-mpc-armv7.zip` and `reMixXXL-CUE-0.1.3-mpc-armv7.zip` (the companion effect, source in `cue/`, built by `cue/build.sh`) are in the repo root.
+**What this source reproduces.** `src/` is the code of the 0.1.25 release (tested on a Force; its armv7 `remixxxl.so` has the SHA-256 `c54ac2d86c47b042b61bc049fe455145d74e424da131df1b3c70b1abad86cc39`) with only the version string changed for 0.2.0, which is built for both CPUs; `./build.sh` generates its skin; the WHEEL page is cut from the author's own picture `art/ui/controls/wheel_page_user_0.1.11.png` (boxes in `tools/wheel_geom.py`). The release zips of 0.1.25 and the earlier versions (`reMixXXL-0.1.25-mpc-armv7.zip`, `reMixXXL-CUE-0.1.3-mpc-armv7.zip`, ...) stay in the repo root; the 0.2.0 zips are on the Releases page, not in the repo.
 
 Text sizes follow the L'Cronx XXL rule: Titillium Web, nothing under 26 px on any page (readouts and list rows 26 px
 Bold, button labels 28 px, page names and deck numbers 34 px, knob names 26-28 px SemiBold).
@@ -142,6 +145,9 @@ written to the diag log.
   settled after the first device test.
 - LED feedback to a controller needs the plugin's ALSA port ("reMixXXL: LED Out") routed in MPC's MIDI settings; not
   yet verified on a device.
+- 0.2.0 has not been tried on a device yet: the 64-bit MPCs (the wheel drawing on their screen, touch, the cue on outputs 3/4, MIDI) and
+  MPC OS 3.10.1 are built and tested offline only (as ARM code under qemu), 2026-11-17. The code is the 0.1.25 code that was tested on a
+  Force.
 
 ## Logs
 
@@ -154,19 +160,57 @@ Two text files next to the plugin, for reporting a problem:
 
 ## Install
 
-Take the release zip (`reMixXXL-<version>-mpc-armv7.zip` from the Releases page), unzip it on a computer, connect the
-Force (SSH as in the mpc-vst-plugins docs) and run `install.sh`; `uninstall.sh` removes it. `INSTALL.md` in the zip
-has the steps, `SHA256SUMS` the checksums. The plugin folder is `L'Cronx - VST - reMixXXL` (the apostrophe is part of
-the name and is escaped in the scripts). Put tracks (WAV / FLAC / MP3) into its `Tracks` folder, or pick any folder on
-BROWSE.
+Requirements: an **Akai Force** or a first-generation standalone MPC (MPC Live / Live II, One, X, Key 61 / 37) on **MPC OS 3.x**
+(32-bit ARM: the `-mpc-armv7.zip`), or a 64-bit MPC (**MPC Live III, XL, One G2, Key G2**: the `-mpc-aarch64.zip`). The skin needs 3.x.
+The two zips with `install.sh` need a **root shell (SSH)**, a modded unit (for example MockbaMod); on **MPC OS 3.10.1 or later** the
+`-mpc-sdk.zip` (Akai's plugin folder format) needs no mod at all. Nothing else: the decoders, the analysis and the web page are inside
+the plugin.
 
-## Build
+Each release has three zips for reMixXXL and three for the companion effect reMixXXL CUE (the cue needs both, see
+[Cue (PFL)](#cue-pfl-beat-matching-on-the-headphones)). Pick the one for your device:
+
+| Zip | For |
+|---|---|
+| `reMixXXL-<version>-mpc-armv7.zip` | Akai Force and the 32-bit MPCs (X, Live, Live II, One, Key 61 / 37), modded, MPC OS 3.x |
+| `reMixXXL-<version>-mpc-aarch64.zip` | the 64-bit MPCs (Live III, XL, One G2, Key G2), modded, MPC OS 3.x |
+| `reMixXXL-<version>-mpc-sdk.zip` | any MPC on **MPC OS 3.10.1 or later**, Akai's plugin folder format, no mod needed |
+| `reMixXXL-CUE-<version>-mpc-armv7.zip`, `-mpc-aarch64.zip`, `-mpc-sdk.zip` | the same three, for the cue effect |
+
+**With the Plugin Manager** (the [Open MPC catalog](https://open-mpc.github.io/mpc-vst-plugins/)): DISCOVER → reMixXXL → INSTALL →
+APPLY, then the same for reMixXXL CUE. It picks the right zip for the device.
+
+**One line, on the device** (needs internet; save your project first, MPC restarts). Force and 32-bit MPCs:
+
+```sh
+cd /tmp && wget -qO rx.zip https://github.com/sunskiefer/reMixXXL/releases/download/v0.2.0/reMixXXL-0.2.0-mpc-armv7.zip && unzip -qo rx.zip && sh reMixXXL-0.2.0/install.sh
+```
+
+64-bit MPCs: the same line with `-mpc-aarch64.zip` in place of `-mpc-armv7.zip`.
+
+**From a computer:** download the release zip for your device, unzip it, copy the folder to the device and run its `install.sh`:
+
+```sh
+scp -r reMixXXL-0.2.0 root@<device-ip>:/tmp/
+ssh root@<device-ip> sh /tmp/reMixXXL-0.2.0/install.sh
+```
+
+The installer checks the device, copies the plugin folder to `/sdcard/Synths/`, backs up `MPC.settings`, registers the plugin and
+restarts MPC. Running it again upgrades and keeps your `Tracks` folder. `uninstall.sh` removes it. `INSTALL.md` in the zip has the manual
+steps, `SHA256SUMS` the checksums. The plugin folder is `L'Cronx - VST - reMixXXL` (the apostrophe is part of the name and is escaped in
+the scripts). Put tracks (WAV / FLAC / MP3) into its `Tracks` folder, or pick any folder on BROWSE.
+
+**MPC OS 3.10.1 or later, Akai's format (no mod, no shell):** unzip `reMixXXL-<version>-mpc-sdk.zip` on a computer, copy its one folder
+(`L'Cronx - VST - reMixXXL`, with `plugin.json` and both binaries inside) into the `VST2 Plugins` folder of a USB drive or SD card, put the
+drive in the MPC, turn on **External Plugin Support** in the preferences and let MPC scan. The same folder works on the 32-bit and the
+64-bit MPCs. Do the same with the reMixXXL CUE zip for the cue.
+
+## Building from source
 
 `./build.sh` (needs python3 with Pillow and numpy, a host gcc, and Zig via `pip install ziglang`); `./build.sh
---skin-only` builds and checks only the skin and writes `build/preview/<page>.png` for every page. The ARM `.so` is
-built with Zig for armv7-a / glibc 2.31; the skin from `tools/remix_skin.py`; the geometry of every page from
+--skin-only` builds and checks only the skin and writes `build/preview/<page>.png` for every page. The `.so` files are
+built with Zig, armv7-a and aarch64, both for glibc 2.31; the skin from `tools/remix_skin.py`; the geometry of every page from
 `tools/remix_pages.py` (`build/pages.json`, shipped as `Layout/pages.json` with numbered overlays of the wheel
-pages). Only the Force (ARM) binary is built; there is no desktop build.
+pages). Only ARM binaries are built (the Force and 32-bit MPCs, and the 64-bit MPCs); there is no desktop build.
 
 ## Licences
 
