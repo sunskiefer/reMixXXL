@@ -97,7 +97,9 @@ int main(void) {
     double pos1 = ctl_get(playpos) * SEC;
     CHECK(fabs(pos1 - 400.0 * RX_BLOCK / RX_SR) < 0.02, "rate 1: position %.3f s after 400 blocks", pos1);
 
-    /* ---- rate +10 % (slider 1.0 at range 0.10) */
+    /* ---- rate +10 % (slider 1.0 at range 0.10, rate_dir +1: since 0.1.14 the default is -1, the Mixxx / CDJ direction, tested below) */
+    ctl_id rdir = ctl_lookup("[Channel1]", "rate_dir");
+    ctl_set(rdir, 1);
     ctl_set(rate, 1.0);
     run(d, 20, NULL, NULL, NULL);
     double f2 = run(d, 400, NULL, NULL, &pk);
@@ -114,6 +116,13 @@ int main(void) {
     CHECK(fabs(adv - 1.1 * 400.0 * RX_BLOCK / RX_SR) < 0.03, "keylock 1.1: advanced %.3f s (expect %.3f)", adv, 1.1 * 400.0 * RX_BLOCK / RX_SR);
     CHECK(pk <= 1.0, "keylock: no clipping (peak %.2f)", pk);
     ctl_set(keylock, 0); ctl_set(rate, 0);
+
+    /* ---- the shipped default: rate_dir -1 (Mixxx's: the slider up = slower, the + at the bottom, like a CDJ) */
+    ctl_set(rdir, -1);
+    ctl_set(rate, 1.0);
+    run(d, 20, NULL, NULL, NULL);
+    CHECK(fabs(deck_current_rate(d) - 0.9) < 1e-6, "rate_dir -1: slider 1.0 at range 0.10 = rate 0.9 (%.4f)", deck_current_rate(d));
+    ctl_set(rate, 0);
 
     /* ---- reverse */
     p0 = ctl_get(playpos) * SEC;
